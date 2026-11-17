@@ -24,6 +24,46 @@ function patrona_cms_render(array $s): void {
         patrona_render(['tipo'=>'hero','datos'=>['slides'=>$slides,'config'=>$config]]);
         return;
     }
+    if ($name==='sellos_home') {
+        $seals=array_values(array_filter($items,static fn(array $i):bool=>trim((string)($i['imagen']??''))!==''));
+        if (!$seals) return;
+        $title=(string)($config['titulo_bloque']??'Sellos del colegio');
+        $subtitle=(string)($config['subtitulo_bloque']??'');
+        ?>
+        <section class="section patrona-seals" id="sellos-home"><div class="wrap">
+          <?php if($subtitle!==''):?><p class="eyebrow"><?=patrona_e($subtitle)?></p><?php endif;?>
+          <?php if($title!==''):?><h2><?=patrona_e($title)?></h2><?php endif;?>
+          <div class="patrona-seals-grid">
+          <?php foreach($seals as $seal):
+            $label=(string)($seal['titulo']??'Sello institucional');
+            $desc=trim((string)($seal['descripcion']??''));
+            $url=patrona_cms_url($seal['url']??'');
+          ?>
+          <article class="patrona-seal-card <?= $desc!==''?'has-back':'' ?>" tabindex="<?= $desc!==''?'0':'-1' ?>">
+            <div class="patrona-seal-inner">
+              <div class="patrona-seal-front"><img loading="lazy" src="<?=patrona_e((string)$seal['imagen'])?>" alt="<?=patrona_e($label)?>"></div>
+              <?php if($desc!==''):?><div class="patrona-seal-back"><p><?=nl2br(patrona_e($desc))?></p><?php if($url!=='#'):?><a href="<?=patrona_e($url)?>" target="_blank" rel="noopener noreferrer">Visitar sitio</a><?php endif;?></div><?php endif;?>
+            </div>
+            <?php if($desc===''&&$url!=='#'):?><a class="patrona-seal-link" href="<?=patrona_e($url)?>" target="_blank" rel="noopener noreferrer">Visitar sitio</a><?php endif;?>
+          </article>
+          <?php endforeach;?>
+          </div>
+        </div></section>
+        <style>
+        .patrona-seals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:22px;margin-top:30px}
+        .patrona-seal-card{position:relative;perspective:1100px;min-height:255px}
+        .patrona-seal-inner{position:relative;width:100%;height:255px;transition:transform .55s;transform-style:preserve-3d}
+        .patrona-seal-card.has-back:hover .patrona-seal-inner,.patrona-seal-card.has-back:focus-within .patrona-seal-inner,.patrona-seal-card.has-back:focus .patrona-seal-inner{transform:rotateY(180deg)}
+        .patrona-seal-front,.patrona-seal-back{position:absolute;inset:0;backface-visibility:hidden;border:1px solid #dce6f1;border-radius:16px;background:white;display:flex;align-items:center;justify-content:center;padding:22px;box-shadow:0 10px 25px #08295312}
+        .patrona-seal-front img{max-width:100%;max-height:100%;width:100%;height:100%;object-fit:contain}
+        .patrona-seal-back{transform:rotateY(180deg);flex-direction:column;gap:10px;overflow:auto;text-align:center;background:#153c6b;color:white}
+        .patrona-seal-back p{font-size:14px;line-height:1.5}.patrona-seal-back a{color:#fff;text-decoration:underline}
+        .patrona-seal-link{display:block;text-align:center;margin-top:10px;color:#1675bb}
+        @media(prefers-reduced-motion:reduce){.patrona-seal-inner{transition:none}}
+        </style>
+        <?php
+        return;
+    }
     if (!$items && !array_filter($config,static fn($v)=>trim((string)$v)!=='')) return;
     $id='seccion-'.(int)$s['id_seccion'];
     $title=(string)($config['titulo_bloque']??$config['titulo']??'');
