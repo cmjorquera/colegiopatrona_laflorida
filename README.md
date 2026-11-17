@@ -1,7 +1,14 @@
-# Colegio Patrona de Lourdes - La Florida
+# Colegio Patrona de Lourdes — La Florida
 
-Proyecto de sitio web administrable independiente, con estructura CMS basada en Colegio Tabancura y diseño propio del Colegio Patrona de Lourdes (La Florida).
+Sitio público independiente en PHP, con componentes de portada reutilizables y estructura de datos preparada para un CMS MySQL. **Etapa 1: portada; administración pendiente.**
 
-Repositorio de trabajo: `cmjorquera/colegiopatrona_laflorida`.
+## Desarrollo
+- PHP 8.1+ y Apache. Abrir `index.php` en un servidor PHP.
+- Sin credenciales ni dependencias externas obligatorias.
+- Los contenidos demostrativos están en `config/portada.php`. Son **ejemplos**, no información oficial verificada.
+- Los contenedores están en `componentes/portada.php`; estilos en `assets/css/patrona.css`.
+- El esquema propuesto se encuentra en `sql/01_portada.sql`. **No ha sido ejecutado**. No ejecutar sin revisar la base de datos de destino.
+- La etapa siguiente conectará la portada a MySQL, usando la lógica reutilizable del CMS Tabancura, sin copiar su diseño, contenido, cuentas ni credenciales.
 
-Se mantendrá la rama `main` como rama principal al configurar el repositorio. No almacenar credenciales ni datos institucionales de otro colegio.
+## Seguridad
+No publicar credenciales, datos personales, imágenes de alumnos sin autorización ni documentos internos. No hay despliegue automático ni conexión a Tabancura.

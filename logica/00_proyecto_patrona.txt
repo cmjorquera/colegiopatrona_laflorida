@@ -1,0 +1,12 @@
+COLEGIO PATRONA DE LOURDES — LA FLORIDA
+ETAPA 1: PORTADA PÚBLICA (MVP)
+
+Se desarrolló una portada PHP autónoma y responsive con un motor de renderizado por tipo de contenedor.
+Contenedores: hero, accesos, presentación, valores, noticias, contacto.
+El contenido de prueba se encuentra en config/portada.php. No corresponde a información institucional verificada.
+El orden y visibilidad se controlan desde el arreglo de configuración.
+No hay panel administrable ni conexión MySQL todavía.
+El esquema SQL es una propuesta inicial, no la copia definitiva del esquema de Tabancura.
+Se reutiliza el concepto de motor CMS por contenedores, no el código completo ni el diseño del otro colegio.
+No se copiaron credenciales, datos personales, imágenes, PDFs, usuarios ni automatizaciones de Tabancura.
+Próximo paso: verificar identidad visual, recuperar imágenes autorizadas, revisar el esquema CMS original y conectar MySQL; luego implementar administración.
