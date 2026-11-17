@@ -45,7 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 session_regenerate_id(true);
                 $_SESSION['patrona_admin_id'] = (int)$user['id_usuario'];
                 $_SESSION['patrona_admin_nombre'] = (string)$user['nombre'];
-                if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') { header('Content-Type: application/json; charset=utf-8'); echo json_encode(['ok'=>true,'redirect'=>'admin.php?panel=contenedores']); exit; }\n                header('Location: admin.php?panel=contenedores'); exit;
+                if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') { header('Content-Type: application/json; charset=utf-8'); echo json_encode(['ok'=>true,'redirect'=>'admin.php?panel=contenedores']); exit; }
+                header('Location: admin.php?panel=contenedores'); exit;
             }
             $error = 'Credenciales incorrectas o acceso no autorizado.';
         } catch (Throwable $e) {
@@ -54,7 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['accion'] ?? '') === 'ingresar' && ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest') {\n    header('Content-Type: application/json; charset=utf-8');\n    http_response_code(401); echo json_encode(['ok'=>false,'msg'=>$error]); exit;\n}\n$logged = !empty($_SESSION['patrona_admin_id']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['accion'] ?? '') === 'ingresar' && ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest') {
+    header('Content-Type: application/json; charset=utf-8');
+    http_response_code(401); echo json_encode(['ok'=>false,'msg'=>$error]); exit;
+}
+$logged = !empty($_SESSION['patrona_admin_id']);
 $sections = [];
 if ($logged) {
     try {
@@ -91,7 +96,9 @@ if (!$logged):
 endif;
 ?>
 
-<div class="layout"><aside>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contenedores | Patrona de Lourdes</title><link rel="stylesheet" href="assets/admin/css/patrona-panel.css">
+</head><body><div class="layout"><aside>
 <img src="assets/imagenes/logo-patrona.png" alt="Logo institucional">
 <h3>Patrona de Lourdes</h3><small style="color:#d5e7fa">La Florida</small>
 <a href="admin.php?panel=contenedores">Contenedores</a>
