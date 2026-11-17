@@ -1,0 +1,12 @@
+ETAPA 3 - PLAN DE EDITOR hero_principal
+Fuentes inspeccionadas: Tabancura admin.php e includes/admin_layout.php; Patrona admin.php, index.php, config/portada.php y componentes/portada.php.
+Estado: SQL preparado; NO ejecutado. Editor PHP y conexión pública PENDIENTES.
+Diagnóstico: la portada de Patrona usa config/portada.php (datos fijos) y NO consume MySQL. El listado admin usa seccion.
+SQL: sql/03_hero_principal.sql, tabla patrona_hero_config con JSON de etiqueta,titulo,texto,boton,enlace,imagen,video.
+Requisitos implementación:
+1. Editor en admin.php?panel=hero para la fila seccion id_institucion=2 y nombre_interno=hero_principal, solo usuarios autenticados.
+2. Guardar mediante POST con CSRF y consultas preparadas; validar límites y rutas multimedia locales.
+3. index.php debe leer hero JSON desde MySQL, aplicar valores sobre el contenedor hero existente y respetar visible/estado de seccion.
+4. Mantener fallback config/portada.php si no hay registro. No exponer credenciales.
+5. Mantener estilos del panel; documentar despliegue y pruebas.
+6. No ejecutar migraciones desde PHP ni GitHub. Usuario ejecuta SQL manualmente.
