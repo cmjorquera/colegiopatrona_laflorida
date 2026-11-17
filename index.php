@@ -17,12 +17,12 @@ usort($top,static fn(array $a,array $b):int=>($a['orden']??0)<=>($b['orden']??0)
 <title>Colegio Patrona de Lourdes | La Florida</title>
 <link rel="stylesheet" href="assets/css/patrona.css?v=5">
 <style>
-.patrona-cms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+.brand-name{font-size:13px;font-weight:800;color:#153c6b;letter-spacing:.03em}.patrona-cms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
 .patrona-cms-card{border:1px solid #e3e7ed;border-radius:12px;padding:20px;overflow:hidden}
 .patrona-cms-card img{width:100%;height:210px;object-fit:cover;border-radius:8px}
 </style></head><body>
 <div class="topline"><div class="wrap"><span>COLEGIO PATRONA DE LOURDES · LA FLORIDA</span><span>Sitio en desarrollo</span></div></div>
-<header class="site-header"><div class="wrap nav"><a class="brand" href="#inicio" aria-label="Inicio Colegio Patrona de Lourdes"><img class="brand-logo" src="assets/imagenes/LOGO-COLEGIO--Sin-fondo.png" alt="Colegio Patrona de Lourdes"><span class="brand-sede">LA FLORIDA</span></a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="#inicio" aria-label="Inicio Colegio Patrona de Lourdes"><span class="brand-name">COLEGIO PATRONA DE LOURDES</span><span class="brand-sede">LA FLORIDA</span></a>
 <nav aria-label="Navegación principal"><ul><?php foreach (($portada['menu']??[]) as $m): ?><li><a href="<?= patrona_e((string)$m['url']) ?>"><?= patrona_e((string)$m['texto']) ?></a></li><?php endforeach; ?></ul></nav>
 <a class="nav-cta" href="#contacto">Contáctanos ↗</a></div></header>
 <main>
