@@ -1,0 +1,15 @@
+ETAPA 6 - INDEX.PHP DESDE MYSQL
+Fecha 2026-11-17; rama main.
+Se agrego includes/patrona_cms_public.php: consulta seccion, seccion_item, seccion_config, menus y sub_menus para la institucion 2. Filtra secciones visible=si y estado=activo; elementos visible=si; ordena.
+Se agrego componentes/patrona_cms.php: render generico de contenido, hero y menu desplegable con un nivel de submenus.
+Se reemplazo index.php: no usa config/portada.php para publicar contenido demo; solo datos reales de MySQL. Topbar/header/footer se procesan cuando estan activos y visibles.
+No se modifico base de datos ni se copio contenido institucional de Tabancura.
+LIMITACIONES: el render de sellos, podcast, galeria, estadisticas y otros es generico, NO replica el componente especializado de Tabancura. Los enlaces sin URL muestran #; tercer nivel de menus no soportado por sub_menus. El header requiere header_principal visible=si y activo. Si la BD falla, no se publica contenido provisional y se registra error_log. El hero se oculta si no tiene items visibles. No se ha validado en cPanel ni se ha hecho php -l.
+VERIFICACION MANUAL:
+git pull origin main
+php -l index.php
+php -l includes/patrona_cms_public.php
+php -l componentes/patrona_cms.php
+php -l componentes/portada.php
+Abrir index.php y verificar menu, orden y contenido. Confirmar que topbar y header estan visibles en seccion; si no, no se muestran.
+PENDIENTE: componentes especializados de Tabancura, menu de tercer nivel, editores especializados, carga de medios, pruebas de CRUD.
