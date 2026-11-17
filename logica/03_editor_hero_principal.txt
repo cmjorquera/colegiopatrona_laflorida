@@ -1,8 +1,18 @@
-ETAPA 3 - EDITOR hero_principal (CORRECCIÓN DE ARQUITECTURA)
-OBJETIVO: reutilizar el esquema y la lógica probados del CMS Tabancura; NO crear tablas paralelas.
-Fuentes revisadas: Tabancura admin.php, includes/admin_layout.php; Patrona admin.php, index.php, config/portada.php, componentes/portada.php.
-Tablas existentes a investigar y reutilizar: seccion, seccion_config, seccion_item.
-PENDIENTE: inspeccionar funciones reales de lectura/escritura del hero en Tabancura y el esquema exacto de seccion_config/seccion_item para Patrona antes de producir SQL.
-PENDIENTE: implementar editor y conectar portada pública a MySQL respetando id_institucion=2.
-NO ejecutar SQL de la propuesta descartada patrona_hero_config. Archivo sql/03_hero_principal.sql retirado del repositorio.
-Estado: análisis parcial, ninguna migración ejecutada, editor NO implementado.
+ETAPA 3 - EDITOR HERO PRINCIPAL
+Fecha: 2026-11-17. Rama main. Repositorio cmjorquera/colegiopatrona_laflorida.
+Referencia revisada: cmjorquera/colegioTabancura/admin.php, editar_contenedor.php, includes/cms_helpers.php.
+Implementado:
+- admin.php: botón lápiz del hero_principal enlaza a editar_contenedor.php.
+- editar_contenedor.php: sesión institucional, CSRF, consulta seccion por id_institucion=2 y nombre_interno='hero_principal'; alta/edición de diapositivas en seccion_item; configuración en seccion_config.
+- index.php: carga desde MySQL el primer item visible del hero y respeta visible/estado de seccion; fallback a config/portada.php cuando faltan items o conexión.
+- No se creó ninguna tabla ni se ejecutó SQL. hero_principal ya estaba registrado en seccion.
+Limitaciones y pendientes de paridad con Tabancura:
+- Editor simplificado: no es todavía una copia completa del diseño/funciones de editar_contenedor.php de Tabancura.
+- La portada pública solo representa la primera diapositiva visible; carrusel de múltiples slides pendiente.
+- Carga de imágenes y videos desde formulario pendiente; por ahora se ingresan rutas de archivos existentes.
+- Configuración del carrusel se guarda pero su aplicación visual en portada queda pendiente.
+- No se ha probado en cPanel ni se ha ejecutado php -l; verificar antes de usar en producción.
+- Se deben comprobar las columnas exactas y restricciones de seccion_item de la base desplegada.
+Despliegue: git pull origin main, php -l admin.php, php -l editar_contenedor.php, php -l index.php.
+Pruebas: entrar a admin.php?panel=contenedores, pulsar lápiz del hero, crear slide, guardar, abrir index.php y verificar visibilidad.
+Seguridad: no cambiar credenciales; no subir conexion_local.php al repositorio.
