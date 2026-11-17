@@ -31,11 +31,15 @@ try {
         'texto'=>(string)($slide['descripcion']?:($slide['subtitulo']??'')),
         'imagen'=>(string)($slide['imagen']??''),
         'video'=>(string)($slide['url']??''),
+        'video_youtube'=>(string)($slide['video_youtube']??''),
         'boton'=>(string)($slide['boton_1_texto']??''),
         'enlace'=>(string)($slide['boton_1_url']??'')
        ];
       },$slides);
       $c['datos']=array_merge($c['datos'],$c['datos']['slides'][0]);
+      $conf=$db->prepare('SELECT clave,valor FROM seccion_config WHERE id_seccion=?');
+      $conf->bind_param('i',$id);$conf->execute();
+      $c['datos']['config']=array_column($conf->get_result()->fetch_all(MYSQLI_ASSOC),'valor','clave');
      }
     }
     unset($c);
