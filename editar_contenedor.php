@@ -13,6 +13,17 @@ function conexionHero(): mysqli {
  mysqli_report(MYSQLI_REPORT_ERROR|MYSQLI_REPORT_STRICT);
  $db=new mysqli($cfg['host'],$cfg['user'],$cfg['pass'],$cfg['db']); $db->set_charset('utf8mb4'); return $db;
 }
+// Sellos usa un editor especializado y mantiene el mismo esquema CMS de Tabancura.
+if ((int)($_GET['id']??0)>0) {
+ try {
+  $sealDb=conexionHero();$requested=(int)$_GET['id'];
+  $sealQuery=$sealDb->prepare('SELECT nombre_interno FROM seccion WHERE id_institucion=2 AND id_seccion=? LIMIT 1');
+  $sealQuery->bind_param('i',$requested);$sealQuery->execute();
+  $sealRow=$sealQuery->get_result()->fetch_assoc();
+  $sealDb->close();
+  if (($sealRow['nombre_interno']??'')==='sellos_home') {header('Location: editar_sellos.php');exit;}
+ }catch(Throwable $e){error_log('Patrona redireccion sellos: '.$e->getMessage());}
+}
 if (empty($_SESSION['patrona_csrf'])) $_SESSION['patrona_csrf']=bin2hex(random_bytes(32));
 $error=''; $notice=(string)($_SESSION['hero_notice']??'');unset($_SESSION['hero_notice']);
 $section=[];$items=[];$configs=[];
