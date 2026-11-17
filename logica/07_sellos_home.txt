@@ -1,0 +1,10 @@
+ETAPA 7 - SELLOS DEL COLEGIO (sellos_home)
+Referencia examinada: cmjorquera/colegioTabancura/editar_contenedor.php y includes/cms_helpers.php.
+Tabancura: tipo seals, configuraciones titulo_bloque y subtitulo_bloque; seccion_item con etiqueta sello, imagen, descripcion, url, titulo, visible y orden. Imagen completa sin recorte, reverso con descripcion, link opcional. No aparece si no hay sellos visibles con imagen.
+Implementado en La Florida:
+- editar_sellos.php: editor especializado de configuracion y sellos; subir JPG PNG WebP max 5MB; agregar, editar, eliminar, orden y visibilidad; CSRF, login y filtro institucion=2. Archivos en assets/uploads/secciones/sellos_home.
+- editar_contenedor.php: redirige sellos_home al editor especializado.
+- componentes/patrona_cms.php: tarjetas de sellos; reverso en hover/foco; imagen completa; enlace opcional; oculta bloque sin imagen visible.
+No se crean tablas ni se ejecuta SQL. Utiliza seccion, seccion_config, seccion_item existentes.
+PENDIENTES: verificar PHP lint y escritura en cPanel; validar permisos del directorio uploads; probar carga y giro en dispositivos tactiles; mejorar accesibilidad y diseño a paridad visual exacta con Tabancura. No se ha probado produccion.
+Comandos: git pull origin main; php -l editar_sellos.php; php -l editar_contenedor.php; php -l componentes/patrona_cms.php.
