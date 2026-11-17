@@ -89,7 +89,7 @@ if (!$logged):
         error_log('Patrona CMS identidad login: ' . $e->getMessage());
     }
     $institution['nombre'] = $institution['nombre'] ?? 'Colegio Patrona de Lourdes - La Florida';
-    $institution['logo_header'] = 'assets/imagenes/logo-patrona.png';
+    $institution['logo_header'] = 'assets/imagenes/LOGO-COLEGIO--Sin-fondo.png';
     $institution['imagen_login'] = '';
     function cms_e(?string $value): string { return h((string)$value); }
     require __DIR__ . '/includes/admin_login.php';
@@ -100,7 +100,7 @@ endif;
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Contenedores | Patrona de Lourdes</title><link rel="stylesheet" href="assets/admin/css/patrona-panel.css">
 </head><body><div class="layout"><aside>
-<img src="assets/imagenes/logo-patrona.png" alt="Logo institucional">
+<img src="assets/imagenes/LOGO-COLEGIO--Sin-fondo.png" alt="Logo institucional">
 <h3>Patrona de Lourdes</h3><small style="color:#d5e7fa">La Florida</small>
 <a href="admin.php?panel=contenedores">Contenedores</a>
 <a href="index.php">Ver sitio público</a>
