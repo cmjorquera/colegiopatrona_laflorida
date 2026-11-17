@@ -13,3 +13,5 @@ php -l componentes/patrona_cms.php
 php -l componentes/portada.php
 Abrir index.php y verificar menu, orden y contenido. Confirmar que topbar y header estan visibles en seccion; si no, no se muestran.
 PENDIENTE: componentes especializados de Tabancura, menu de tercer nivel, editores especializados, carga de medios, pruebas de CRUD.
+
+CAMBIO POSTERIOR 2026-11-17 (commit fd298828): A pedido del usuario, se restaura visualmente el bloque superior original de config/portada.php: topbar, header/menu, hero y cuatro accesos rapidos. Los contenedores CMS restantes se renderizan debajo. Para evitar duplicados, se excluyen topbar,header_principal,hero_principal,tab_destacados_home,footer_principal y los dos contenedores antiguos. La zona superior es provisional y NO se administra aun desde MySQL; queda pendiente mantener el mismo aspecto conectandola al CMS. Logo en captura aparece roto: revisar archivo assets/imagenes/LOGO-COLEGIO--Sin-fondo.png y sensibilidad a mayusculas. El pie tambien permanece fijo. Este cambio reemplaza el comportamiento anterior descrito arriba.
