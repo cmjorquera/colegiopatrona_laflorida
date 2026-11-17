@@ -1,0 +1,10 @@
+ETAPA 2 - ADMINISTRADOR PATRONA DE LOURDES (17-11-2026)
+Referencia visual: cmjorquera/colegiotabancura/includes/admin_layout.php
+Implementado en admin.php y assets/admin/css/patrona-panel.css.
+- Dashboard y listado de contenedores con sidebar, topbar y tarjetas KPI.
+- Visibilidad y estado se actualizan por POST con token CSRF, sesión y filtro id_institucion=2.
+- Sin cambios de estructura MySQL. Requiere registros en seccion (8 contenedores de etapa 1).
+- Editor de contenido, reordenamiento, permisos granulares, usuarios y menús aún NO implementados.
+- El sitio público puede no reaccionar a los cambios hasta conectar index.php a seccion.
+- Archivo class/conexion_local.php contiene credenciales privadas: no versionar.
+- Despliegue cPanel: cd /home3/crist668/colegiolaflorida.webnia.cl && git pull origin main
