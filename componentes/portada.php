@@ -12,7 +12,7 @@ function patrona_render(array $contenedor): void {
  <section class="hero" id="inicio"><div class="wrap hero-grid">
    <div><p class="eyebrow"><?= patrona_e($d['etiqueta'] ?? '') ?></p><h1><?= patrona_e($d['titulo'] ?? '') ?></h1>
    <p class="lead"><?= patrona_e($d['texto'] ?? '') ?></p><a class="btn" href="<?= patrona_e($d['enlace'] ?? '#colegio') ?>"><?= patrona_e($d['boton'] ?? 'Conocer más') ?> <span aria-hidden="true">↗</span></a></div>
-   <div class="hero-art" role="img" aria-label="Composición gráfica abstracta en tonos azules"><div class="hero-mark">P<span>·</span>L</div><p>LA FLORIDA</p></div>
+   <div class="hero-art hero-photo"><img src="assets/imagenes/hero-patrona.png" alt="Gráfica institucional Patrona de Lourdes"><span class="hero-photo-caption">PATRONA DE LOURDES · LA FLORIDA</span></div>
  </div></section>
  <?php break;
  case 'accesos': ?>
@@ -22,7 +22,7 @@ function patrona_render(array $contenedor): void {
  <?php endforeach; ?></div></section>
  <?php break;
  case 'presentacion': ?>
- <section class="section wrap split" id="colegio"><div><p class="eyebrow">Bienvenidos</p><h2><?= patrona_e($d['titulo'] ?? '') ?></h2><p class="body-text"><?= patrona_e($d['texto'] ?? '') ?></p><p class="muted"><?= patrona_e($d['detalle'] ?? '') ?></p></div><div class="photo-placeholder"><span>Un espacio para nuestras fotografías institucionales</span></div></section>
+ <section class="section wrap split" id="colegio"><div><p class="eyebrow">Bienvenidos</p><h2><?= patrona_e($d['titulo'] ?? '') ?></h2><p class="body-text"><?= patrona_e($d['texto'] ?? '') ?></p><p class="muted"><?= patrona_e($d['detalle'] ?? '') ?></p></div><div class="photo-placeholder photo-real"><img loading="lazy" src="assets/imagenes/vida-escolar.png" alt="Gráfica institucional de inicio de clases"></div></section>
  <?php break;
  case 'valores': ?>
  <section class="section tinted" id="proyecto"><div class="wrap"><p class="eyebrow">Lo que nos inspira</p><h2><?= patrona_e($d['titulo'] ?? '') ?></h2><div class="values">

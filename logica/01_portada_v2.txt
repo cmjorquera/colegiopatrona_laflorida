@@ -1,0 +1,5 @@
+PORTADA V2 - 2026-11-17
+Motor PHP por contenedores conservado.
+Logotipo real y graficas institucionales procedentes de galeria_patrona.zip.
+Archivos multimedia permanecen en carpeta privada de rescate; copiar con scripts/instalar_recursos_v2.sh.
+La base MySQL no se modifica. Textos siguen siendo borradores. No se publican retratos personales.

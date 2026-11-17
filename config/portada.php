@@ -16,9 +16,9 @@ return [
  'contenedores' => [
    ['clave'=>'hero','tipo'=>'hero','orden'=>10,'visible'=>true,'datos'=>[
      'etiqueta'=>'Colegio Patrona de Lourdes · La Florida',
-     'titulo'=>'Una comunidad que aprende, crece y comparte.',
+     'titulo'=>'Un colegio para aprender, compartir y crecer.',
      'texto'=>'Una nueva experiencia digital para nuestra comunidad educativa.',
-     'boton'=>'Conoce nuestro colegio','enlace'=>'#colegio'
+     'boton'=>'Descubre nuestro colegio','enlace'=>'#colegio','imagen'=>'assets/imagenes/hero-patrona.png'
    ]],
    ['clave'=>'accesos','tipo'=>'accesos','orden'=>20,'visible'=>true,'datos'=>[
      'titulo'=>'Accesos de interés','items'=>[
@@ -31,7 +31,7 @@ return [
    ['clave'=>'bienvenida','tipo'=>'presentacion','orden'=>30,'visible'=>true,'datos'=>[
      'titulo'=>'Un lugar para crecer juntos',
      'texto'=>'Queremos que nuestra nueva página refleje la vida del colegio: aprendizaje, convivencia, proyectos y participación de las familias.',
-     'detalle'=>'Esta presentación es provisional y será reemplazada por el texto institucional oficial.'
+     'detalle'=>'Contenido institucional en revisión.','imagen'=>'assets/imagenes/vida-escolar.png'
    ]],
    ['clave'=>'proyecto','tipo'=>'valores','orden'=>40,'visible'=>true,'datos'=>[
      'titulo'=>'Nuestro proyecto educativo','items'=>[
