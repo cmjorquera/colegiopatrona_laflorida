@@ -34,10 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (($_POST['accion'] ?? '') === 'ingresar') {
         try {
             $db = db();
-            $email = trim((string)($_POST['email'] ?? ''));
+            $email = trim((string)($_POST['usuario'] ?? $_POST['email'] ?? ''));
             $clave = (string)($_POST['clave'] ?? '');
-            $stmt = $db->prepare("SELECT id_usuario,id_institucion,nombre,clave,rol,estado FROM usuario WHERE email=? LIMIT 1");
-            $stmt->bind_param('s', $email); $stmt->execute();
+            $stmt = $db->prepare("SELECT id_usuario,id_institucion,nombre,clave,rol,estado FROM usuario WHERE (email=? OR usuario=?) LIMIT 1");
+            $stmt->bind_param('ss', $email, $email); $stmt->execute();
             $user = $stmt->get_result()->fetch_assoc();
             if ($user && $user['estado'] === 'activo' && (int)$user['id_institucion'] === 2
                 && password_verify($clave, (string)$user['clave'])
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 session_regenerate_id(true);
                 $_SESSION['patrona_admin_id'] = (int)$user['id_usuario'];
                 $_SESSION['patrona_admin_nombre'] = (string)$user['nombre'];
-                header('Location: admin.php?panel=contenedores'); exit;
+                if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') { header('Content-Type: application/json; charset=utf-8'); echo json_encode(['ok'=>true,'redirect'=>'admin.php?panel=contenedores']); exit; }\n                header('Location: admin.php?panel=contenedores'); exit;
             }
             $error = 'Credenciales incorrectas o acceso no autorizado.';
         } catch (Throwable $e) {
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-$logged = !empty($_SESSION['patrona_admin_id']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['accion'] ?? '') === 'ingresar' && ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest') {\n    header('Content-Type: application/json; charset=utf-8');\n    http_response_code(401); echo json_encode(['ok'=>false,'msg'=>$error]); exit;\n}\n$logged = !empty($_SESSION['patrona_admin_id']);
 $sections = [];
 if ($logged) {
     try {
@@ -68,38 +68,29 @@ if ($logged) {
     }
 }
 ?>
-<!doctype html><html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Administrador | Patrona de Lourdes</title>
-<style>
-:root{font-family:system-ui,Arial,sans-serif;color:#142b49;background:#f3f6fa}
-*{box-sizing:border-box}body{margin:0}.layout{display:flex;min-height:100vh}
-aside{background:#092d54;color:white;width:235px;padding:28px 20px}
-aside img{width:95px;max-height:90px;object-fit:contain;background:white;border-radius:8px;padding:7px}
-aside a{color:white;text-decoration:none;display:block;padding:13px 10px;border-radius:8px;margin-top:12px;background:#19446d}
-main{flex:1;padding:35px;min-width:0}.panel{background:white;border:1px solid #dce4ee;border-radius:12px;padding:26px;box-shadow:0 3px 16px #102c4d0c}
-.login{max-width:440px;margin:10vh auto}label{display:block;margin-top:16px;font-weight:600}
-input{width:100%;padding:12px;border:1px solid #b9c9d9;border-radius:7px;margin-top:6px}
-button{background:#1369a6;color:white;border:0;padding:12px 18px;border-radius:7px;cursor:pointer;margin-top:18px}
-.error{background:#fff0ef;color:#8d2222;padding:12px;border-radius:7px;margin-bottom:15px}
-table{border-collapse:collapse;width:100%;margin-top:20px}th,td{padding:12px;border-bottom:1px solid #e1e7ef;text-align:left}
-th{background:#eef3f9}small{color:#52657b}.muted{color:#61758c}
-@media(max-width:700px){.layout{display:block}aside{width:auto}main{padding:15px}table{display:block;overflow:auto}}
-</style></head><body>
-<?php if (!$logged): ?>
-<div class="panel login">
-<img src="assets/imagenes/logo-patrona.png" alt="Patrona de Lourdes" style="width:100px">
-<h1>Administración</h1><p>Patrona de Lourdes · La Florida</p>
-<?php if ($error): ?><div class="error"><?=h($error)?></div><?php endif; ?>
-<form method="post" autocomplete="on">
-<input type="hidden" name="csrf" value="<?=h($_SESSION['patrona_csrf'])?>">
-<input type="hidden" name="accion" value="ingresar">
-<label for="email">Correo electrónico</label><input id="email" name="email" type="email" required autocomplete="username">
-<label for="clave">Contraseña</label><input id="clave" name="clave" type="password" required autocomplete="current-password">
-<button type="submit">Ingresar</button>
-</form><p><small>El acceso requiere un usuario activo autorizado en la base de datos.</small></p>
-</div>
-<?php else: ?>
+<?php
+if (!$logged):
+    $institution = [];
+    try {
+        $connection = db();
+        $query = $connection->prepare('SELECT * FROM institucion WHERE id_institucion = ? LIMIT 1');
+        $institutionId = 2;
+        $query->bind_param('i', $institutionId);
+        $query->execute();
+        $institution = $query->get_result()->fetch_assoc() ?: [];
+        $query->close();
+    } catch (Throwable $e) {
+        error_log('Patrona CMS identidad login: ' . $e->getMessage());
+    }
+    $institution['nombre'] = $institution['nombre'] ?? 'Colegio Patrona de Lourdes - La Florida';
+    $institution['logo_header'] = 'assets/imagenes/logo-patrona.png';
+    $institution['imagen_login'] = '';
+    function cms_e(?string $value): string { return h((string)$value); }
+    require __DIR__ . '/includes/admin_login.php';
+    exit;
+endif;
+?>
+
 <div class="layout"><aside>
 <img src="assets/imagenes/logo-patrona.png" alt="Logo institucional">
 <h3>Patrona de Lourdes</h3><small style="color:#d5e7fa">La Florida</small>
@@ -117,4 +108,4 @@ th{background:#eef3f9}small{color:#52657b}.muted{color:#61758c}
 </tr><?php endforeach; ?>
 <?php if (!$sections): ?><tr><td colspan="5">Todavía no hay contenedores registrados.</td></tr><?php endif; ?>
 </tbody></table></div></main></div>
-<?php endif; ?></body></html>
+</body></html>
