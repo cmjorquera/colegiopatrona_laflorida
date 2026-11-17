@@ -13,7 +13,7 @@ usort($contenedores, static fn(array $a,array $b): int => ($a['orden'] ?? 0) <=>
 <link rel="stylesheet" href="assets/css/patrona.css?v=3">
 </head><body>
 <div class="topline"><div class="wrap"><span>COLEGIO PATRONA DE LOURDES · LA FLORIDA</span><span>Sitio en desarrollo</span></div></div>
-<header class="site-header"><div class="wrap nav"><a class="brand" href="#inicio" aria-label="Inicio Colegio Patrona de Lourdes"><img class="brand-logo" src="assets/imagenes/logo-patrona.png" alt="Colegio Patrona de Lourdes"><span class="brand-sede">LA FLORIDA</span></a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="#inicio" aria-label="Inicio Colegio Patrona de Lourdes"><img class="brand-logo" src="assets/imagenes/LOGO-COLEGIO--Sin-fondo.png" alt="Colegio Patrona de Lourdes"><span class="brand-sede">LA FLORIDA</span></a>
 <nav aria-label="Navegación principal"><ul><?php foreach (($portada['menu'] ?? []) as $m): ?><li><a href="<?= patrona_e($m['url']) ?>"><?= patrona_e($m['texto']) ?></a></li><?php endforeach; ?></ul></nav>
 <a class="nav-cta" href="#contacto">Contáctanos ↗</a></div></header>
 <main><?php foreach ($contenedores as $contenedor) patrona_render($contenedor); ?></main>
