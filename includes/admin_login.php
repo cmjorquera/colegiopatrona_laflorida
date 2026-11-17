@@ -1,17 +1,9 @@
 <?php
-// Vista del acceso: el procesamiento de credenciales permanece en login_check.php.
-$institution = [];
-try {
-    $loginDb = cms_get_connection();
-    $loginInstitutionId = cms_get_institution_id($loginDb);
-    $result = $loginDb->query('SELECT * FROM institucion WHERE id_institucion = ' . $loginInstitutionId . ' LIMIT 1');
-    $institution = $result ? ($result->fetch_assoc() ?: []) : [];
-} catch (Throwable $exception) {
-    error_log('admin.php: no fue posible cargar la identidad institucional del login.');
-}
+// Vista de acceso: la identidad es preparada por admin.php.
+$institution = isset($institution) && is_array($institution) ? $institution : [];
 
 $nombreInstitucion = trim((string) ($institution['nombre'] ?? '')) ?: 'Colegio Patrona de Lourdes - La Florida';
-$logoInstitucion = trim((string) ($institution['logo_header'] ?? '')) ?: 'assets/imagenes/logo-patrona.png';
+$logoInstitucion = trim((string) ($institution['logo_header'] ?? '')) ?: 'assets/imagenes/LOGO-COLEGIO--Sin-fondo.png';
 $imagenLogin = trim((string) ($institution['imagen_login'] ?? '')) ?: '';
 $esloganLogin = trim((string) ($institution['eslogan'] ?? '')) ?: 'Un colegio para aprender, compartir y crecer.';
 foreach (['logoInstitucion', 'imagenLogin'] as $variable) {
