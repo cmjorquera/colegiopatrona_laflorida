@@ -10,7 +10,7 @@ usort($contenedores, static fn(array $a,array $b): int => ($a['orden'] ?? 0) <=>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Colegio Patrona de Lourdes, La Florida. Nueva página institucional en preparación.">
 <title><?= patrona_e($portada['colegio'] ?? 'Colegio') ?> | <?= patrona_e($portada['sede'] ?? '') ?></title>
-<link rel="stylesheet" href="assets/css/patrona.css?v=2">
+<link rel="stylesheet" href="assets/css/patrona.css?v=3">
 </head><body>
 <div class="topline"><div class="wrap"><span>COLEGIO PATRONA DE LOURDES · LA FLORIDA</span><span>Sitio en desarrollo</span></div></div>
 <header class="site-header"><div class="wrap nav"><a class="brand" href="#inicio" aria-label="Inicio Colegio Patrona de Lourdes"><img class="brand-logo" src="assets/imagenes/logo-patrona.png" alt="Colegio Patrona de Lourdes"><span class="brand-sede">LA FLORIDA</span></a>

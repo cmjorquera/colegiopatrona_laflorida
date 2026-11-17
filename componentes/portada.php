@@ -9,11 +9,21 @@ function patrona_render(array $contenedor): void {
  $d = $contenedor['datos'] ?? [];
  switch ($tipo) {
  case 'hero': ?>
- <section class="hero" id="inicio"><div class="wrap hero-grid">
-   <div><p class="eyebrow"><?= patrona_e($d['etiqueta'] ?? '') ?></p><h1><?= patrona_e($d['titulo'] ?? '') ?></h1>
-   <p class="lead"><?= patrona_e($d['texto'] ?? '') ?></p><a class="btn" href="<?= patrona_e($d['enlace'] ?? '#colegio') ?>"><?= patrona_e($d['boton'] ?? 'Conocer más') ?> <span aria-hidden="true">↗</span></a></div>
-   <div class="hero-art hero-photo"><img src="assets/imagenes/hero-patrona.png" alt="Gráfica institucional Patrona de Lourdes"><span class="hero-photo-caption">PATRONA DE LOURDES · LA FLORIDA</span></div>
- </div></section>
+ <section class="hero hero-video" id="inicio" aria-label="Bienvenida al Colegio Patrona de Lourdes">
+   <div class="hero-media" aria-hidden="true">
+     <video class="hero-background-video" autoplay muted loop playsinline preload="metadata"
+       poster="<?= patrona_e($d['imagen'] ?? 'assets/imagenes/hero-patrona.png') ?>">
+       <source src="<?= patrona_e($d['video'] ?? 'assets/videos/portada-patrona.mp4') ?>" type="video/mp4">
+     </video>
+   </div>
+   <div class="hero-shade" aria-hidden="true"></div>
+   <div class="wrap hero-video-content">
+     <p class="eyebrow"><?= patrona_e($d['etiqueta'] ?? '') ?></p>
+     <h1><?= patrona_e($d['titulo'] ?? '') ?></h1>
+     <p class="lead"><?= patrona_e($d['texto'] ?? '') ?></p>
+     <a class="btn" href="<?= patrona_e($d['enlace'] ?? '#colegio') ?>"><?= patrona_e($d['boton'] ?? 'Conocer más') ?> <span aria-hidden="true">↗</span></a>
+   </div>
+ </section>
  <?php break;
  case 'accesos': ?>
  <section class="quick wrap" aria-label="<?= patrona_e($d['titulo'] ?? 'Accesos') ?>"><div class="quick-grid">

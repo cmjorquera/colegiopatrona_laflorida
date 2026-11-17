@@ -1,0 +1,7 @@
+PORTADA V3 - VIDEO HERO
+La portada utiliza un elemento HTML5 video con autoplay muted loop playsinline y preload metadata.
+Ruta esperada del archivo: assets/videos/portada-patrona.mp4
+No se ha publicado ningún video binario en GitHub. Hasta que se instale el archivo, se mostrará la imagen de respaldo assets/imagenes/hero-patrona.png.
+Para colocar un video optimizado, usar el Administrador de archivos de cPanel o un procedimiento de transferencia autorizado; no subir el video original de 190 MB sin revisar contenido y compresión.
+Se conservan el resto de contenedores, la configuración PHP y la base de datos.
+El componente admite rutas de video e imagen desde config/portada.php, listas para futura integración CMS.

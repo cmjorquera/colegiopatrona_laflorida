@@ -18,7 +18,9 @@ return [
      'etiqueta'=>'Colegio Patrona de Lourdes · La Florida',
      'titulo'=>'Un colegio para aprender, compartir y crecer.',
      'texto'=>'Una nueva experiencia digital para nuestra comunidad educativa.',
-     'boton'=>'Descubre nuestro colegio','enlace'=>'#colegio','imagen'=>'assets/imagenes/hero-patrona.png'
+     'boton'=>'Descubre nuestro colegio','enlace'=>'#colegio',
+     'imagen'=>'assets/imagenes/hero-patrona.png',
+     'video'=>'assets/videos/portada-patrona.mp4'
    ]],
    ['clave'=>'accesos','tipo'=>'accesos','orden'=>20,'visible'=>true,'datos'=>[
      'titulo'=>'Accesos de interés','items'=>[
