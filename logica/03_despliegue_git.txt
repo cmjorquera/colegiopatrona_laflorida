@@ -1,0 +1,38 @@
+DESPLIEGUE POR GIT - COLEGIO PATRONA DE LOURDES LA FLORIDA
+
+REPOSITORIO: https://github.com/cmjorquera/colegiopatrona_laflorida
+RAMA: main
+
+IMPORTANTE: No eliminar bases de datos ni config_privada ni archivos multimedia
+durante la reorganización de subdominios. Respaldar antes de borrar carpetas.
+Git no contiene las credenciales de MySQL.
+
+INSTALACIÓN NUEVA (carpeta todavía vacía, dominio nuevo)
+1. Crear dominio y comprobar su Document Root en cPanel.
+2. En terminal:
+   cd /home3/crist668
+   git clone --branch main --single-branch https://github.com/cmjorquera/colegiopatrona_laflorida.git colegiopatronalaflorida.webnia.cl
+3. Si cPanel ya creó el directorio (aunque esté vacío), utilizar:
+   cd /home3/crist668/colegiopatronalaflorida.webnia.cl
+   git clone --branch main --single-branch https://github.com/cmjorquera/colegiopatrona_laflorida.git .
+   (si el directorio no está vacío Git rechazará el clon; no borrar archivos
+   sin respaldo ni utilizar git init y reset --hard para forzar)
+4. Comprobar la raíz real y validar: php -l admin.php
+5. En despliegues siguientes:
+   cd /home3/crist668/colegiopatronalaflorida.webnia.cl
+   bash scripts/actualizar_desde_github.sh
+   O simplemente: git pull --ff-only origin main
+
+SEGURIDAD
+- El directorio .git puede quedar dentro del Document Root del sitio.
+  Denegar acceso web a .git mediante configuración Apache/.htaccess.
+- No guardar class/conexion_local.php en Git; archivos privados fuera del root
+  cuando sea posible, y credenciales únicas por entorno.
+- No usar git reset --hard ni forzar sobrescrituras con cp -a a ciegas.
+- Si el directorio existe y contiene código manual, preparar respaldo y una
+  migración controlada, en lugar de clonarlo encima.
+
+ESTADO CMS
+Login visual adaptado desde el CMS de Tabancura. El panel de contenedores aún
+es una vista de solo lectura; su editor y tablero completos están pendientes.
+La tabla usuario sigue sin cuenta activa. No se realizaron INSERT ni SQL.
