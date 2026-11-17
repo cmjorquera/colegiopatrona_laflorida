@@ -2,6 +2,49 @@
 declare(strict_types=1);
 $portada = require __DIR__ . '/config/portada.php';
 require_once __DIR__ . '/componentes/portada.php';
+
+// Fuente CMS: seccion / seccion_item / seccion_config, igual que Tabancura.
+// Si la base no está disponible, se conserva la portada provisional sin interrumpir el sitio.
+try {
+ $cfgFile=__DIR__.'/class/conexion_local.php';
+ if (is_file($cfgFile)) {
+  $cfg=require $cfgFile;
+  if (is_array($cfg) && ($cfg['db']??'')==='crist668_colegio_patrona_laflorida') {
+   $db=new mysqli($cfg['host'],$cfg['user'],$cfg['pass'],$cfg['db']);
+   $db->set_charset('utf8mb4');
+   $stmt=$db->prepare("SELECT id_seccion,visible,estado,orden FROM seccion WHERE id_institucion=2 AND nombre_interno='hero_principal' LIMIT 1");
+   $stmt->execute();$heroSection=$stmt->get_result()->fetch_assoc();
+   if ($heroSection) {
+    foreach ($portada['contenedores'] as &$c) {
+     if (($c['clave']??'')!=='hero') continue;
+     $c['visible']=($heroSection['visible']==='si' && $heroSection['estado']==='activo');
+     $c['orden']=(int)$heroSection['orden'];
+     $id=(int)$heroSection['id_seccion'];
+     $stmtItems=$db->prepare("SELECT * FROM seccion_item WHERE id_seccion=? AND visible='si' ORDER BY orden,id_item");
+     $stmtItems->bind_param('i',$id);$stmtItems->execute();
+     $slides=$stmtItems->get_result()->fetch_all(MYSQLI_ASSOC);
+     if ($slides) {
+      $c['datos']['slides']=array_map(static function(array $slide):array {
+       return [
+        'etiqueta'=>(string)($slide['etiqueta']??''),
+        'titulo'=>(string)($slide['titulo']??''),
+        'texto'=>(string)($slide['descripcion']?:($slide['subtitulo']??'')),
+        'imagen'=>(string)($slide['imagen']??''),
+        'video'=>(string)($slide['url']??''),
+        'boton'=>(string)($slide['boton_1_texto']??''),
+        'enlace'=>(string)($slide['boton_1_url']??'')
+       ];
+      },$slides);
+      $c['datos']=array_merge($c['datos'],$c['datos']['slides'][0]);
+     }
+    }
+    unset($c);
+   }
+   $db->close();
+  }
+ }
+} catch (Throwable $e) { error_log('Patrona CMS portada: '.$e->getMessage()); }
+
 $contenedores = array_values(array_filter($portada['contenedores'] ?? [], static fn(array $c): bool => ($c['visible'] ?? false) === true));
 usort($contenedores, static fn(array $a,array $b): int => ($a['orden'] ?? 0) <=> ($b['orden'] ?? 0));
 ?>
