@@ -18,9 +18,11 @@ $error=''; $notice=(string)($_SESSION['hero_notice']??'');unset($_SESSION['hero_
 $section=[];$items=[];$configs=[];
 try {
  $db=conexionHero();
- $q=$db->prepare("SELECT * FROM seccion WHERE id_institucion=2 AND nombre_interno='hero_principal' LIMIT 1");
- $q->execute();$section=$q->get_result()->fetch_assoc()?:[];
- if (!$section) throw new RuntimeException('No existe hero_principal en seccion. Debe registrarse con el esquema original.');
+ $requestedId=(int)($_GET['id']??$_POST['id_seccion']??0);
+ if ($requestedId<=0) throw new RuntimeException('Selecciona un contenedor desde el administrador.');
+ $q=$db->prepare('SELECT * FROM seccion WHERE id_institucion=2 AND id_seccion=? LIMIT 1');
+ $q->bind_param('i',$requestedId);$q->execute();$section=$q->get_result()->fetch_assoc()?:[];
+ if (!$section) throw new RuntimeException('El contenedor solicitado no existe en La Florida.');
  $sid=(int)$section['id_seccion'];
  if ($_SERVER['REQUEST_METHOD']==='POST') {
   if (!hash_equals((string)$_SESSION['patrona_csrf'],(string)($_POST['csrf']??''))) throw new RuntimeException('Token de seguridad inválido.');
@@ -51,7 +53,7 @@ try {
     $stmt->bind_param('sssssssssssssiii',$data['etiqueta'],$data['titulo'],$data['subtitulo'],$data['descripcion'],$data['imagen'],$data['imagen_mobile'],$data['video_youtube'],$data['url'],$data['boton_1_texto'],$data['boton_1_url'],$data['boton_2_texto'],$data['boton_2_url'],$visible,$orden,$id,$sid);
    } else {
     $stmt=$db->prepare('INSERT INTO seccion_item (id_seccion,etiqueta,titulo,subtitulo,descripcion,imagen,imagen_mobile,video_youtube,url,boton_1_texto,boton_1_url,boton_2_texto,boton_2_url,visible,orden) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
-    $stmt->bind_param('isssssssssssssi',$sid,$data['etiqueta'],$data['titulo'],$data['subtitulo'],$data['descripcion'],$data['imagen'],$data['imagen_mobile'],$data['url'],$data['boton_1_texto'],$data['boton_1_url'],$data['boton_2_texto'],$data['boton_2_url'],$visible,$orden);
+    $stmt->bind_param('isssssssssssssi',$sid,$data['etiqueta'],$data['titulo'],$data['subtitulo'],$data['descripcion'],$data['imagen'],$data['imagen_mobile'],$data['video_youtube'],$data['url'],$data['boton_1_texto'],$data['boton_1_url'],$data['boton_2_texto'],$data['boton_2_url'],$visible,$orden);
    }
    $stmt->execute();
   } elseif ($action==='guardar_config') {
@@ -78,7 +80,7 @@ $fields=['etiqueta'=>'Etiqueta','titulo'=>'Título','subtitulo'=>'Subtítulo','d
 ?>
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Editar portada | Patrona de Lourdes</title><link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=2"><style>
 body{background:#f3f6fb;color:#24334a;font-family:Arial,sans-serif}.hero-layout{max-width:1100px;margin:35px auto;padding:0 18px}.hero-card{background:#fff;border:1px solid #e1e7f0;border-radius:14px;padding:25px;margin:20px 0;box-shadow:0 4px 16px #16345a0a}.hero-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.hero-field{display:flex;flex-direction:column;gap:7px;font-size:14px}.hero-field input,.hero-field textarea,.hero-field select{padding:11px;border:1px solid #cbd5e1;border-radius:8px;width:100%;box-sizing:border-box}.hero-field.wide{grid-column:1/-1}.hero-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.hero-button{background:#003b6f;color:#fff;border:0;border-radius:8px;padding:12px 18px;cursor:pointer}.hero-item{display:inline-block;margin:6px;padding:12px;border:1px solid #d7e0ea;border-radius:8px;text-decoration:none;color:#003b6f}.hero-alert{padding:12px;border-radius:8px;background:#e8f4ee}.hero-error{background:#fff0f0}@media(max-width:680px){.hero-grid{grid-template-columns:1fr}}
-</style></head><body><div class="hero-layout"><div class="hero-actions"><a href="admin.php?panel=contenedores">← Volver a contenedores</a><a href="index.php" target="_blank" rel="noopener">Ver sitio público</a></div><h1>Portada principal</h1><p>Editor del contenedor <code>hero_principal</code> con las tablas originales de Tabancura.</p>
+</style></head><body><div class="hero-layout"><div class="hero-actions"><a href="admin.php?panel=contenedores">← Volver a contenedores</a><a href="index.php" target="_blank" rel="noopener">Ver sitio público</a></div><h1><?=he((string)($section['titulo_admin']??'Editar contenedor'))?></h1><p>Contenedor <code><?=he((string)($section['nombre_interno']??''))?></code> · Tipo: <?=he((string)($section['tipo_seccion']??''))?> · Editor básico de elementos. Los módulos especializados de Tabancura siguen pendientes de adaptación.</p>
 <?php if($error):?><div class="hero-alert hero-error"><?=he($error)?></div><?php endif;?>
 <?php if($notice):?><div class="hero-alert"><?=he($notice)?></div><?php endif;?>
 <?php if($section):?>
