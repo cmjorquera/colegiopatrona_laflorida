@@ -8,22 +8,40 @@ function patrona_render(array $contenedor): void {
  $tipo = $contenedor['tipo'] ?? '';
  $d = $contenedor['datos'] ?? [];
  switch ($tipo) {
- case 'hero': ?>
- <section class="hero hero-video" id="inicio" aria-label="Bienvenida al Colegio Patrona de Lourdes">
+ case 'hero':
+ $slides = $d['slides'] ?? [$d];
+ $config = $d['config'] ?? [];
+ $arrows = ($config['mostrar_flechas'] ?? 'si') === 'si';
+ $dots = ($config['mostrar_indicadores'] ?? 'si') === 'si';
+ $overlay = in_array($config['overlay'] ?? 'oscuro', ['oscuro','claro','ninguno'], true) ? ($config['overlay'] ?? 'oscuro') : 'oscuro';
+ $align = in_array($config['alineacion_texto'] ?? 'centro', ['izquierda','centro','derecha'], true) ? ($config['alineacion_texto'] ?? 'centro') : 'centro';
+ ?>
+ <section class="hero hero-video patrona-carousel" id="inicio" aria-label="Bienvenida al Colegio Patrona de Lourdes" data-carousel>
+ <?php foreach ($slides as $i=>$slide): ?>
+ <div class="patrona-slide" data-slide <?= $i>0?'hidden':'' ?>>
    <div class="hero-media" aria-hidden="true">
-     <video class="hero-background-video" autoplay muted loop playsinline preload="metadata"
-       poster="<?= patrona_e($d['imagen'] ?? 'assets/imagenes/logo-colegio-1024x598.jpg') ?>">
-       <source src="<?= patrona_e($d['video'] ?? 'assets/videos/Principio-Explicativo-V2.prproj.mp4') ?>" type="video/mp4">
-     </video>
+   <?php $video = (string)($slide['video'] ?? ''); $poster=(string)($slide['imagen']??''); ?>
+   <?php if ($video !== ''): ?>
+   <video class="hero-background-video" autoplay muted loop playsinline preload="metadata" <?= $poster!==''?'poster="'.patrona_e($poster).'"':'' ?>><source src="<?= patrona_e($video) ?>" type="video/mp4"></video>
+   <?php elseif ($poster !== ''): ?><img src="<?= patrona_e($poster) ?>" alt="" style="width:100%;height:100%;object-fit:cover">
+   <?php endif; ?>
    </div>
-   <div class="hero-shade" aria-hidden="true"></div>
-   <div class="wrap hero-video-content">
-     <p class="eyebrow"><?= patrona_e($d['etiqueta'] ?? '') ?></p>
-     <h1><?= patrona_e($d['titulo'] ?? '') ?></h1>
-     <p class="lead"><?= patrona_e($d['texto'] ?? '') ?></p>
-     <a class="btn" href="<?= patrona_e($d['enlace'] ?? '#colegio') ?>"><?= patrona_e($d['boton'] ?? 'Conocer más') ?> <span aria-hidden="true">↗</span></a>
+   <?php if ($overlay !== 'ninguno'): ?><div class="hero-shade" aria-hidden="true" style="<?= $overlay==='claro'?'background:rgba(255,255,255,.28)':'' ?>"></div><?php endif; ?>
+   <div class="wrap hero-video-content" style="text-align:<?= $align==='izquierda'?'left':($align==='derecha'?'right':'center') ?>">
+    <p class="eyebrow"><?= patrona_e((string)($slide['etiqueta']??'')) ?></p>
+    <h1><?= patrona_e((string)($slide['titulo']??'')) ?></h1>
+    <p class="lead"><?= patrona_e((string)($slide['texto']??'')) ?></p>
+    <?php if (!empty($slide['boton'])): ?><a class="btn" href="<?= patrona_e((string)($slide['enlace']?:'#colegio')) ?>"><?= patrona_e((string)$slide['boton']) ?> <span aria-hidden="true">↗</span></a><?php endif; ?>
    </div>
+ </div>
+ <?php endforeach; ?>
+ <?php if (count($slides)>1): ?>
+ <?php if ($arrows): ?><button class="patrona-carousel-arrow prev" type="button" data-prev aria-label="Diapositiva anterior">‹</button><button class="patrona-carousel-arrow next" type="button" data-next aria-label="Siguiente diapositiva">›</button><?php endif; ?>
+ <?php if ($dots): ?><div class="patrona-carousel-dots"><?php foreach ($slides as $i=>$slide): ?><button type="button" data-dot="<?= $i ?>" aria-label="Ir a diapositiva <?= $i+1 ?>" aria-current="<?= $i===0?'true':'false' ?>"></button><?php endforeach; ?></div><?php endif; ?>
+ <?php endif; ?>
  </section>
+ <style>.patrona-carousel{position:relative}.patrona-slide{position:relative;min-height:inherit}.patrona-slide[hidden]{display:none!important}.patrona-carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;background:#002b55bb;color:#fff;border:0;border-radius:50%;width:44px;height:44px;font-size:32px;cursor:pointer}.patrona-carousel-arrow.prev{left:20px}.patrona-carousel-arrow.next{right:20px}.patrona-carousel-dots{position:absolute;bottom:20px;left:0;right:0;display:flex;justify-content:center;gap:10px;z-index:6}.patrona-carousel-dots button{width:11px;height:11px;border-radius:50%;border:1px solid white;background:#ffffff70;cursor:pointer}.patrona-carousel-dots button[aria-current="true"]{background:white}</style>
+ <script>document.querySelectorAll('[data-carousel]').forEach(function(root){const slides=[...root.querySelectorAll('[data-slide]')];const dots=[...root.querySelectorAll('[data-dot]')];let current=0;function show(n){current=(n+slides.length)%slides.length;slides.forEach((s,i)=>{s.hidden=i!==current;const v=s.querySelector('video');if(v){if(i===current)v.play().catch(()=>{});else v.pause();}});dots.forEach((d,i)=>d.setAttribute('aria-current',i===current?'true':'false'));}root.querySelector('[data-prev]')?.addEventListener('click',()=>show(current-1));root.querySelector('[data-next]')?.addEventListener('click',()=>show(current+1));dots.forEach((d,i)=>d.addEventListener('click',()=>show(i)));});</script>
  <?php break;
  case 'accesos': ?>
  <section class="quick wrap" aria-label="<?= patrona_e($d['titulo'] ?? 'Accesos') ?>"><div class="quick-grid">
