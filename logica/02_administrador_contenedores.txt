@@ -1,0 +1,37 @@
+ETAPA 1 - ADMINISTRADOR PATRONA DE LOURDES
+Fecha: 2026-11-17
+Repositorio: cmjorquera/colegiopatrona_laflorida
+
+Se agregó admin.php como primer módulo independiente de administración.
+Lee seccion de la institución id=2, ordena por orden e id_seccion.
+No cambia index.php ni config/portada.php.
+No ejecuta SQL ni crea usuarios, secciones o permisos.
+
+AUTENTICACIÓN
+Login con usuario.email, password_verify(usuario.clave), estado activo,
+id_institucion=2 y rol super_admin/admin_institucion. CSRF, sesión regenerada.
+Esta primera versión no implementa aún la matriz perfil_permiso_admin ni los
+endpoints de edición: NO se considera un port completo del CMS de Tabancura.
+
+CONFIGURACIÓN PRIVADA REQUERIDA
+Crear class/conexion_local.php en el hosting (NO versionar) retornando:
+<?php
+return [
+  'host' => 'localhost',
+  'db' => 'crist668_colegio_patrona_laflorida',
+  'user' => 'USUARIO_MYSQL',
+  'pass' => 'CLAVE_MYSQL',
+];
+Usar las credenciales reales del servidor. No subir este archivo a GitHub.
+
+ESTADO
+La tabla usuario aún no tiene cuentas; el login no será utilizable hasta
+crear una cuenta segura y comprobar su rol/permisos.
+El panel muestra contenedores en modo lectura cuando exista sesión válida.
+No incluye editar_contenedor.php, vista previa, AJAX ni gestión de orden.
+Es una base funcional y acotada; falta portar el editor real de Tabancura.
+
+PRUEBAS PENDIENTES
+Desplegar a cPanel, configurar class/conexion_local.php y comprobar conexión.
+Crear cuenta por SQL separado y validar acceso antes de usar el panel.
+Verificar la lectura de seccion y la ausencia de errores PHP.
