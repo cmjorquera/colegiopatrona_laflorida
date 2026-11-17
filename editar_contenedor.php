@@ -57,6 +57,7 @@ try {
    }
    $stmt->execute();
   } elseif ($action==='guardar_config') {
+   if (($section['nombre_interno']??'')!=='hero_principal') throw new RuntimeException('La configuración especializada de este contenedor todavía no está disponible.');
    $keys=['alineacion_texto','overlay','mostrar_flechas','mostrar_indicadores'];
    $db->begin_transaction();
    try {
