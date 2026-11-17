@@ -1,0 +1,15 @@
+ETAPA 5 - ADMINISTRADOR DE CONTENEDORES
+Fecha: 2026-11-17
+Repositorio: cmjorquera/colegiopatrona_laflorida; rama main.
+Cambios realizados:
+1. editar_contenedor.php carga seccion por id_seccion solicitado y valida id_institucion=2. Antes estaba fijado a hero_principal.
+2. Se corrigio el orden de parametros de INSERT seccion_item para incluir video_youtube.
+3. guardar_config queda restringido a hero_principal para no alterar configuraciones especificas de otros tipos de contenedores.
+No se ha ejecutado SQL, ni comprobado escritura en servidor de produccion.
+PENDIENTES IMPORTANTES:
+- Adaptar editores especializados Tabancura: topbar, header, sellos, noticias, comunidad, podcast, galeria, estadisticas, footer.
+- Verificar campos y validaciones por tipo de seccion.
+- Carga multimedia, menus y submenus administrables.
+- Probar php -l editar_contenedor.php y CRUD en cPanel.
+- Verificar que SQL de 11 contenedores haya sido ejecutado manualmente antes de probarlos.
+- La portada publica sigue parcialmente provisional.
