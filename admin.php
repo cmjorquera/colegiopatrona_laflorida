@@ -5,7 +5,21 @@ declare(strict_types=1);
  * Requiere configuración privada class/conexion_local.php y una cuenta en usuario.
  * No modifica la portada ni realiza escrituras en la base de datos.
  */
-session_start();
+// Guardar sesiones fuera del directorio público del subdominio.
+if (session_status() === PHP_SESSION_NONE) {
+    $sessionPath = '/home3/crist668/php_sessions_patrona';
+    if (!is_dir($sessionPath) || !is_writable($sessionPath)) {
+        error_log('Patrona CMS: directorio de sesiones no disponible: ' . $sessionPath);
+        http_response_code(503);
+        exit('El administrador no está disponible temporalmente.');
+    }
+    session_save_path($sessionPath);
+    if (!session_start()) {
+        error_log('Patrona CMS: no fue posible iniciar la sesión.');
+        http_response_code(503);
+        exit('El administrador no está disponible temporalmente.');
+    }
+}
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 function db(): mysqli {
