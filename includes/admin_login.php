@@ -12,7 +12,7 @@ try {
 
 $nombreInstitucion = trim((string) ($institution['nombre'] ?? '')) ?: 'Colegio Patrona de Lourdes - La Florida';
 $logoInstitucion = trim((string) ($institution['logo_header'] ?? '')) ?: 'assets/imagenes/logo-patrona.png';
-$imagenLogin = trim((string) ($institution['imagen_login'] ?? '')) ?: 'assets/imagenes/portada-login.jpg';
+$imagenLogin = trim((string) ($institution['imagen_login'] ?? '')) ?: '';
 $esloganLogin = trim((string) ($institution['eslogan'] ?? '')) ?: 'Un colegio para aprender, compartir y crecer.';
 foreach (['logoInstitucion', 'imagenLogin'] as $variable) {
     if (!preg_match('~^(?:uploads|assets)/[a-zA-Z0-9_./%-]+$~', ${$variable})) {
@@ -76,6 +76,7 @@ foreach (['primario' => '#F0A000', 'secundario' => '#EF6C00', 'terciario' => '#1
                     <h2 id="login-title">Iniciar sesión</h2>
                     <p class="admin-login-subtitle">Ingresa tus credenciales para administrar el sitio web de Colegio Patrona de Lourdes - La Florida.</p>
                     <form id="admin-access-form" action="login_check.php" method="post">
+                        <input type="hidden" name="csrf" value="<?= cms_e($_SESSION['patrona_csrf'] ?? '') ?>">
                         <div id="admin-access-alert" class="admin-login-alert" role="alert" hidden></div>
                         <div class="admin-login-field">
                             <label for="admin-usuario">Usuario o correo electrónico</label>
@@ -102,7 +103,7 @@ foreach (['primario' => '#F0A000', 'secundario' => '#EF6C00', 'terciario' => '#1
                     <span class="admin-login-developer-description">Desarrollo de sitios web y plataformas de gestión</span>
                 </div>
                 <section class="admin-login-network" aria-label="Administración institucional">
-                    <span class="admin-login-network-heading">Colegios de la red SEDUC</span>
+                    <span class="admin-login-network-heading">Colegio Patrona de Lourdes</span>
                     <p class="admin-login-network-heading">Colegio Patrona de Lourdes · La Florida</p></section>
             </div>
         </section>
