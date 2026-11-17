@@ -1,12 +1,8 @@
-ETAPA 3 - PLAN DE EDITOR hero_principal
-Fuentes inspeccionadas: Tabancura admin.php e includes/admin_layout.php; Patrona admin.php, index.php, config/portada.php y componentes/portada.php.
-Estado: SQL preparado; NO ejecutado. Editor PHP y conexión pública PENDIENTES.
-Diagnóstico: la portada de Patrona usa config/portada.php (datos fijos) y NO consume MySQL. El listado admin usa seccion.
-SQL: sql/03_hero_principal.sql, tabla patrona_hero_config con JSON de etiqueta,titulo,texto,boton,enlace,imagen,video.
-Requisitos implementación:
-1. Editor en admin.php?panel=hero para la fila seccion id_institucion=2 y nombre_interno=hero_principal, solo usuarios autenticados.
-2. Guardar mediante POST con CSRF y consultas preparadas; validar límites y rutas multimedia locales.
-3. index.php debe leer hero JSON desde MySQL, aplicar valores sobre el contenedor hero existente y respetar visible/estado de seccion.
-4. Mantener fallback config/portada.php si no hay registro. No exponer credenciales.
-5. Mantener estilos del panel; documentar despliegue y pruebas.
-6. No ejecutar migraciones desde PHP ni GitHub. Usuario ejecuta SQL manualmente.
+ETAPA 3 - EDITOR hero_principal (CORRECCIÓN DE ARQUITECTURA)
+OBJETIVO: reutilizar el esquema y la lógica probados del CMS Tabancura; NO crear tablas paralelas.
+Fuentes revisadas: Tabancura admin.php, includes/admin_layout.php; Patrona admin.php, index.php, config/portada.php, componentes/portada.php.
+Tablas existentes a investigar y reutilizar: seccion, seccion_config, seccion_item.
+PENDIENTE: inspeccionar funciones reales de lectura/escritura del hero en Tabancura y el esquema exacto de seccion_config/seccion_item para Patrona antes de producir SQL.
+PENDIENTE: implementar editor y conectar portada pública a MySQL respetando id_institucion=2.
+NO ejecutar SQL de la propuesta descartada patrona_hero_config. Archivo sql/03_hero_principal.sql retirado del repositorio.
+Estado: análisis parcial, ninguna migración ejecutada, editor NO implementado.
