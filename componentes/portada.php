@@ -12,8 +12,8 @@ function patrona_render(array $contenedor): void {
  <section class="hero hero-video" id="inicio" aria-label="Bienvenida al Colegio Patrona de Lourdes">
    <div class="hero-media" aria-hidden="true">
      <video class="hero-background-video" autoplay muted loop playsinline preload="metadata"
-       poster="<?= patrona_e($d['imagen'] ?? 'assets/imagenes/hero-patrona.png') ?>">
-       <source src="<?= patrona_e($d['video'] ?? 'assets/videos/portada-patrona.mp4') ?>" type="video/mp4">
+       poster="<?= patrona_e($d['imagen'] ?? 'assets/imagenes/logo-colegio-1024x598.jpg') ?>">
+       <source src="<?= patrona_e($d['video'] ?? 'assets/videos/Principio-Explicativo-V2.prproj.mp4') ?>" type="video/mp4">
      </video>
    </div>
    <div class="hero-shade" aria-hidden="true"></div>
@@ -32,7 +32,7 @@ function patrona_render(array $contenedor): void {
  <?php endforeach; ?></div></section>
  <?php break;
  case 'presentacion': ?>
- <section class="section wrap split" id="colegio"><div><p class="eyebrow">Bienvenidos</p><h2><?= patrona_e($d['titulo'] ?? '') ?></h2><p class="body-text"><?= patrona_e($d['texto'] ?? '') ?></p><p class="muted"><?= patrona_e($d['detalle'] ?? '') ?></p></div><div class="photo-placeholder photo-real"><img loading="lazy" src="assets/imagenes/vida-escolar.png" alt="Gráfica institucional de inicio de clases"></div></section>
+ <section class="section wrap split" id="colegio"><div><p class="eyebrow">Bienvenidos</p><h2><?= patrona_e($d['titulo'] ?? '') ?></h2><p class="body-text"><?= patrona_e($d['texto'] ?? '') ?></p><p class="muted"><?= patrona_e($d['detalle'] ?? '') ?></p></div><div class="photo-placeholder photo-real"><img loading="lazy" src="<?= patrona_e($d["imagen"] ?? "assets/imagenes/logo-colegio-1024x598.jpg") ?>" alt="Gráfica institucional de inicio de clases"></div></section>
  <?php break;
  case 'valores': ?>
  <section class="section tinted" id="proyecto"><div class="wrap"><p class="eyebrow">Lo que nos inspira</p><h2><?= patrona_e($d['titulo'] ?? '') ?></h2><div class="values">
