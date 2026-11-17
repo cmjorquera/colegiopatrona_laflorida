@@ -19,6 +19,7 @@ function db(): mysqli {
     if ($cfg['db'] !== 'crist668_colegio_patrona_laflorida') {
         throw new RuntimeException('La base configurada no corresponde a Patrona de Lourdes.');
     }
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
     $db = new mysqli($cfg['host'], $cfg['user'], $cfg['pass'], $cfg['db']);
     $db->set_charset('utf8mb4');
     return $db;
