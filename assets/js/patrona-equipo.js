@@ -15,4 +15,14 @@ function reset(){
 }
 buttons.forEach(b=>b.addEventListener('click',()=>{if(root.classList.contains('patrona-team-active')&&b.getAttribute('aria-pressed')==='true')reset();else show(b.dataset.teamTab);}));
 back?.addEventListener('click',reset);
+panels.forEach(panel=>{
+ const viewport=panel.querySelector('[data-team-viewport]'),cards=[...(panel.querySelectorAll('.patrona-team-person'))],prev=panel.querySelector('[data-team-prev]'),next=panel.querySelector('[data-team-next]'),dots=panel.querySelector('[data-team-dots]');
+ if(!viewport||!cards.length)return;
+ const step=()=>cards.length>1?cards[1].offsetLeft-cards[0].offsetLeft:cards[0].getBoundingClientRect().width;
+ const visible=()=>Math.max(1,Math.round(viewport.clientWidth/Math.max(step(),1)));
+ const index=()=>Math.max(0,Math.round(viewport.scrollLeft/Math.max(step(),1)));
+ function go(i){viewport.scrollTo({left:Math.max(0,Math.min(i,cards.length-visible()))*step(),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}
+ function render(){const total=Math.max(1,cards.length-visible()+1),current=Math.min(index(),total-1);if(prev)prev.disabled=current<=0;if(next)next.disabled=current>=total-1;if(dots){dots.replaceChildren();for(let i=0;i<total;i++){const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Ver docentes desde '+(i+1));b.setAttribute('aria-current',String(i===current));b.addEventListener('click',()=>go(i));dots.append(b);}}}
+ prev?.addEventListener('click',()=>go(index()-1));next?.addEventListener('click',()=>go(index()+1));viewport.addEventListener('scroll',()=>requestAnimationFrame(render),{passive:true});window.addEventListener('resize',render);render();
+});
 })();
