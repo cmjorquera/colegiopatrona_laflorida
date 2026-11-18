@@ -93,6 +93,20 @@ function patrona_cms_render(array $s): void {
         <section class="section patrona-team" id="organizacion-colegio">
           <div class="wrap">
             <div class="patrona-centered-heading"><span class="patrona-kicker">NUESTRO EQUIPO</span><h2><?=patrona_e((string)($config['titulo_bloque']??'Organización del Colegio'))?></h2><p><?=patrona_e((string)($config['subtitulo_bloque']??'Conoce a quienes acompañan el aprendizaje en cada etapa.'))?></p></div>
+            <div class="patrona-all-courses" aria-label="Todos los cursos del colegio">
+              <?php foreach($cycles as $key=>$names):?>
+                <div class="patrona-all-courses-group" data-course-group="<?=patrona_e($key)?>">
+                  <span class="patrona-all-courses-name"><?=patrona_e($names[0].' '.$names[1])?></span>
+                  <div class="patrona-all-courses-row">
+                    <?php foreach($courses[$key] as $course):?>
+                      <button type="button" class="patrona-course-circle" data-global-cycle="<?=patrona_e($key)?>" data-global-course="<?=patrona_e($course)?>" aria-pressed="false" title="<?=patrona_e($names[0].' '.$names[1].' · '.$courseLabel($key,$course))?>">
+                        <?=patrona_e($courseLabel($key,$course))?>
+                      </button>
+                    <?php endforeach;?>
+                  </div>
+                </div>
+              <?php endforeach;?>
+            </div>
             <div class="patrona-team-tabs" role="tablist" aria-label="Ciclos educativos">
               <?php foreach($cycles as $key=>$names):?>
                 <button type="button" role="tab" class="patrona-team-tab" data-team-tab="<?=patrona_e($key)?>" id="team-tab-<?=patrona_e($key)?>" aria-controls="team-panel-<?=patrona_e($key)?>" aria-selected="<?= $key==='jardin'?'true':'false' ?>" tabindex="<?= $key==='jardin'?'0':'-1' ?>">
