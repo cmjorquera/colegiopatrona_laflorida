@@ -1,0 +1,6 @@
+ETAPA 9 - NOTICIAS
+Se habilito el lapiz de noticias_home en admin.php.
+Se creo editar_noticias.php: CRUD de seccion_item del contenedor noticias_home de institucion 2, CSRF, carga de imagen JPG/PNG/WebP hasta 5MB, fecha_publicacion, titulo, descripcion, URL, orden, visible. Usa tablas existentes de Tabancura, sin migraciones.
+Se adapto componentes/patrona_cms.php para mostrar hasta tres noticias visibles en tarjetas con imagen superior, titulo, resumen limpio de HTML y entidades, y enlace Leer mas. No cambia otros contenedores. No se muestra seccion vacia.
+PENDIENTE: probar php -l, CRUD, permisos de subida y aspecto en cPanel; no se ha verificado ejecucion de produccion. No se implemento listado de todas las noticias ni pagina de detalle interna: Leer mas depende de URL existente.
+Comandos: cd /home3/crist668/colegiolaflorida.webnia.cl && git pull origin main && php -l editar_noticias.php && php -l admin.php && php -l componentes/patrona_cms.php
