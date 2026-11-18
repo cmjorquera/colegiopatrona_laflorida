@@ -64,6 +64,36 @@ function patrona_cms_render(array $s): void {
         <?php
         return;
     }
+    if ($name==='tab_comunidad_home') {
+        $families=array_values(array_filter($items,static fn(array $i):bool=>($i['etiqueta']??'')==='familias'));
+        if (!$families) return;
+        ?>
+        <section class="section patrona-family" id="comunidad-escolar"><div class="wrap">
+          <h2>Comunidad escolar</h2>
+          <div class="patrona-family-tabs" role="tablist" aria-label="Comunidad escolar">
+            <button role="tab" aria-selected="true" aria-controls="patrona-panel-familias" id="patrona-tab-familias" type="button">Familias</button>
+          </div>
+          <div role="tabpanel" id="patrona-panel-familias" aria-labelledby="patrona-tab-familias">
+            <div class="patrona-family-grid">
+            <?php foreach($families as $item):
+                $url=patrona_cms_url($item['url']??'');
+            ?>
+              <article class="patrona-family-card">
+                <?php if(!empty($item['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$item['imagen'])?>" alt="<?=patrona_e((string)$item['titulo'])?>"><?php endif;?>
+                <div class="patrona-family-body"><h3><?=patrona_e((string)$item['titulo'])?></h3>
+                <?php if(!empty($item['descripcion'])):?><p><?=nl2br(patrona_e((string)$item['descripcion']))?></p><?php endif;?>
+                <?php if($url!=='#'):?><a href="<?=patrona_e($url)?>" <?=preg_match('~^https?://~i',$url)?'target="_blank" rel="noopener noreferrer"':''?>>Conocer más →</a><?php endif;?></div>
+              </article>
+            <?php endforeach;?></div>
+          </div>
+        </div></section>
+        <style>
+        .patrona-family{padding-block:64px}.patrona-family-tabs{display:flex;gap:10px;border-bottom:1px solid #d9e4f1;margin:22px 0 28px}.patrona-family-tabs button{background:#123b70;color:white;border:0;border-radius:9px 9px 0 0;padding:13px 25px;font-weight:700}
+        .patrona-family-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px}.patrona-family-card{background:white;border:1px solid #dfe7f0;border-radius:14px;overflow:hidden;box-shadow:0 10px 28px #09294e10}.patrona-family-card img{width:100%;height:225px;object-fit:cover}.patrona-family-body{padding:22px}.patrona-family-body h3{margin-top:0}.patrona-family-body p{line-height:1.6}.patrona-family-body a{color:#126cb3;font-weight:700}
+        </style>
+        <?php
+        return;
+    }
     if (!$items && !array_filter($config,static fn($v)=>trim((string)$v)!=='')) return;
     $id='seccion-'.(int)$s['id_seccion'];
     $title=(string)($config['titulo_bloque']??$config['titulo']??'');
