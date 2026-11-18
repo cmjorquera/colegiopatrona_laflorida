@@ -1,0 +1,10 @@
+ETAPA 11 - MODAL INSTITUCIONAL AUTOMATICO
+Objetivo: contenedor modal_institucional, visible automaticamente al ingresar a index.php.
+Estructura: reutiliza seccion, seccion_config y seccion_item de Tabancura. No se crean tablas adicionales.
+SQL MANUAL: sql/11_modal_institucional.sql (ejecutar en phpMyAdmin; el asistente NO ejecuta cambios de BD).
+Archivos: componentes/modal_institucional.php, index.php, editar_cms.php (editor compartido ya existente).
+Flujo: 1) ejecutar SQL; 2) git pull origin main; 3) en administrador abrir Modal institucional con lapiz; 4) agregar un elemento con titulo, descripcion, imagen opcional, URL opcional, visibilidad si; 5) activar visibilidad del contenedor en listado; 6) ingresar a portada y verificar apertura automatica.
+Seguridad: filtro de institucion 2, modal solo se muestra con contenedor activo/visible y un elemento visible con contenido. Sin elementos publicados, no aparece. Cierra por X, Escape o clic fuera; bloqueo de scroll y foco.
+La tabla seccion registra modal_institucional como tipo content por compatibilidad con tipos ya utilizados. El modal no se dibuja como bloque convencional; se excluye de render generico.
+LIMITACIONES: el editor de modal es el editor compartido, aun no tiene paridad visual completa con Tabancura. Se muestra el primer elemento visible ordenado. La apertura es en cada carga de pagina, no una vez por sesion. Boton del modal muestra 'Mas informacion' si hay URL.
+PRUEBAS PENDIENTES: php -l index.php, php -l componentes/modal_institucional.php, php -l editar_cms.php; alta SQL manual; CRUD y vista publica en produccion.
