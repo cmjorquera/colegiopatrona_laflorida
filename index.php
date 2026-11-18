@@ -48,7 +48,7 @@ usort($top,static fn(array $a,array $b):int=>($a['orden']??0)<=>($b['orden']??0)
 <meta name="description" content="Colegio Patrona de Lourdes, La Florida.">
 <title>Colegio Patrona de Lourdes | La Florida</title>
 <link rel="stylesheet" href="assets/css/patrona.css?v=5">
-<link rel="stylesheet" href="assets/css/patrona-cms-v6.css?v=2">
+<link rel="stylesheet" href="assets/css/patrona-cms-v6.css?v=3">
 <link rel="stylesheet" href="assets/css/patrona-equipo.css?v=1">
 <style>
 .brand-name{font-size:13px;font-weight:800;color:#153c6b;letter-spacing:.03em}.patrona-cms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
