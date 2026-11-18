@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/../includes/rich_editor.php';
 function patrona_cms_url(?string $url): string {
     $url=trim((string)$url);
     if ($url==='' || preg_match('~^(?:javascript|data):~i',$url)) return '#';
@@ -42,7 +43,7 @@ function patrona_cms_render(array $s): void {
           <article class="patrona-seal-card <?= $desc!==''?'has-back':'' ?>" tabindex="<?= $desc!==''?'0':'-1' ?>">
             <div class="patrona-seal-inner">
               <div class="patrona-seal-front"><img loading="lazy" src="<?=patrona_e((string)$seal['imagen'])?>" alt="<?=patrona_e($label)?>"></div>
-              <?php if($desc!==''):?><div class="patrona-seal-back"><p><?=nl2br(patrona_e($desc))?></p><?php if($url!=='#'):?><a href="<?=patrona_e($url)?>" target="_blank" rel="noopener noreferrer">Visitar sitio</a><?php endif;?></div><?php endif;?>
+              <?php if($desc!==''):?><div class="patrona-seal-back"><p><?=patrona_rich_clean($desc)?></p><?php if($url!=='#'):?><a href="<?=patrona_e($url)?>" target="_blank" rel="noopener noreferrer">Visitar sitio</a><?php endif;?></div><?php endif;?>
             </div>
             <?php if($desc===''&&$url!=='#'):?><a class="patrona-seal-link" href="<?=patrona_e($url)?>" target="_blank" rel="noopener noreferrer">Visitar sitio</a><?php endif;?>
           </article>
@@ -114,7 +115,7 @@ function patrona_cms_render(array $s): void {
               <article class="patrona-family-card">
                 <?php if(!empty($item['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$item['imagen'])?>" alt="<?=patrona_e((string)$item['titulo'])?>"><?php endif;?>
                 <div class="patrona-family-body"><h3><?=patrona_e((string)$item['titulo'])?></h3>
-                <?php if(!empty($item['descripcion'])):?><p><?=nl2br(patrona_e((string)$item['descripcion']))?></p><?php endif;?>
+                <?php if(!empty($item['descripcion'])):?><p><?=patrona_rich_clean((string)$item['descripcion'])?></p><?php endif;?>
                 <?php if($url!=='#'):?><a href="<?=patrona_e($url)?>" <?=preg_match('~^https?://~i',$url)?'target="_blank" rel="noopener noreferrer"':''?>>Conocer más →</a><?php endif;?></div>
               </article>
             <?php endforeach;?></div>
