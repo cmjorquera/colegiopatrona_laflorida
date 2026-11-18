@@ -91,20 +91,26 @@ function patrona_cms_render(array $s): void {
         $families=array_values(array_filter($items,static fn(array $i):bool=>($i['etiqueta']??'')==='familias'));
         if (!$families) return;
         ?>
-        <section class="section patrona-family" id="comunidad-escolar"><div class="wrap">
+        <section class="section patrona-family patrona-family-3d" id="comunidad-escolar"><div class="wrap">
           <div class="patrona-centered-heading"><span class="patrona-kicker">NUESTRA COMUNIDAD</span><h2>Comunidad escolar</h2><p>Conoce los espacios de encuentro y participación de nuestras familias.</p></div>
           <div class="patrona-family-tabs"><span>Familias</span></div>
-          <div class="patrona-family-grid">
-          <?php foreach($families as $item):$url=patrona_cms_url($item['url']??'');$title=(string)($item['titulo']??'');$id='familia-'.(int)($item['id_item']??0);?>
-            <article class="patrona-family-card">
-              <?php if(!empty($item['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$item['imagen'])?>" alt="<?=patrona_e($title)?>"><?php endif;?>
-              <div class="patrona-family-body"><h3><?=patrona_e($title)?></h3><button class="patrona-family-expand" type="button" aria-expanded="false" aria-controls="<?=patrona_e($id)?>" data-family-toggle>Conocer más <span aria-hidden="true">+</span></button></div>
-              <div class="patrona-family-detail" id="<?=patrona_e($id)?>" hidden>
-                <div class="patrona-rich-text"><?=patrona_rich_clean((string)($item['descripcion']??''))?></div>
-                <?php if($url!=='#'):?><a href="<?=patrona_e($url)?>" <?=preg_match('~^https?://~i',$url)?'target="_blank" rel="noopener noreferrer"':''?>>Más información ↗</a><?php endif;?>
-              </div>
-            </article>
-          <?php endforeach;?></div>
+          <div class="patrona-family-stage" data-family-stage aria-label="Carrusel de comunidad escolar">
+            <button class="patrona-family-arrow" type="button" data-family-prev aria-label="Elemento anterior">‹</button>
+            <div class="patrona-family-deck">
+            <?php foreach($families as $item):$url=patrona_cms_url($item['url']??'');$title=(string)($item['titulo']??'');$id='familia-'.(int)($item['id_item']??0);?>
+              <article class="patrona-family-card" data-family-card>
+                <?php if(!empty($item['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$item['imagen'])?>" alt="<?=patrona_e($title)?>"><?php endif;?>
+                <div class="patrona-family-body"><h3><?=patrona_e($title)?></h3><button class="patrona-family-expand" type="button" aria-expanded="false" aria-controls="<?=patrona_e($id)?>" data-family-toggle>Conocer más <span aria-hidden="true">+</span></button></div>
+                <div class="patrona-family-detail" id="<?=patrona_e($id)?>" hidden>
+                  <div class="patrona-rich-text"><?=patrona_rich_clean((string)($item['descripcion']??''))?></div>
+                  <?php if($url!=='#'):?><a href="<?=patrona_e($url)?>" <?=preg_match('~^https?://~i',$url)?'target="_blank" rel="noopener noreferrer"':''?>>Más información ↗</a><?php endif;?>
+                </div>
+              </article>
+            <?php endforeach;?></div>
+            <button class="patrona-family-arrow" type="button" data-family-next aria-label="Elemento siguiente">›</button>
+          </div>
+          <div class="patrona-family-dots" data-family-dots aria-label="Seleccionar elemento"></div>
+          <div class="patrona-family-selected" data-family-selected aria-live="polite"></div>
         </div></section>
         <?php return;
     }
