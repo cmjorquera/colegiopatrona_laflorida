@@ -31,9 +31,9 @@ try{
     }$db->commit();
    }catch(Throwable $e){$db->rollback();throw $e;}
   }elseif($action==='save'){
-   $title=trim((string)($_POST['titulo']??''));$desc=patrona_rich_clean((string)($_POST['descripcion']??''));$url=trim((string)($_POST['url']??''));$label=trim((string)($_POST['etiqueta']??''));
-   if(mb_strlen($title)>220||mb_strlen($desc)>5000||mb_strlen($label)>120)throw new RuntimeException('Texto demasiado largo.');
-   if($url!==''&&(!filter_var($url,FILTER_VALIDATE_URL)||!in_array(strtolower((string)parse_url($url,PHP_URL_SCHEME)),['http','https'],true)))throw new RuntimeException('El enlace debe ser HTTP(S).');
+   $title=trim((string)($_POST['titulo']??''));$desc=patrona_rich_clean((string)($_POST['descripcion']??''));$url=trim((string)($_POST['url']??''));$label=trim((string)($_POST['etiqueta']??''));$subtitle=trim((string)($_POST['subtitulo']??''));
+   if(mb_strlen($title)>220||mb_strlen($desc)>5000||mb_strlen($label)>120||mb_strlen($subtitle)>220)throw new RuntimeException('Texto demasiado largo.');
+   if($url!==''&&!(($name==='equipo_docente_home'&&filter_var($url,FILTER_VALIDATE_EMAIL))||(filter_var($url,FILTER_VALIDATE_URL)&&in_array(strtolower((string)parse_url($url,PHP_URL_SCHEME)),['http','https'],true))))throw new RuntimeException('El enlace debe ser HTTP(S).');
    $image='';
    if($id){$q=$db->prepare('SELECT imagen FROM seccion_item WHERE id_item=? AND id_seccion=?');$q->bind_param('ii',$id,$sid);$q->execute();$old=$q->get_result()->fetch_assoc();if(!$old)throw new RuntimeException('Elemento no encontrado');$image=(string)($old['imagen']??'');}
    if(isset($_FILES['imagen'])&&($_FILES['imagen']['error']??UPLOAD_ERR_NO_FILE)!==UPLOAD_ERR_NO_FILE){
@@ -48,11 +48,11 @@ try{
    }
    $visible=($_POST['visible']??'si')==='no'?'no':'si';$orden=max(1,(int)($_POST['orden']??1));
    if($id){
-    $q=$db->prepare('UPDATE seccion_item SET etiqueta=?,titulo=?,descripcion=?,imagen=?,url=?,visible=?,orden=? WHERE id_item=? AND id_seccion=?');
-    $q->bind_param('ssssssiii',$label,$title,$desc,$image,$url,$visible,$orden,$id,$sid);
+    $q=$db->prepare('UPDATE seccion_item SET etiqueta=?,titulo=?,subtitulo=?,descripcion=?,imagen=?,url=?,visible=?,orden=? WHERE id_item=? AND id_seccion=?');
+    $q->bind_param('sssssssiii',$label,$title,$subtitle,$desc,$image,$url,$visible,$orden,$id,$sid);
    }else{
-    $q=$db->prepare('INSERT INTO seccion_item(id_seccion,etiqueta,titulo,descripcion,imagen,url,visible,orden) VALUES(?,?,?,?,?,?,?,?)');
-    $q->bind_param('issssssi',$sid,$label,$title,$desc,$image,$url,$visible,$orden);
+    $q=$db->prepare('INSERT INTO seccion_item(id_seccion,etiqueta,titulo,subtitulo,descripcion,imagen,url,visible,orden) VALUES(?,?,?,?,?,?,?,?,?)');
+    $q->bind_param('isssssssi',$sid,$label,$title,$subtitle,$desc,$image,$url,$visible,$orden);
    }$q->execute();
   }elseif($action==='delete'){
    $q=$db->prepare('DELETE FROM seccion_item WHERE id_item=? AND id_seccion=?');$q->bind_param('ii',$id,$sid);$q->execute();
@@ -74,9 +74,12 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 </div><p><button class="cms-btn">Guardar configuración</button></p></form></section>
 <section class="cms-card"><h2><?=$editing?'Editar elemento':'Agregar elemento'?></h2><form method="post" enctype="multipart/form-data"><input type="hidden" name="id_seccion" value="<?=(int)$sid?>"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="save"><input type="hidden" name="id_item" value="<?=(int)($editing['id_item']??0)?>"><div class="cms-grid">
 <label class="cms-field">Título<input name="titulo" maxlength="220" value="<?=ce($editing['titulo']??'')?>"></label>
-<label class="cms-field">Etiqueta<input name="etiqueta" maxlength="120" value="<?=ce($editing['etiqueta']??'')?>"></label>
+<?php if(($section['nombre_interno']??'')==='equipo_docente_home'):?>
+<label class="cms-field">Ciclo<select name="etiqueta"><?php foreach(['jardin'=>'Jardín','basica_1'=>'Básica 1.er ciclo','basica_2'=>'Básica 2.º ciclo','media'=>'Enseñanza Media'] as $key=>$label):?><option value="<?=ce($key)?>" <?=($editing['etiqueta']??'')===$key?'selected':''?>><?=ce($label)?></option><?php endforeach;?></select></label>
+<?php else:?><label class="cms-field">Etiqueta<input name="etiqueta" maxlength="120" value="<?=ce($editing['etiqueta']??'')?>"></label><?php endif;?>
+<label class="cms-field"><?=($section['nombre_interno']??'')==='equipo_docente_home'?'Cargo / curso (Coordinación, Profesor jefe, etc.)':'Subtítulo'?><input name="subtitulo" maxlength="220" value="<?=ce($editing['subtitulo']??'')?>"></label>
 <label class="cms-field">Imagen JPG/PNG/WebP, máximo 5 MB<input type="file" name="imagen" accept="image/jpeg,image/png,image/webp" id="cms-image-input"><img class="cms-preview" id="cms-image-preview" alt="Vista previa de imagen seleccionada"></label>
-<label class="cms-field">Enlace HTTP(S)<input type="url" name="url" value="<?=ce($editing['url']??'')?>"></label>
+<label class="cms-field"><?=($section['nombre_interno']??'')==='equipo_docente_home'?'Correo institucional':'Enlace HTTP(S)'?><input type="<?=($section['nombre_interno']??'')==='equipo_docente_home'?'email':'url'?>" name="url" value="<?=ce($editing['url']??'')?>"></label>
 <label class="cms-field">Orden<input type="number" min="1" name="orden" value="<?=(int)($editing['orden']??count($items)+1)?>"></label>
 <label class="cms-field">Visibilidad<select name="visible"><option value="si" <?=($editing['visible']??'si')==='si'?'selected':''?>>Visible</option><option value="no" <?=($editing['visible']??'si')==='no'?'selected':''?>>Oculto</option></select></label>
 <label class="cms-field" style="grid-column:1/-1">Descripción<textarea name="descripcion" rows="4" maxlength="5000" data-rich-editor><?=ce($editing['descripcion']??'')?></textarea></label>
