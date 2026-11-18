@@ -4,6 +4,7 @@ $portada=require __DIR__.'/config/portada.php';
 require_once __DIR__.'/componentes/portada.php';
 require_once __DIR__.'/componentes/patrona_cms.php';
 require_once __DIR__.'/includes/patrona_cms_public.php';
+require_once __DIR__.'/componentes/modal_institucional.php';
 $site=patrona_cms_site();
 $sections=$site['sections'];
 $sectionsByName=[];
@@ -66,5 +67,6 @@ foreach($sections as $section) {
 }
 ?>
 </main>
+<?php patrona_render_modal_institucional($sections); ?>
 <?php if($showFooter): ?><footer id="contacto"><div class="wrap footer-row"><strong>COLEGIO PATRONA DE LOURDES <small>LA FLORIDA</small></strong><span><?=patrona_e((string)($footerConfig['texto']??'Portada en desarrollo · Contenido institucional administrado desde el CMS'))?></span></div></footer><?php endif; ?>
 </body></html>
