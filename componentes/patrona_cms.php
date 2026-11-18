@@ -64,6 +64,39 @@ function patrona_cms_render(array $s): void {
         <?php
         return;
     }
+    if ($name==='noticias_home') {
+        if (!$items) return;
+        $clean=static function($v):string {
+            $v=html_entity_decode((string)$v,ENT_QUOTES|ENT_HTML5,'UTF-8');
+            return trim(preg_replace('/\\s+/u',' ',strip_tags($v))??'');
+        };
+        ?>
+        <section class="section patrona-news" id="noticias-home"><div class="wrap">
+        <div class="patrona-news-heading"><h2>Noticias</h2></div>
+        <div class="patrona-news-grid">
+        <?php foreach(array_slice($items,0,3) as $item):
+          $url=patrona_cms_url($item['url']??$item['boton_1_url']??'');
+          $title=$clean($item['titulo']??'');
+          $desc=$clean($item['descripcion']??$item['subtitulo']??'');
+        ?>
+        <article class="patrona-news-card">
+        <?php if(!empty($item['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$item['imagen'])?>" alt="<?=patrona_e($title)?>"><?php endif;?>
+        <div class="patrona-news-body">
+        <h3><?=patrona_e($title)?></h3>
+        <?php if($desc!==''):?><p><?=patrona_e(mb_strimwidth($desc,0,200,'…','UTF-8'))?></p><?php endif;?>
+        <?php if($url!=='#'):?><a href="<?=patrona_e($url)?>" <?=preg_match('~^https?://~i',$url)?'target="_blank" rel="noopener noreferrer"':''?>>Leer más →</a><?php endif;?>
+        </div></article><?php endforeach;?>
+        </div></div></section>
+        <style>
+        .patrona-news{padding:70px 0;background:#f5f8fc}.patrona-news-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}.patrona-news-heading h2{margin:0;color:#003b6f}
+        .patrona-news-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:25px}
+        .patrona-news-card{background:white;border-radius:12px;overflow:hidden;box-shadow:0 8px 25px #102d5212}
+        .patrona-news-card img{display:block;width:100%;height:230px;object-fit:cover}
+        .patrona-news-body{padding:24px}.patrona-news-body h3{font-size:21px;line-height:1.35;color:#003b6f;margin:0 0 10px}.patrona-news-body p{font-size:15px;line-height:1.6;color:#526784}.patrona-news-body a{color:#0058a7;font-weight:700;text-decoration:none}
+        @media(max-width:850px){.patrona-news-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:580px){.patrona-news-grid{grid-template-columns:1fr}}
+        </style>
+        <?php return;
+    }
     if ($name==='tab_comunidad_home') {
         $families=array_values(array_filter($items,static fn(array $i):bool=>($i['etiqueta']??'')==='familias'));
         if (!$families) return;
