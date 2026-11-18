@@ -4,7 +4,7 @@
 -- No publica nombres ni fotos reales sin autorización.
 INSERT INTO seccion
 (id_institucion,nombre_interno,titulo_admin,tipo_seccion,visible,estado,editable,orden)
-SELECT 2,'equipo_docente_home','Organización del Colegio · Equipo docente','contenido','si','activo','si',
+SELECT 2,'equipo_docente_home','Organización del Colegio · Equipo docente','content','si','activo','si',
        COALESCE((SELECT MAX(orden)+1 FROM (SELECT orden FROM seccion WHERE id_institucion=2) t),50)
 WHERE NOT EXISTS (SELECT 1 FROM seccion WHERE id_institucion=2 AND nombre_interno='equipo_docente_home');
 
