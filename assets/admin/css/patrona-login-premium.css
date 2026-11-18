@@ -25,14 +25,26 @@
 .patrona-webnia-whatsapp{margin-top:4px;display:inline-flex;align-items:center;gap:7px;padding:10px 17px;border-radius:999px;background:#128c62;color:#fff;font-size:12px;font-weight:800;text-decoration:none;transition:background .2s}
 .patrona-webnia-whatsapp:hover{background:#0c7250}
 
-/* Marca de agua: solo el isotipo cuadrado, sin el logotipo tipográfico gigante. */
-.admin-login-brand{background-image:linear-gradient(145deg,#0c2b4b,#133a60)!important;background-position:center!important;background-size:cover!important}
-.admin-login-brand::before{content:""!important;display:block!important;position:absolute!important;inset:0!important;width:auto!important;height:auto!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:url("../../imagenes/cropped-logo-cuadrado-sin-fondo-2-192x192.png") no-repeat center 52%!important;background-size:min(65%,420px) auto!important;opacity:.105!important;filter:grayscale(1) brightness(0) invert(1)!important;pointer-events:none!important}
+/* La marca de agua utiliza el isotipo real de la Virgen. Ruta CSS relativa a assets/admin/css/. */
+.admin-login-brand{background-image:linear-gradient(145deg,#0c2b4b,#133a60)!important}
+.admin-login-brand::before{
+ content:""!important;display:block!important;position:absolute!important;inset:0!important;
+ width:auto!important;height:auto!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;background-image:url("../../imagenes/cropped-logo-cuadrado-sin-fondo-2-192x192.png")!important;
+ background-repeat:no-repeat!important;background-position:86% 53%!important;
+ background-size:clamp(250px,30vw,480px) auto!important;opacity:.16!important;
+ filter:grayscale(1) brightness(0) invert(1)!important;pointer-events:none!important;
+}
 .admin-login-brand-top,.admin-login-intro,.admin-login-brand-bottom{z-index:1}
-.patrona-webnia-whatsapp{width:46px;height:46px;padding:0;margin-top:9px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#159b65;color:white;box-shadow:0 7px 18px #0c79522b}
-.patrona-webnia-whatsapp:hover{background:#0c7954;transform:translateY(-2px)}
-.patrona-webnia-whatsapp svg{display:block}
-
+.patrona-login-social{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:10px}
+.patrona-login-social a{width:43px;height:43px;display:grid;place-items:center;border:1px solid #d8e3ef;background:#fff;border-radius:50%;text-decoration:none;box-shadow:0 5px 15px #17395314;transition:transform .18s,box-shadow .18s}
+.patrona-login-social a:hover{transform:translateY(-3px);box-shadow:0 9px 19px #17395325}
+.patrona-login-social svg{width:24px;height:24px;display:block}
+.patrona-social-webnia{color:#12558a}
+.patrona-social-whatsapp{color:#159b65}
+.patrona-social-instagram{color:#c13584}
+.patrona-social-instagram[aria-disabled="true"]{cursor:default;opacity:.64}
+.patrona-social-instagram[aria-disabled="true"]:hover{transform:none}
 /* Login completo en una sola pantalla de escritorio; en pantallas bajas se permite scroll natural. */
 @media (min-width:851px) and (min-height:690px){
   .admin-login-shell{height:100vh;height:100svh;min-height:0}
@@ -63,15 +75,12 @@
   .admin-login-developer-caption{font-size:9px}
   .admin-login-developer-link{font-size:25px}
   .admin-login-developer-description{font-size:10px}
-  .patrona-webnia-cta{margin-top:4px;padding:6px 12px;font-size:10px}
-  .patrona-webnia-whatsapp{margin-top:4px;width:39px;height:39px}
-  .patrona-webnia-whatsapp svg{width:22px;height:22px}
+  .patrona-login-social{margin-top:7px;gap:11px}
+  .patrona-login-social a{width:40px;height:40px}
+  .patrona-login-social svg{width:22px;height:22px}
   .admin-login-network{display:none}
 }
 @media (min-width:851px) and (max-height:689px){
   .admin-login-content{padding:15px 25px}
 }
-/* Isotipo en el lateral derecho de la composición, fuera del bloque de lectura. */
-@media (min-width:851px){
-  .admin-login-brand::before{background-position:88% 58%!important;background-size:min(36%,260px) auto!important;opacity:.13!important}
-}
+/* La transparencia del isotipo se ajusta para que sea visible sin distraer. */
