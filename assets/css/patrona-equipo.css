@@ -134,3 +134,21 @@
  #organizacion-colegio .patrona-team-person{flex-basis:calc((100% - 14px)/2)}
 }
 @media(max-width:430px){#organizacion-colegio .patrona-team-person{flex-basis:80%}}
+
+
+/* Navegación de cursos dentro de cada ciclo */
+#organizacion-colegio .patrona-course-heading{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:24px 0 16px}
+#organizacion-colegio .patrona-course-heading h3{font-size:23px;color:#0b305b;margin:0}
+#organizacion-colegio .patrona-course-heading p{color:#637b95;font-size:14px;margin:0}
+#organizacion-colegio .patrona-course-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px}
+#organizacion-colegio .patrona-course-button{min-width:0;aspect-ratio:1.35;border:2px solid transparent;border-radius:22px;background:linear-gradient(135deg,#2099e5,#a5d2ff);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#082d52;cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s;font:inherit}
+#organizacion-colegio .patrona-course-button strong{font-size:clamp(29px,4vw,58px);line-height:1;font-weight:800}
+#organizacion-colegio .patrona-course-button span{font-size:clamp(12px,1.5vw,19px);font-weight:800;letter-spacing:.08em;margin-top:12px}
+#organizacion-colegio .patrona-course-button:hover{transform:translateY(-3px);box-shadow:0 10px 20px #123e7020}
+#organizacion-colegio .patrona-course-button[aria-pressed=true]{border-color:#0c315a;box-shadow:0 0 0 3px #d2e9ff;background:linear-gradient(135deg,#1c7ec9,#76afe9)}
+#organizacion-colegio .patrona-course-button:focus-visible{outline:3px solid #e69a24;outline-offset:3px}
+#organizacion-colegio .patrona-course-results{border-top:1px solid #dce4ee;padding-top:14px}
+#organizacion-colegio .patrona-course-selected-title{font-size:22px;color:#0b305b;margin:0 0 10px}
+#organizacion-colegio .patrona-course-empty{color:#61788f;padding:12px 0}
+#organizacion-colegio .patrona-team-person[hidden],#organizacion-colegio .patrona-course-results[hidden],#organizacion-colegio .patrona-team-viewport[hidden],#organizacion-colegio .patrona-team-carousel-heading[hidden],#organizacion-colegio .patrona-team-carousel-dots[hidden]{display:none!important}
+@media(max-width:720px){#organizacion-colegio .patrona-course-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#organizacion-colegio .patrona-course-heading{display:block}#organizacion-colegio .patrona-course-button{border-radius:16px}}
