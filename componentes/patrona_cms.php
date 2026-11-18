@@ -67,35 +67,24 @@ function patrona_cms_render(array $s): void {
     }
     if ($name==='noticias_home') {
         if (!$items) return;
-        $clean=static function($v):string {
-            $v=html_entity_decode((string)$v,ENT_QUOTES|ENT_HTML5,'UTF-8');
-            return trim(preg_replace('/\\s+/u',' ',strip_tags($v))??'');
-        };
+        $clean=static function($v):string {return trim(preg_replace('/\\s+/u',' ',strip_tags(html_entity_decode((string)$v,ENT_QUOTES|ENT_HTML5,'UTF-8')))??'');};
         ?>
         <section class="section patrona-news" id="noticias-home"><div class="wrap">
-        <div class="patrona-news-heading"><h2>Noticias</h2></div>
-        <div class="patrona-news-grid">
-        <?php foreach(array_slice($items,0,6) as $item):
-          $url=patrona_cms_url($item['url']??$item['boton_1_url']??'');
-          $title=$clean($item['titulo']??'');
-          $desc=$clean($item['descripcion']??$item['subtitulo']??'');
-        ?>
-        <article class="patrona-news-card">
-        <?php if(!empty($item['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$item['imagen'])?>" alt="<?=patrona_e($title)?>"><?php endif;?>
-        <div class="patrona-news-body">
-        <h3><?=patrona_e($title)?></h3>
-        <?php if($desc!==''):?><p><?=patrona_e(mb_strimwidth($desc,0,200,'…','UTF-8'))?></p><?php endif;?>
-        <?php if($url!=='#'):?><a href="<?=patrona_e($url)?>" <?=preg_match('~^https?://~i',$url)?'target="_blank" rel="noopener noreferrer"':''?>>Leer más →</a><?php endif;?>
-        </div></article><?php endforeach;?>
-        </div></div></section>
-        <style>
-        .patrona-news{padding:70px 0;background:#f5f8fc}.patrona-news-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}.patrona-news-heading h2{margin:0;color:#003b6f}
-        .patrona-news-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:25px}
-        .patrona-news-card{background:white;border-radius:12px;overflow:hidden;box-shadow:0 8px 25px #102d5212}
-        .patrona-news-card img{display:block;width:100%;height:230px;object-fit:cover}
-        .patrona-news-body{padding:24px}.patrona-news-body h3{font-size:21px;line-height:1.35;color:#003b6f;margin:0 0 10px}.patrona-news-body p{font-size:15px;line-height:1.6;color:#526784}.patrona-news-body a{color:#0058a7;font-weight:700;text-decoration:none}
-        @media(max-width:850px){.patrona-news-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:580px){.patrona-news-grid{grid-template-columns:1fr}}
-        </style>
+          <div class="patrona-news-heading"><div><span class="patrona-kicker">ACTUALIDAD ESCOLAR</span><h2>Noticias</h2></div>
+          <?php if(count($items)>3):?><div class="patrona-news-controls"><button type="button" data-news-prev aria-label="Noticias anteriores">‹</button><button type="button" data-news-next aria-label="Noticias siguientes">›</button></div><?php endif;?></div>
+          <div class="patrona-news-viewport" tabindex="0" aria-label="Carrusel de noticias">
+            <div class="patrona-news-grid" data-news-track>
+            <?php foreach($items as $item):
+              $url=patrona_cms_url($item['url']??$item['boton_1_url']??'');
+              $title=$clean($item['titulo']??'');$desc=$clean($item['descripcion']??$item['subtitulo']??'');
+            ?><article class="patrona-news-card">
+              <?php if(!empty($item['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$item['imagen'])?>" alt="<?=patrona_e($title)?>"><?php endif;?>
+              <div class="patrona-news-body"><h3><?=patrona_e($title)?></h3>
+              <?php if($desc!==''):?><p><?=patrona_e(mb_strimwidth($desc,0,180,'…','UTF-8'))?></p><?php endif;?>
+              <?php if($url!=='#'):?><a href="<?=patrona_e($url)?>" <?=preg_match('~^https?://~i',$url)?'target="_blank" rel="noopener noreferrer"':''?>>Leer más →</a><?php endif;?></div>
+            </article><?php endforeach;?></div>
+          </div><div class="patrona-news-dots" data-news-dots aria-label="Páginas de noticias"></div>
+        </div></section>
         <?php return;
     }
     if ($name==='tab_comunidad_home') {
@@ -103,37 +92,42 @@ function patrona_cms_render(array $s): void {
         if (!$families) return;
         ?>
         <section class="section patrona-family" id="comunidad-escolar"><div class="wrap">
-          <h2>Comunidad escolar</h2>
-          <div class="patrona-family-tabs" role="tablist" aria-label="Comunidad escolar">
-            <button role="tab" aria-selected="true" aria-controls="patrona-panel-familias" id="patrona-tab-familias" type="button">Familias</button>
-          </div>
-          <div role="tabpanel" id="patrona-panel-familias" aria-labelledby="patrona-tab-familias">
-            <div class="patrona-family-grid">
-            <?php foreach($families as $item):
-                $url=patrona_cms_url($item['url']??'');
-            ?>
-              <article class="patrona-family-card">
-                <?php if(!empty($item['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$item['imagen'])?>" alt="<?=patrona_e((string)$item['titulo'])?>"><?php endif;?>
-                <div class="patrona-family-body"><h3><?=patrona_e((string)$item['titulo'])?></h3>
-                <?php if(!empty($item['descripcion'])):?><p><?=patrona_rich_clean((string)$item['descripcion'])?></p><?php endif;?>
-                <?php if($url!=='#'):?><a href="<?=patrona_e($url)?>" <?=preg_match('~^https?://~i',$url)?'target="_blank" rel="noopener noreferrer"':''?>>Conocer más →</a><?php endif;?></div>
-              </article>
-            <?php endforeach;?></div>
-          </div>
+          <div class="patrona-centered-heading"><span class="patrona-kicker">NUESTRA COMUNIDAD</span><h2>Comunidad escolar</h2><p>Conoce los espacios de encuentro y participación de nuestras familias.</p></div>
+          <div class="patrona-family-tabs"><span>Familias</span></div>
+          <div class="patrona-family-grid">
+          <?php foreach($families as $item):$url=patrona_cms_url($item['url']??'');$title=(string)($item['titulo']??'');$id='familia-'.(int)($item['id_item']??0);?>
+            <article class="patrona-family-card">
+              <?php if(!empty($item['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$item['imagen'])?>" alt="<?=patrona_e($title)?>"><?php endif;?>
+              <div class="patrona-family-body"><h3><?=patrona_e($title)?></h3><button class="patrona-family-expand" type="button" aria-expanded="false" aria-controls="<?=patrona_e($id)?>" data-family-toggle>Conocer más <span aria-hidden="true">+</span></button></div>
+              <div class="patrona-family-detail" id="<?=patrona_e($id)?>" hidden>
+                <div class="patrona-rich-text"><?=patrona_rich_clean((string)($item['descripcion']??''))?></div>
+                <?php if($url!=='#'):?><a href="<?=patrona_e($url)?>" <?=preg_match('~^https?://~i',$url)?'target="_blank" rel="noopener noreferrer"':''?>>Más información ↗</a><?php endif;?>
+              </div>
+            </article>
+          <?php endforeach;?></div>
         </div></section>
-        <style>
-        .patrona-family{padding-block:64px}.patrona-family-tabs{display:flex;gap:10px;border-bottom:1px solid #d9e4f1;margin:22px 0 28px}.patrona-family-tabs button{background:#123b70;color:white;border:0;border-radius:9px 9px 0 0;padding:13px 25px;font-weight:700}
-        .patrona-family-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px}.patrona-family-card{background:white;border:1px solid #dfe7f0;border-radius:14px;overflow:hidden;box-shadow:0 10px 28px #09294e10}.patrona-family-card img{width:100%;height:225px;object-fit:cover}.patrona-family-body{padding:22px}.patrona-family-body h3{margin-top:0}.patrona-family-body p{line-height:1.6}.patrona-family-body a{color:#126cb3;font-weight:700}
-        </style>
-        <?php
-        return;
+        <?php return;
     }
     if (str_contains($name,'galeria')) {
         $photos=array_values(array_filter($items,static fn(array $i):bool=>trim((string)($i['imagen']??''))!==''));
         if(!$photos)return;
-        ?><section class="section wrap patrona-gallery" id="galeria-home"><h2><?=patrona_e((string)($config['titulo_bloque']??'Galería'))?></h2><div class="patrona-gallery-grid">
-        <?php foreach($photos as $photo):?><figure><img loading="lazy" src="<?=patrona_e((string)$photo['imagen'])?>" alt="<?=patrona_e((string)($photo['titulo']??''))?>"><figcaption><?=patrona_e((string)($photo['titulo']??''))?></figcaption></figure><?php endforeach;?></div></section>
-        <style>.patrona-gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}.patrona-gallery-grid figure{margin:0}.patrona-gallery-grid img{width:100%;height:230px;object-fit:cover;border-radius:12px}.patrona-gallery-grid figcaption{padding:8px;color:#003b6f}</style><?php return;
+        ?><section class="section patrona-gallery" id="galeria-home"><div class="wrap">
+          <div class="patrona-centered-heading"><span class="patrona-kicker">VIDA ESCOLAR</span><h2><?=patrona_e((string)($config['titulo_bloque']??'Nuestra galería'))?></h2><p>Momentos de nuestra comunidad educativa.</p></div>
+          <div class="patrona-gallery-grid">
+          <?php foreach($photos as $i=>$photo):?><figure class="patrona-gallery-tile">
+            <button type="button" data-gallery-open data-gallery-index="<?=$i?>" aria-label="Ampliar <?=patrona_e((string)($photo['titulo']??'fotografía'))?>">
+              <img loading="lazy" src="<?=patrona_e((string)$photo['imagen'])?>" alt="<?=patrona_e((string)($photo['titulo']??''))?>">
+              <span class="patrona-gallery-overlay"><?=patrona_e((string)($photo['titulo']??''))?></span>
+            </button>
+          </figure><?php endforeach;?></div>
+        </div>
+        <div class="patrona-lightbox" data-gallery-lightbox hidden role="dialog" aria-modal="true" aria-label="Fotografía ampliada">
+          <button type="button" class="patrona-lightbox-close" data-gallery-close aria-label="Cerrar galería">×</button>
+          <button type="button" class="patrona-lightbox-prev" data-gallery-prev aria-label="Fotografía anterior">‹</button>
+          <figure><img data-gallery-image alt=""><figcaption data-gallery-caption></figcaption></figure>
+          <button type="button" class="patrona-lightbox-next" data-gallery-next aria-label="Fotografía siguiente">›</button>
+        </div></section>
+        <?php return;
     }
     if(str_contains($name,'podcast')){
         $episodes=array_values(array_filter($items,static fn(array $i):bool=>trim((string)($i['url']??''))!==''));
@@ -145,8 +139,13 @@ function patrona_cms_render(array $s): void {
     }
     if(str_contains($name,'estadisticas')||str_contains($name,'numeros')){
         if(!$items)return;
-        ?><section class="section wrap patrona-stats" id="estadisticas-home"><h2><?=patrona_e((string)($config['titulo_bloque']??'Nuestro colegio en números'))?></h2><div class="patrona-cms-grid">
-        <?php foreach($items as $stat):?><article class="patrona-cms-card"><strong style="font-size:32px;color:#003b6f"><?=patrona_e((string)($stat['etiqueta']??''))?></strong><h3><?=patrona_e((string)($stat['titulo']??''))?></h3><p><?=patrona_e((string)($stat['descripcion']??''))?></p></article><?php endforeach;?></div></section><?php return;
+        ?><section class="section patrona-stats" id="estadisticas-home"><div class="wrap">
+        <div class="patrona-centered-heading"><span class="patrona-kicker">NUESTRO COLEGIO</span><h2><?=patrona_e((string)($config['titulo_bloque']??'Nuestro colegio en números'))?></h2><p>Indicadores de nuestra comunidad educativa.</p></div>
+        <div class="patrona-stats-grid">
+        <?php foreach($items as $i=>$stat):?><article class="patrona-stat-card">
+          <?php if(!empty($stat['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$stat['imagen'])?>" alt=""><?php endif;?>
+          <div class="patrona-stat-info"><strong><?=patrona_e((string)($stat['etiqueta']??''))?></strong><h3><?=patrona_e((string)($stat['titulo']??''))?></h3><p><?=patrona_e((string)($stat['descripcion']??''))?></p></div>
+        </article><?php endforeach;?></div></div></section><?php return;
     }
     if (!$items) return;
     $id='seccion-'.(int)$s['id_seccion'];
