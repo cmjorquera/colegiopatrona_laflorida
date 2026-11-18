@@ -178,6 +178,7 @@ $subsByMenu=[]; foreach($publicSubs as $sub){$subsByMenu[(int)$sub['id_menu']][]
 <title>CMS | Patrona de Lourdes · La Florida</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=3">
+<link rel="stylesheet" href="assets/admin/css/patrona-admin-menu.css?v=1">
 </head>
 <body>
 <div class="admin-shell">
