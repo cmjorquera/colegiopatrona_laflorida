@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/includes/rich_editor.php';
 declare(strict_types=1);
 $sessionDir='/home3/crist668/php_sessions_patrona';
 if(!is_dir($sessionDir)||!is_writable($sessionDir)){http_response_code(503);exit('Sesiones no disponibles');}
@@ -22,7 +23,7 @@ try{
   $action=(string)($_POST['accion']??'');
   if($action==='save'){
    $id=max(0,(int)($_POST['id_item']??0));
-   $title=trim((string)($_POST['titulo']??''));$desc=trim((string)($_POST['descripcion']??''));$url=trim((string)($_POST['url']??''));
+   $title=trim((string)($_POST['titulo']??''));$desc=patrona_rich_clean((string)($_POST['descripcion']??''));$url=trim((string)($_POST['url']??''));
    if($title===''||mb_strlen($title)>180||mb_strlen($desc)>1200)throw new RuntimeException('Revisa el título y la descripción.');
    if($url!==''&&!filter_var($url,FILTER_VALIDATE_URL))throw new RuntimeException('Enlace inválido.');
    if($url!==''&&!in_array(strtolower((string)parse_url($url,PHP_URL_SCHEME)),['https','http'],true))throw new RuntimeException('Solo enlaces HTTP o HTTPS.');
@@ -52,7 +53,7 @@ $editId=(int)($_GET['item']??0);$editing=null;foreach($items as $i)if((int)$i['i
 ?>
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Comunidad escolar · Familias</title><link rel="stylesheet" href="assets/admin/css/patrona-panel.css"><style>
 .family-shell{display:grid;grid-template-columns:235px 1fr;min-height:100vh;background:#f3f6fb}.family-side{background:#102b50;color:white;padding:25px 18px}.family-side a{display:block;color:#d8e8ff;text-decoration:none;padding:12px;border-radius:8px}.family-side a:hover{background:#214a7b}.family-main{padding:32px;max-width:1100px;width:100%;margin:auto}.family-card{background:white;border:1px solid #dce4ee;border-radius:12px;padding:24px;margin:22px 0;box-shadow:0 5px 20px #102d5208}.family-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.family-field{display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:600}.family-field input,.family-field select,.family-field textarea{padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;font-weight:400}.family-btn{background:#1765b8;color:white;border:0;border-radius:7px;padding:11px 17px;cursor:pointer;text-decoration:none;display:inline-block}.family-row{display:flex;align-items:center;gap:16px;border-bottom:1px solid #e5eaf0;padding:14px 0}.family-row img{width:100px;height:75px;object-fit:cover}.family-row form{margin-left:auto}@media(max-width:700px){.family-shell{grid-template-columns:1fr}.family-side{padding:12px}.family-main{padding:16px}.family-grid{grid-template-columns:1fr}.family-row{flex-wrap:wrap}}
-</style></head><body><div class="family-shell"><aside class="family-side"><h3>Patrona de Lourdes</h3><p>La Florida · Panel CMS</p><a href="admin.php?panel=contenedores">← Contenedores</a><a href="index.php#comunidad-escolar" target="_blank" rel="noopener">Ver sitio público</a><hr><strong>Comunidad escolar</strong><a href="editar_comunidad.php" aria-current="page">Familias</a><p style="font-size:12px;color:#b5c9e5">Estudiantes y Actividades se incorporarán después.</p></aside><main class="family-main"><small>GESTIÓN DEL SITIO / COMUNIDAD ESCOLAR</small><h1>Familias</h1><p>Administra las tarjetas de la pestaña Familias. No se publicará hasta que agregues contenido visible.</p>
+</style><?php patrona_rich_assets(); ?></head><body><div class="family-shell"><aside class="family-side"><h3>Patrona de Lourdes</h3><p>La Florida · Panel CMS</p><a href="admin.php?panel=contenedores">← Contenedores</a><a href="index.php#comunidad-escolar" target="_blank" rel="noopener">Ver sitio público</a><hr><strong>Comunidad escolar</strong><a href="editar_comunidad.php" aria-current="page">Familias</a><p style="font-size:12px;color:#b5c9e5">Estudiantes y Actividades se incorporarán después.</p></aside><main class="family-main"><small>GESTIÓN DEL SITIO / COMUNIDAD ESCOLAR</small><h1>Familias</h1><p>Administra las tarjetas de la pestaña Familias. No se publicará hasta que agregues contenido visible.</p>
 <?php if($error):?><p style="color:#b42318"><?=fam_e($error)?></p><?php endif;?><?php if($notice):?><p style="color:#187344"><?=fam_e($notice)?></p><?php endif;?>
 <?php if($sid):?><section class="family-card"><h2><?= $editing?'Editar contenido':'Agregar contenido para Familias' ?></h2><form method="post" enctype="multipart/form-data"><input type="hidden" name="csrf" value="<?=fam_e($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="save"><input type="hidden" name="id_item" value="<?=(int)($editing['id_item']??0)?>"><div class="family-grid">
 <label class="family-field">Título<input name="titulo" required maxlength="180" value="<?=fam_e($editing['titulo']??'')?>"></label>
@@ -60,7 +61,7 @@ $editId=(int)($_GET['item']??0);$editing=null;foreach($items as $i)if((int)$i['i
 <label class="family-field">Enlace opcional<input name="url" type="url" placeholder="https://..." value="<?=fam_e($editing['url']??'')?>"></label>
 <label class="family-field">Orden<input type="number" name="orden" min="1" value="<?=(int)($editing['orden']??count($items)+1)?>"></label>
 <label class="family-field">Visibilidad<select name="visible"><option value="si" <?=($editing['visible']??'si')==='si'?'selected':''?>>Visible</option><option value="no" <?=($editing['visible']??'si')==='no'?'selected':''?>>Oculto</option></select></label>
-<label class="family-field" style="grid-column:1/-1">Descripción<textarea name="descripcion" maxlength="1200" rows="4"><?=fam_e($editing['descripcion']??'')?></textarea></label></div>
+<label class="family-field" style="grid-column:1/-1">Descripción<textarea name="descripcion" maxlength="1200" rows="4" data-rich-editor><?=fam_e($editing['descripcion']??'')?></textarea></label></div>
 <?php if(!empty($editing['imagen'])):?><p>Imagen actual: <img src="<?=fam_e($editing['imagen'])?>" alt="" style="max-width:170px;max-height:110px"></p><?php endif;?>
 <p><button class="family-btn" type="submit">Guardar contenido</button> <?php if($editing):?><a href="editar_comunidad.php">Cancelar</a><?php endif;?></p></form></section>
 <section class="family-card"><h2>Contenidos de Familias (<?=count($items)?>)</h2><?php if(!$items):?><p>Aún no hay contenido registrado.</p><?php endif;?>
