@@ -107,7 +107,7 @@ function patrona_cms_render(array $s): void {
                     <?php if(!empty($person['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$person['imagen'])?>" alt="<?=patrona_e((string)$person['titulo'])?>"><?php endif;?>
                     <div><span class="patrona-kicker">COORDINACIÓN DEL CICLO</span><h3><?=patrona_e((string)$person['titulo'])?></h3><strong><?=patrona_e((string)($person['subtitulo']??'Coordinación'))?></strong>
                     <?php $email=(string)($person['url']??'');if(filter_var($email,FILTER_VALIDATE_EMAIL)):?><a href="mailto:<?=patrona_e($email)?>"><?=patrona_e($email)?></a><?php endif;?>
-                    <?php if(!empty($person['descripcion'])):?><div class="patrona-rich-text"><?=patrona_rich_clean((string)$person['descripcion'])?></div><?php endif;?></div>
+                    </div>
                   </article>
                 <?php endforeach;?>
                 <?php if($teachers):?><div class="patrona-team-carousel-heading"><h3 class="patrona-team-subheading">Profesores jefes y equipo docente</h3><div class="patrona-team-carousel-controls"><button type="button" data-team-prev aria-label="Profesores anteriores">‹</button><button type="button" data-team-next aria-label="Profesores siguientes">›</button></div></div><div class="patrona-team-viewport" data-team-viewport tabindex="0" aria-label="Carrusel de profesores"><div class="patrona-team-grid" data-team-track>
