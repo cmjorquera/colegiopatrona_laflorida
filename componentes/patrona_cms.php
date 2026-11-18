@@ -151,7 +151,7 @@ function patrona_cms_render(array $s): void {
         ?>
         <section class="section patrona-news" id="noticias-home"><div class="wrap">
           <div class="patrona-news-heading"><div><span class="patrona-kicker">ACTUALIDAD ESCOLAR</span><h2>Noticias</h2></div>
-          <?php if(count($items)>3):?><div class="patrona-news-controls"><button type="button" data-news-prev aria-label="Noticias anteriores">‹</button><button type="button" data-news-next aria-label="Noticias siguientes">›</button></div><?php endif;?></div>
+          <?php if(count($items)>4):?><div class="patrona-news-controls"><button type="button" data-news-prev aria-label="Noticias anteriores">‹</button><button type="button" data-news-next aria-label="Noticias siguientes">›</button></div><?php endif;?></div>
           <div class="patrona-news-viewport" tabindex="0" aria-label="Carrusel de noticias">
             <div class="patrona-news-grid" data-news-track>
             <?php foreach($items as $item):
@@ -217,11 +217,34 @@ function patrona_cms_render(array $s): void {
     }
     if(str_contains($name,'podcast')){
         $episodes=array_values(array_filter($items,static fn(array $i):bool=>trim((string)($i['url']??''))!==''));
-        if(!$episodes)return;
-        ?><section class="section wrap patrona-podcast" id="podcast-home"><h2><?=patrona_e((string)($config['titulo_bloque']??'Podcast'))?></h2><div class="patrona-cms-grid">
-        <?php foreach($episodes as $episode):$url=patrona_cms_url($episode['url']??'');if($url==='#')continue;?>
-        <article class="patrona-cms-card"><?php if(!empty($episode['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$episode['imagen'])?>" alt=""><?php endif;?><h3><?=patrona_e((string)($episode['titulo']??''))?></h3><p><?=patrona_e(strip_tags(html_entity_decode((string)($episode['descripcion']??''),ENT_QUOTES|ENT_HTML5,'UTF-8')))?></p><a href="<?=patrona_e($url)?>" target="_blank" rel="noopener noreferrer">Escuchar episodio →</a></article>
-        <?php endforeach;?></div></section><?php return;
+        $instagramUrl=patrona_cms_url($config['instagram_url']??'');
+        $instagramUser=trim((string)($config['instagram_usuario']??''));
+        $instagramPhotos=array_values(array_filter($items,static fn(array $i):bool=>($i['etiqueta']??'')==='instagram' && !empty($i['imagen'])));
+        if(!$episodes && !$instagramPhotos && $instagramUrl==='#')return;
+        ?><section class="section patrona-podcast" id="podcast-home"><div class="wrap patrona-podcast-layout">
+          <div class="patrona-podcast-audio">
+            <span class="patrona-podcast-eyebrow">Escúchanos en</span>
+            <div class="patrona-podcast-header"><h2><span aria-hidden="true">●</span> <?=patrona_e((string)($config['titulo_bloque']??'Podcast del colegio'))?></h2>
+              <?php if(!empty($config['spotify_url'])):$spotifyUrl=patrona_cms_url($config['spotify_url']);if($spotifyUrl!=='#'):?><a class="patrona-podcast-spotify" href="<?=patrona_e($spotifyUrl)?>" target="_blank" rel="noopener noreferrer">Escuchar en Spotify ↗</a><?php endif;endif;?>
+            </div>
+            <div class="patrona-podcast-episodes">
+            <?php foreach($episodes as $episode):if(($episode['etiqueta']??'')==='instagram')continue;$url=patrona_cms_url($episode['url']??'');if($url==='#')continue;?>
+              <a class="patrona-podcast-episode" href="<?=patrona_e($url)?>" target="_blank" rel="noopener noreferrer">
+                <span class="patrona-podcast-icon" aria-hidden="true">♫</span>
+                <span><strong><?=patrona_e((string)($episode['titulo']??''))?></strong><small><?=patrona_e(strip_tags(html_entity_decode((string)($episode['descripcion']??''),ENT_QUOTES|ENT_HTML5,'UTF-8')))?></small></span>
+                <span class="patrona-podcast-out" aria-hidden="true">↗</span>
+              </a>
+            <?php endforeach;?></div>
+          </div>
+          <div class="patrona-podcast-social">
+            <div class="patrona-social-header"><div><h2>Síguenos en Instagram</h2><?php if($instagramUser!==''):?><strong><?=patrona_e('@'.ltrim($instagramUser,'@'))?></strong><?php endif;?></div>
+              <?php if($instagramUrl!=='#'):?><a href="<?=patrona_e($instagramUrl)?>" target="_blank" rel="noopener noreferrer">Ver Instagram ↗</a><?php endif;?>
+            </div>
+            <?php if($instagramPhotos):?><div class="patrona-social-grid">
+              <?php foreach(array_slice($instagramPhotos,0,6) as $photo):?><a href="<?=patrona_e($instagramUrl!=='#'?$instagramUrl:'#podcast-home')?>" <?= $instagramUrl!=='#'?'target="_blank" rel="noopener noreferrer"':'' ?>><img loading="lazy" src="<?=patrona_e((string)$photo['imagen'])?>" alt="<?=patrona_e((string)($photo['titulo']??'Publicación de Instagram'))?>"></a><?php endforeach;?>
+            </div><?php else:?><div class="patrona-social-placeholder"><span aria-hidden="true">◎</span><p>Las publicaciones de Instagram se mostrarán aquí cuando se configuren desde el administrador.</p></div><?php endif;?>
+          </div>
+        </div></section><?php return;
     }
     if(str_contains($name,'estadisticas')||str_contains($name,'numeros')){
         if(!$items)return;
@@ -230,7 +253,7 @@ function patrona_cms_render(array $s): void {
         <div class="patrona-stats-grid">
         <?php foreach($items as $i=>$stat):?><article class="patrona-stat-card">
           <?php if(!empty($stat['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$stat['imagen'])?>" alt=""><?php endif;?>
-          <div class="patrona-stat-info"><strong><?=patrona_e((string)($stat['etiqueta']??''))?></strong><h3><?=patrona_e((string)($stat['titulo']??''))?></h3><p><?=patrona_e((string)($stat['descripcion']??''))?></p></div>
+          <div class="patrona-stat-info"><strong data-stat-count><?=patrona_e((string)($stat['etiqueta']??''))?></strong><h3><?=patrona_e((string)($stat['titulo']??''))?></h3><p><?=patrona_e((string)($stat['descripcion']??''))?></p></div>
         </article><?php endforeach;?></div></div></section><?php return;
     }
     if (!$items) return;
