@@ -32,12 +32,40 @@ if($quickItems){
  unset($block);
 }
 $headerItems=$sectionsByName['header_principal']['items']??[];
-if($headerItems){
- $portada['menu']=array_map(static fn(array $i):array=>[
- 'texto'=>(string)($i['titulo']??''),
- 'url'=>patrona_cms_url($i['url']??'')
- ],$headerItems);
+// La navegación pública utiliza la jerarquía real menus / sub_menus de San Pablo.
+$publicMenus=[];
+if(!empty($site['menus'])){
+    $submenusById=[];
+    foreach(($site['subs']??[]) as $sub){
+        $parentId=(int)($sub['id_menu']??0);
+        $submenusById[$parentId][]=[
+            'texto'=>(string)($sub['nombre']??''),
+            'url'=>patrona_cms_url($sub['url']??'')
+        ];
+    }
+    foreach($site['menus'] as $menu){
+        $id=(int)($menu['id_menu']??0);
+        $publicMenus[]=[
+            'texto'=>(string)($menu['nombre']??''),
+            'url'=>patrona_cms_url($menu['url']??''),
+            'children'=>$submenusById[$id]??[]
+        ];
+    }
+} elseif($headerItems){
+    // Compatibilidad con los enlaces anteriores si aún no hay menús registrados.
+    $publicMenus=array_map(static fn(array $i):array=>[
+        'texto'=>(string)($i['titulo']??''),
+        'url'=>patrona_cms_url($i['url']??''),
+        'children'=>[]
+    ],$headerItems);
+} else {
+    $publicMenus=array_map(static fn(array $item):array=>[
+        'texto'=>(string)($item['texto']??''),
+        'url'=>(string)($item['url']??'#'),
+        'children'=>[]
+    ],$portada['menu']??[]);
 }
+$portada['menu']=$publicMenus;
 // El bloque superior es la portada original aprobada visualmente.
 // El CMS empieza DESPUÉS de los cuatro accesos rápidos.
 $top=array_values(array_filter($portada['contenedores']??[],fn(array $c):bool=>(($c['clave']??'')==='hero'&&$showHero)||(($c['clave']??'')==='accesos'&&$showQuick)));
@@ -49,7 +77,7 @@ usort($top,static fn(array $a,array $b):int=>($a['orden']??0)<=>($b['orden']??0)
 <title>Colegio Patrona de Lourdes | La Florida</title>
 <link rel="stylesheet" href="assets/css/patrona.css?v=5">
 <link rel="stylesheet" href="assets/css/patrona-cms-v6.css?v=7">
-<link rel="stylesheet" href="assets/css/patrona-equipo.css?v=8">
+<link rel="stylesheet" href="assets/css/patrona-equipo.css?v=8">\n<link rel="stylesheet" href="assets/css/patrona-nav.css?v=1">
 <style>
 .brand-name{font-size:13px;font-weight:800;color:#153c6b;letter-spacing:.03em}.patrona-cms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
 .patrona-cms-card{border:1px solid #e3e7ed;border-radius:12px;padding:20px;overflow:hidden}
@@ -57,7 +85,7 @@ usort($top,static fn(array $a,array $b):int=>($a['orden']??0)<=>($b['orden']??0)
 </style></head><body>
 <?php if($showTopbar): ?><div class="topline"><div class="wrap"><span>COLEGIO PATRONA DE LOURDES · LA FLORIDA</span><span><?=patrona_e((string)($topbarConfig['texto']??'Sitio en desarrollo'))?></span></div></div><?php endif; ?>
 <?php if($showHeader): ?><header class="site-header"><div class="wrap nav"><a class="brand" href="#inicio" aria-label="Inicio Colegio Patrona de Lourdes"><span class="brand-name"><?=patrona_e((string)($headerConfig['titulo_bloque']??'COLEGIO PATRONA DE LOURDES'))?></span><span class="brand-sede">LA FLORIDA</span></a>
-<nav aria-label="Navegación principal"><ul><?php foreach (($portada['menu']??[]) as $m): ?><li><a href="<?= patrona_e((string)$m['url']) ?>"><?= patrona_e((string)$m['texto']) ?></a></li><?php endforeach; ?></ul></nav>
+<nav class="patrona-public-nav" aria-label="Navegación principal"><ul><?php foreach (($portada['menu']??[]) as $m): $children=$m['children']??[]; ?><li class="<?= $children?'has-submenu':'' ?>"><a href="<?=patrona_e((string)$m['url'])?>"><?=patrona_e((string)$m['texto'])?></a><?php if($children):?><button type="button" class="patrona-nav-expand" aria-label="Desplegar <?=patrona_e((string)$m['texto'])?>" aria-expanded="false">⌄</button><ul class="patrona-nav-submenu"><?php foreach($children as $child):?><li><a href="<?=patrona_e((string)$child['url'])?>"><?=patrona_e((string)$child['texto'])?></a></li><?php endforeach;?></ul><?php endif;?></li><?php endforeach;?></ul></nav>
 <a class="nav-cta" href="<?=patrona_e(patrona_cms_url($headerConfig['enlace']??'#contacto'))?>"><?=patrona_e((string)($headerConfig['boton_texto']??'Contáctanos'))?> ↗</a></div></header><?php endif; ?>
 <main>
 <?php foreach($top as $c) patrona_render($c); ?>
@@ -90,5 +118,5 @@ $contactUrl=patrona_cms_url($headerConfig['url_contacto_flotante']??'#contacto')
 <?php patrona_render_modal_institucional($sections); ?>
 <?php if($showFooter): ?><footer id="contacto"><div class="wrap footer-row"><strong>COLEGIO PATRONA DE LOURDES <small>LA FLORIDA</small></strong><span><?=patrona_e((string)($footerConfig['texto']??'Portada en desarrollo · Contenido institucional administrado desde el CMS'))?></span></div></footer><?php endif; ?>
 <script defer src="assets/js/patrona-cms-v6.js?v=3"></script>
-<script defer src="assets/js/patrona-equipo.js?v=8"></script>
+<script defer src="assets/js/patrona-equipo.js?v=8"></script>\n<script defer src="assets/js/patrona-nav.js?v=1"></script>
 </body></html>
