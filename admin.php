@@ -72,6 +72,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         header('Location: admin.php?panel=contenedores');
         exit;
+    } elseif (($_POST['accion'] ?? '') === 'guardar_menu_publico' && !empty($_SESSION['patrona_admin_id'])) {
+        try {
+            $db=db();$id=(int)($_POST['id_menu']??0);$nombre=trim((string)($_POST['nombre']??''));$url=trim((string)($_POST['url']??''));$estado=isset($_POST['estado'])?1:0;
+            if($nombre===''||mb_strlen($nombre)>180||mb_strlen($url)>255)throw new RuntimeException('Datos inválidos.');
+            if($url!=='' && $url!=='#' && !preg_match('~^(https?://|/|#|[a-zA-Z0-9_])~',$url))throw new RuntimeException('URL no válida.');
+            if($id>0){$q=$db->prepare('UPDATE menus SET nombre=?,url=?,estado=? WHERE id_menu=?');$q->bind_param('ssii',$nombre,$url,$estado,$id);}
+            else{$orden=(int)$db->query('SELECT COALESCE(MAX(orden),0)+1 AS orden FROM menus')->fetch_assoc()['orden'];$q=$db->prepare('INSERT INTO menus(nombre,url,icono,orden,estado) VALUES (?,?,"",?,?)');$q->bind_param('ssii',$nombre,$url,$orden,$estado);}
+            $q->execute();$_SESSION['patrona_notice']='Menú público guardado.';
+        }catch(Throwable $e){error_log('Patrona guardar menu: '.$e->getMessage());$_SESSION['patrona_notice']='No fue posible guardar el menú. Comprueba el esquema de menus.';}
+        header('Location: admin.php?panel=menus');exit;
+    } elseif (($_POST['accion'] ?? '') === 'guardar_submenu_publico' && !empty($_SESSION['patrona_admin_id'])) {
+        try{
+            $db=db();$id=(int)($_POST['id_sub_menu']??0);$padre=(int)($_POST['id_menu']??0);$nombre=trim((string)($_POST['nombre']??''));$url=trim((string)($_POST['url']??''));$estado=isset($_POST['estado'])?1:0;
+            if($padre<1||$nombre===''||mb_strlen($nombre)>180||mb_strlen($url)>255)throw new RuntimeException('Datos inválidos.');
+            if($url!=='' && $url!=='#' && !preg_match('~^(https?://|/|#|[a-zA-Z0-9_])~',$url))throw new RuntimeException('URL no válida.');
+            $q=$db->prepare('SELECT id_menu FROM menus WHERE id_menu=?');$q->bind_param('i',$padre);$q->execute();if(!$q->get_result()->fetch_assoc())throw new RuntimeException('Menú padre no existe.');
+            if($id>0){$q=$db->prepare('UPDATE sub_menus SET id_menu=?,nombre=?,url=?,estado=? WHERE id_sub_menu=?');$q->bind_param('issii',$padre,$nombre,$url,$estado,$id);}
+            else{$o=$db->prepare('SELECT COALESCE(MAX(orden),0)+1 AS orden FROM sub_menus WHERE id_menu=?');$o->bind_param('i',$padre);$o->execute();$orden=(int)$o->get_result()->fetch_assoc()['orden'];$q=$db->prepare('INSERT INTO sub_menus(id_menu,nombre,url,icono,orden,estado) VALUES (?,?,?,"",?,?)');$q->bind_param('issii',$padre,$nombre,$url,$orden,$estado);}
+            $q->execute();$_SESSION['patrona_notice']='Submenú guardado.';
+        }catch(Throwable $e){error_log('Patrona guardar submenu: '.$e->getMessage());$_SESSION['patrona_notice']='No fue posible guardar el submenú.';}
+        header('Location: admin.php?panel=menus');exit;
     } elseif (($_POST['accion'] ?? '') === 'ingresar') {
         try {
             $db = db();
@@ -205,6 +226,46 @@ $subsByMenu=[]; foreach($publicSubs as $sub){$subsByMenu[(int)$sub['id_menu']][]
 <?php if (!$sections): ?><tr><td colspan="7">No hay contenedores registrados.</td></tr><?php endif; ?>
 </tbody></table></div>
 <div class="card-footer">Los cambios de visibilidad y estado se guardan en MySQL. La edición de la portada y los sellos ya está disponible; los demás editores siguen en desarrollo.</div>
+</section>
+<?php else: ?>
+<section class="content-card patrona-menu-admin">
+  <div class="card-header"><div><h2>Menú principal</h2><p>Expande cada menú para administrar sus submenús.</p></div><span class="count"><?=count($publicMenus)?> menús · <?=count($publicSubs)?> submenús</span></div>
+  <div class="patrona-menu-list">
+  <?php foreach($publicMenus as $menu):$children=$subsByMenu[(int)$menu['id_menu']]??[];?>
+    <details class="patrona-menu-entry">
+      <summary><span class="menu-order"><?=(int)$menu['orden']?></span><strong><?=h((string)$menu['nombre'])?></strong><span class="menu-count"><?=count($children)?> submenús</span><span class="menu-status"><?=((int)$menu['estado']===1)?'Activo':'Inactivo'?></span></summary>
+      <form class="menu-editor-form" method="post">
+        <input type="hidden" name="csrf" value="<?=h($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="guardar_menu_publico"><input type="hidden" name="id_menu" value="<?=(int)$menu['id_menu']?>">
+        <label>Nombre<input name="nombre" required maxlength="180" value="<?=h((string)$menu['nombre'])?>"></label>
+        <label>Enlace<input name="url" maxlength="255" value="<?=h((string)$menu['url'])?>"></label>
+        <label class="menu-check"><input type="checkbox" name="estado" value="1" <?=((int)$menu['estado']===1)?'checked':''?>> Activo</label>
+        <button type="submit">Guardar</button>
+      </form>
+      <div class="patrona-menu-children"><h3>Submenús</h3>
+        <?php foreach($children as $sub):?>
+          <form class="menu-editor-form" method="post">
+            <input type="hidden" name="csrf" value="<?=h($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="guardar_submenu_publico"><input type="hidden" name="id_menu" value="<?=(int)$menu['id_menu']?>"><input type="hidden" name="id_sub_menu" value="<?=(int)$sub['id_sub_menu']?>">
+            <label>Nombre<input name="nombre" required maxlength="180" value="<?=h((string)$sub['nombre'])?>"></label>
+            <label>Enlace<input name="url" maxlength="255" value="<?=h((string)$sub['url'])?>"></label>
+            <label class="menu-check"><input type="checkbox" name="estado" value="1" <?=((int)$sub['estado']===1)?'checked':''?>> Activo</label><button type="submit">Guardar</button>
+          </form>
+        <?php endforeach;?>
+        <form class="menu-editor-form add-sub" method="post">
+          <input type="hidden" name="csrf" value="<?=h($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="guardar_submenu_publico"><input type="hidden" name="id_menu" value="<?=(int)$menu['id_menu']?>">
+          <label>Nuevo submenú<input name="nombre" required maxlength="180" placeholder="Nombre"></label>
+          <label>Enlace<input name="url" maxlength="255" placeholder="#seccion o URL"></label>
+          <label class="menu-check"><input type="checkbox" name="estado" value="1" checked> Activo</label><button type="submit">Agregar</button>
+        </form>
+      </div>
+    </details>
+  <?php endforeach;?>
+  </div>
+  <form class="menu-editor-form add-menu" method="post">
+    <input type="hidden" name="csrf" value="<?=h($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="guardar_menu_publico">
+    <label>Nuevo menú<input name="nombre" required maxlength="180" placeholder="Nombre"></label>
+    <label>Enlace<input name="url" maxlength="255" placeholder="#seccion o URL"></label>
+    <label class="menu-check"><input type="checkbox" name="estado" value="1" checked> Activo</label><button type="submit">Agregar menú</button>
+  </form>
 </section>
 <?php endif; ?>
 </main></div></div><script defer src="assets/admin/js/patrona-sidebar.js?v=1"></script></body></html>
