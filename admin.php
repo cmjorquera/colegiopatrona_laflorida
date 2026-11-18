@@ -182,7 +182,8 @@ $subsByMenu=[]; foreach($publicSubs as $sub){$subsByMenu[(int)$sub['id_menu']][]
 </head>
 <body>
 <div class="admin-shell">
-<aside class="admin-sidebar">\n  <div class="sidebar-watermark" aria-hidden="true"></div>
+<aside class="admin-sidebar">
+  <div class="sidebar-watermark" aria-hidden="true"></div>
   <div class="sidebar-brand"><span class="sidebar-brand-icon"><img src="assets/imagenes/LOGO-COLEGIO--Sin-fondo.png" alt="" onerror="this.style.display='none'"></span><span><strong>Patrona de Lourdes</strong><small>La Florida · Panel CMS</small></span></div>
   <nav class="sidebar-nav" aria-label="Navegación administrativa">
     <span class="nav-group-label">PRINCIPAL</span>
