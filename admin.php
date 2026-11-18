@@ -102,12 +102,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['accion'] ?? '') === 'ingre
 }
 $logged = !empty($_SESSION['patrona_admin_id']);
 $sections = [];
+$publicMenus = [];
+$publicSubs = [];
 if ($logged) {
     try {
         $db = db();
         $sql = "SELECT id_seccion,nombre_interno,titulo_admin,tipo_seccion,visible,estado,editable,orden
                 FROM seccion WHERE id_institucion=2 ORDER BY orden,id_seccion";
         $sections = $db->query($sql)->fetch_all(MYSQLI_ASSOC);
+        try { $publicMenus=$db->query('SELECT id_menu,nombre,url,icono,orden,estado FROM menus ORDER BY orden,id_menu')->fetch_all(MYSQLI_ASSOC); $publicSubs=$db->query('SELECT id_sub_menu,id_menu,nombre,url,orden,estado FROM sub_menus ORDER BY orden,id_sub_menu')->fetch_all(MYSQLI_ASSOC); } catch(Throwable $err){ error_log('Patrona menu: '.$err->getMessage()); }
     } catch (Throwable $e) {
         error_log('Patrona CMS listado: ' . $e->getMessage());
         $error = 'No se pudo cargar el listado. Revisa la conexión MySQL.';
@@ -144,7 +147,8 @@ $activeCount = count(array_filter($sections, static fn($s) => ($s['estado'] ?? '
 $notice = (string)($_SESSION['patrona_notice'] ?? '');
 unset($_SESSION['patrona_notice']);
 $panel = (string)($_GET['panel'] ?? 'contenedores');
-if (!in_array($panel, ['dashboard','contenedores'], true)) { $panel = 'contenedores'; }
+if (!in_array($panel, ['dashboard','contenedores','menus'], true)) { $panel = 'contenedores'; }
+$subsByMenu=[]; foreach($publicSubs as $sub){$subsByMenu[(int)$sub['id_menu']][]=$sub;}
 ?>
 <!doctype html>
 <html lang="es">
@@ -152,28 +156,33 @@ if (!in_array($panel, ['dashboard','contenedores'], true)) { $panel = 'contenedo
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CMS | Patrona de Lourdes · La Florida</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=2">
+<link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=3">
 </head>
 <body>
 <div class="admin-shell">
-<aside class="admin-sidebar">
+<aside class="admin-sidebar">\n  <div class="sidebar-watermark" aria-hidden="true"></div>
   <div class="sidebar-brand"><span class="sidebar-brand-icon"><img src="assets/imagenes/LOGO-COLEGIO--Sin-fondo.png" alt="" onerror="this.style.display='none'"></span><span><strong>Patrona de Lourdes</strong><small>La Florida · Panel CMS</small></span></div>
-  <nav class="sidebar-nav">
+  <nav class="sidebar-nav" aria-label="Navegación administrativa">
     <span class="nav-group-label">PRINCIPAL</span>
-    <a class="nav-item <?= $panel==='dashboard'?'active':'' ?>" href="admin.php?panel=dashboard"><i class="bi bi-grid-1x2"></i> Inicio</a>
+    <a class="nav-item <?= $panel==='dashboard'?'active':'' ?>" href="admin.php?panel=dashboard"><i class="bi bi-grid-1x2"></i> Dashboard</a>
     <span class="nav-group-label">GESTIÓN DEL SITIO</span>
-    <a class="nav-item <?= $panel==='contenedores'?'active':'' ?>" href="admin.php?panel=contenedores"><i class="bi bi-layers"></i> Contenedores</a>
+    <button class="nav-item sidebar-group-toggle" type="button" aria-expanded="true" aria-controls="sidebar-contenidos"><i class="bi bi-layers"></i> Contenidos del sitio <i class="bi bi-chevron-down nav-chevron"></i></button>
+    <div class="sidebar-subitems" id="sidebar-contenidos"><a class="nav-item <?= $panel==='contenedores'?'active':'' ?>" href="admin.php?panel=contenedores"><i class="bi bi-grid-3x3-gap"></i> Contenedores</a></div>
+    <button class="nav-item sidebar-group-toggle <?= $panel==='menus'?'active':'' ?>" type="button" aria-expanded="true" aria-controls="sidebar-navegacion"><i class="bi bi-signpost-split"></i> Navegación <i class="bi bi-chevron-down nav-chevron"></i></button>
+    <div class="sidebar-subitems" id="sidebar-navegacion"><a class="nav-item <?= $panel==='menus'?'active':'' ?>" href="admin.php?panel=menus"><i class="bi bi-diagram-3"></i> Menú público</a></div>
+    <span class="nav-group-label">SISTEMA</span>
     <a class="nav-item" href="index.php" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Ver sitio público</a>
   </nav>
   <div class="sidebar-bottom"><div class="admin-user"><span class="avatar"><i class="bi bi-person"></i></span><span><strong><?=h((string)($_SESSION['patrona_admin_nombre'] ?? 'Administrador'))?></strong><small>Administrador institucional</small></span></div>
   <form method="post"><input type="hidden" name="csrf" value="<?=h($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="salir"><button class="logout" type="submit"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button></form></div>
 </aside>
 <div class="admin-content">
-<header class="topbar"><span><i class="bi bi-list"></i> Panel de administración <span class="topbar-muted">/ <?= $panel==='dashboard'?'Inicio':'Contenedores del sitio' ?></span></span><a href="index.php" target="_blank" rel="noopener">Ver sitio <i class="bi bi-arrow-up-right"></i></a></header>
+<header class="topbar"><span><i class="bi bi-list"></i> Panel de administración <span class="topbar-muted">/ <?= $panel==='dashboard'?'Inicio':($panel==='menus'?'Menú público':'Contenedores del sitio') ?></span></span><a href="index.php" target="_blank" rel="noopener">Ver sitio <i class="bi bi-arrow-up-right"></i></a></header>
 <main class="admin-main">
-<div class="page-heading"><div><div class="eyebrow">COLEGIO PATRONA DE LOURDES · LA FLORIDA</div><h1><?= $panel==='dashboard'?'Dashboard':'Contenedores del sitio' ?></h1><p><?= $panel==='dashboard'?'Resumen de la administración del sitio web.':'Gestiona la visibilidad y el estado de las secciones de la página.' ?></p></div><span class="section-pill"><i class="bi bi-database-check"></i> MySQL conectado</span></div>
+<div class="page-heading"><div><div class="eyebrow">COLEGIO PATRONA DE LOURDES · LA FLORIDA</div><h1><?= $panel==='dashboard'?'Dashboard':($panel==='menus'?'Menú público':'Contenedores del sitio') ?></h1><p><?= $panel==='dashboard'?'Resumen de la administración del sitio web.':($panel==='menus'?'Administra menús y submenús del encabezado.':'Gestiona la visibilidad y el estado de las secciones de la página.') ?></p></div><span class="section-pill"><i class="bi bi-database-check"></i> MySQL conectado</span></div>
 <?php if ($error): ?><div class="alert error"><?=h($error)?></div><?php endif; ?>
 <?php if ($notice): ?><div class="alert"><?=h($notice)?></div><?php endif; ?>
+<?php if($panel!=='menus'): ?>
 <section class="kpi-grid">
 <div class="kpi-card"><span class="kpi-icon blue"><i class="bi bi-layers"></i></span><div><small>Total contenedores</small><strong><?= $total ?></strong><span>Secciones registradas</span></div></div>
 <div class="kpi-card"><span class="kpi-icon green"><i class="bi bi-eye"></i></span><div><small>Visibles</small><strong><?= $visibleCount ?></strong><span>Mostrados en el CMS</span></div></div>
@@ -197,4 +206,5 @@ if (!in_array($panel, ['dashboard','contenedores'], true)) { $panel = 'contenedo
 </tbody></table></div>
 <div class="card-footer">Los cambios de visibilidad y estado se guardan en MySQL. La edición de la portada y los sellos ya está disponible; los demás editores siguen en desarrollo.</div>
 </section>
-</main></div></div></body></html>
+<?php endif; ?>
+</main></div></div><script defer src="assets/admin/js/patrona-sidebar.js?v=1"></script></body></html>
