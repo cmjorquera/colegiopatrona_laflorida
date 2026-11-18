@@ -1,0 +1,38 @@
+
+/* Estructura de San Pablo adaptada al branding Patrona de Lourdes. */
+.admin-sidebar{background:linear-gradient(180deg,#226fba 0%,#125191 45%,#0b396b 100%);isolation:isolate}
+.sidebar-watermark{position:absolute;bottom:82px;left:2%;width:96%;height:230px;background:url('../../imagenes/LOGO-COLEGIO--Sin-fondo.png') center center/contain no-repeat;opacity:.09;pointer-events:none;z-index:-1;filter:grayscale(1) brightness(4)}
+.sidebar-brand,.sidebar-nav,.sidebar-bottom{position:relative;z-index:1}
+.sidebar-brand{background:#267bce}
+.sidebar-brand-icon{background:rgba(255,255,255,.1)}
+.sidebar-brand-icon img{max-width:45px;max-height:45px}
+.sidebar-nav{overflow-y:auto;scrollbar-width:thin;scrollbar-color:#ffffff35 transparent}
+.sidebar-group-toggle{width:100%;border:0;text-align:left;background:transparent;font:inherit;cursor:pointer}
+.nav-chevron{margin-left:auto!important;font-size:12px!important;transition:transform .2s}
+.sidebar-group-toggle[aria-expanded="false"] .nav-chevron{transform:rotate(-90deg)}
+.sidebar-subitems{padding-left:13px;margin-bottom:5px;border-left:2px solid #71b1ec55;margin-left:20px}
+.sidebar-subitems[hidden]{display:none!important}
+.sidebar-subitems .nav-item{font-size:13px;padding:9px 10px}
+.nav-item.active{background:#ffffff30;box-shadow:inset 3px 0 0 #f9be37}
+.patrona-menu-admin .patrona-menu-list{padding:10px 20px}
+.patrona-menu-entry{border:1px solid #e2e8f0;border-radius:10px;margin:10px 0;overflow:hidden;background:#fff}
+.patrona-menu-entry>summary{padding:16px;display:flex;align-items:center;gap:22px;cursor:pointer;background:#fbfcff;list-style:none}
+.patrona-menu-entry>summary::-webkit-details-marker{display:none}
+.patrona-menu-entry>summary::after{content:'⌄';margin-left:auto;font-size:19px;color:#6b87a7}
+.patrona-menu-entry[open]>summary::after{transform:rotate(180deg)}
+.patrona-menu-entry>summary strong{font-size:14px;color:#0e3157}
+.menu-order{min-width:18px;font-weight:700;color:#6281a4}
+.menu-count{border-radius:6px;background:#eef5fd;color:#2469a4;padding:5px 9px;font-size:12px}
+.menu-status{margin-left:auto;font-size:12px;color:#26824c;font-weight:700}
+.menu-editor-form{display:flex;align-items:end;flex-wrap:wrap;gap:12px;padding:14px 18px;border-top:1px solid #eef0f4;background:#fff}
+.menu-editor-form label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#58708b;flex:1;min-width:165px}
+.menu-editor-form input:not([type="checkbox"]){width:100%;border:1px solid #cbd6e3;border-radius:7px;padding:9px;font:inherit;color:#193b60}
+.menu-editor-form .menu-check{flex:0 0 auto;min-width:90px;flex-direction:row;align-items:center;gap:8px;padding-bottom:8px}
+.menu-editor-form button{background:#10629f;color:white;border:0;border-radius:8px;padding:10px 15px;font-size:13px;font-weight:700}
+.menu-editor-form button:hover{background:#0c4778}
+.patrona-menu-children{padding:8px 18px 16px;background:#f5f8fc}
+.patrona-menu-children h3{font-size:15px;margin:8px 0;color:#0b315b}
+.patrona-menu-children .menu-editor-form{margin:8px 0;border:1px solid #e5ebf3;border-radius:9px}
+.patrona-menu-children .add-sub,.add-menu{background:#f0f6fd}
+.add-menu{margin:0 20px 24px;border-radius:9px;border:1px dashed #a0c3e5}
+@media(max-width:700px){.sidebar-watermark{display:none}.patrona-menu-admin .patrona-menu-list{padding:8px}.patrona-menu-entry>summary{gap:8px;flex-wrap:wrap}.menu-status{margin-left:0}.menu-editor-form{padding:12px}}
