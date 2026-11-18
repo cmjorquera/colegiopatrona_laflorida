@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/../includes/rich_editor.php';
 /** Modal institucional automático. Solo contenido publicado en el CMS. */
 function patrona_render_modal_institucional(array $sections): void {
     $section=null;
@@ -15,7 +16,7 @@ function patrona_render_modal_institucional(array $sections): void {
     $image=trim((string)($item['imagen']??''));
     $url=patrona_cms_url($item['url']??'');
     if($title===''&&$description===''&&$image==='')return;
-    $description=trim(strip_tags(html_entity_decode($description,ENT_QUOTES|ENT_HTML5,'UTF-8')));
+
     ?>
     <div id="patrona-modal-institucional" class="pm-backdrop" hidden>
       <section class="pm-dialog" role="dialog" aria-modal="true" aria-labelledby="pm-modal-title" tabindex="-1">
@@ -25,7 +26,7 @@ function patrona_render_modal_institucional(array $sections): void {
         <?php endif;?>
         <div class="pm-body">
           <?php if($title!==''):?><h2 id="pm-modal-title"><?=patrona_e($title)?></h2><?php else:?><h2 id="pm-modal-title">Comunicado institucional</h2><?php endif;?>
-          <?php if($description!==''):?><p><?=nl2br(patrona_e($description))?></p><?php endif;?>
+          <?php if($description!==''):?><p><?=patrona_rich_clean((string)($item['descripcion']??''))?></p><?php endif;?>
           <?php if($url!=='#'):?><a class="pm-action" href="<?=patrona_e($url)?>" <?=preg_match('~^https?://~i',$url)?'target="_blank" rel="noopener noreferrer"':''?>>Más información</a><?php endif;?>
         </div>
       </section>
