@@ -73,6 +73,16 @@ function patrona_cms_render(array $s): void {
             'basica_2'=>['Básica','2.º ciclo'],
             'media'=>['Enseñanza','Media']
         ];
+        $courses=[
+            'jardin'=>['PK-A','PK-B','K-A','K-B'],
+            'basica_1'=>['1A','1B','2A','2B','3A','3B','4A','4B'],
+            'basica_2'=>['5A','5B','6A','6B','7A','7B','8A','8B'],
+            'media'=>['1A','1B','2A','2B','3A','3B','4A','4B']
+        ];
+        $courseLabel=static function(string $cycle,string $course):string {
+            if($cycle==='jardin')return str_replace('-','-', $course);
+            return substr($course,0,-1).'º '.substr($course,-1);
+        };
         $grouped=[];
         foreach($items as $item){
             $cycle=trim((string)($item['etiqueta']??''));
@@ -108,14 +118,27 @@ function patrona_cms_render(array $s): void {
                     </div>
                   </article>
                 <?php endforeach;?>
+                <div class="patrona-course-heading"><h3>Cursos</h3><p>Selecciona un curso para conocer a sus profesores.</p></div>
+                <div class="patrona-course-grid" role="group" aria-label="Cursos de <?=patrona_e($names[0].' '.$names[1])?>">
+                  <?php foreach($courses[$key] as $course):?>
+                    <button type="button" class="patrona-course-button" data-course="<?=patrona_e($course)?>" aria-pressed="false">
+                      <strong><?=patrona_e($courseLabel($key,$course))?></strong>
+                      <span><?=patrona_e($key==='jardin'?'JARDÍN':($key==='media'?'MEDIA':'BÁSICO'))?></span>
+                    </button>
+                  <?php endforeach;?>
+                </div>
+                <div class="patrona-course-results" data-course-results hidden>
+                  <h3 class="patrona-course-selected-title" data-course-title></h3>
+                  <p class="patrona-course-empty" data-course-empty hidden>Aún no hay profesores asignados a este curso.</p>
                 <?php if($teachers):?><div class="patrona-team-carousel-heading"><h3 class="patrona-team-subheading">Profesores jefes y equipo docente</h3><div class="patrona-team-carousel-controls"><button type="button" data-team-prev aria-label="Profesores anteriores">‹</button><button type="button" data-team-next aria-label="Profesores siguientes">›</button></div></div><div class="patrona-team-viewport" data-team-viewport tabindex="0" aria-label="Carrusel de profesores"><div class="patrona-team-grid" data-team-track>
-                <?php foreach($teachers as $person):$email=(string)($person['url']??'');?><article class="patrona-team-person">
+                <?php foreach($teachers as $person):$email=(string)($person['url']??'');?><article class="patrona-team-person" data-person-course="<?=patrona_e((string)($person['titulo_linea_1']??''))?>" data-person-role="<?=patrona_e((string)($person['subtitulo']??''))?>">
                   <?php if(!empty($person['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$person['imagen'])?>" alt="<?=patrona_e((string)$person['titulo'])?>"><?php else:?><div class="patrona-team-placeholder" aria-hidden="true">👤</div><?php endif;?>
                   <h4><?=patrona_e((string)$person['titulo'])?></h4><span class="patrona-team-role"><?=patrona_e((string)($person['subtitulo']??'Docente'))?></span>
                   <?php if(filter_var($email,FILTER_VALIDATE_EMAIL)):?><a href="mailto:<?=patrona_e($email)?>"><?=patrona_e($email)?></a><?php endif;?>
                   <?php if(!empty($person['descripcion'])):?><details><summary>Ver información</summary><div class="patrona-rich-text"><?=patrona_rich_clean((string)$person['descripcion'])?></div></details><?php endif;?>
                 </article><?php endforeach;?></div></div><div class="patrona-team-carousel-dots" data-team-dots></div><?php endif;?>
                 <?php endif;?>
+                </div>
               </div>
             <?php endforeach;?>
           </div>
