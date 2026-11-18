@@ -104,7 +104,7 @@ foreach (['primario' => '#F0A000', 'secundario' => '#EF6C00', 'terciario' => '#1
                       </a>
                       <?php
                         // Enlace configurable: sin URL verificada no se atribuye una cuenta ajena a Webnia.
-                        $instagramWebnia = getenv('WEBNIA_INSTAGRAM_URL') ?: '';
+                        $instagramWebnia = 'https://www.instagram.com/webnia_soluciones/';
                         $instagramWebnia = preg_match('~^https://(?:www\\.)?instagram\\.com/[A-Za-z0-9_.]+/?$~', $instagramWebnia) ? $instagramWebnia : '';
                       ?>
                       <?php if($instagramWebnia!==''):?><a class="patrona-social-instagram" href="<?=cms_e($instagramWebnia)?>" target="_blank" rel="noopener noreferrer" title="Instagram de Webnia" aria-label="Instagram de Webnia"><?php else:?><span class="patrona-social-instagram patrona-social-pending" title="Instagram de Webnia: enlace pendiente de configurar" aria-label="Instagram de Webnia pendiente"><?php endif;?>
