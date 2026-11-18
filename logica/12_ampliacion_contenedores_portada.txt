@@ -1,0 +1,16 @@
+AJUSTES DE PORTADA - LA FLORIDA
+
+Se amplió el ancho de noticias, galería, indicadores, comunidad escolar y podcast a un máximo de 1600px con márgenes responsivos.
+
+NOTICIAS: cuatro tarjetas visibles en escritorio ancho; tres en escritorio intermedio, dos en tablet y una en móvil. Avance automático cada 3000 ms, de izquierda a derecha en el contenido; vuelve al inicio al terminar. Pausa al pasar mouse, al enfocar y cuando pestaña está oculta. Respeta preferencias de movimiento reducido. Si hay cuatro o menos noticias en escritorio, no se desplaza hasta que existan más.
+
+ESTADÍSTICAS: animación de conteo cuando los valores numéricos entran en pantalla, conserva sufijos como %. Valores no numéricos se muestran sin animación.
+
+GALERÍA: mosaico más amplio y fotos de mayor tamaño; conserva lightbox.
+
+COMUNIDAD: escenario y tarjetas 3D más amplios; conserva navegación y datos.
+
+PODCAST: diseño a dos columnas estilo Spotify/Instagram. Columna izquierda: enlaces de episodios provenientes de seccion_item. Columna derecha: enlace configurado mediante seccion_config instagram_url, nombre mediante instagram_usuario y hasta seis imágenes de seccion_item con etiqueta instagram. Spotify usa seccion_config spotify_url. Si faltan imágenes, muestra marcador informativo, sin atribuir imágenes ajenas al colegio. Configuración de estas claves pendiente de facilitar en editor administrativo.
+
+Archivos: componentes/patrona_cms.php, assets/css/patrona-cms-v6.css, assets/js/patrona-cms-v6.js, index.php.
+No se alteró esquema de BD ni se ejecutaron migraciones.
