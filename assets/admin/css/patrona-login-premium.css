@@ -32,3 +32,46 @@
 .patrona-webnia-whatsapp{width:46px;height:46px;padding:0;margin-top:9px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#159b65;color:white;box-shadow:0 7px 18px #0c79522b}
 .patrona-webnia-whatsapp:hover{background:#0c7954;transform:translateY(-2px)}
 .patrona-webnia-whatsapp svg{display:block}
+
+/* Login completo en una sola pantalla de escritorio; en pantallas bajas se permite scroll natural. */
+@media (min-width:851px) and (min-height:690px){
+  .admin-login-shell{height:100vh;height:100svh;min-height:0}
+  .admin-login-brand,.admin-login-content{min-height:0}
+  .admin-login-brand{padding:clamp(24px,3.3vh,45px) clamp(38px,4.2vw,72px)}
+  .admin-login-intro{margin:clamp(12px,2vh,25px) 0}
+  .admin-login-brand h1{font-size:clamp(38px,3.6vw,59px);line-height:1.04;margin-bottom:11px}
+  .admin-login-brand .admin-login-eyebrow{margin-bottom:13px}
+  .admin-login-feature-grid{margin-top:clamp(14px,2vh,24px);row-gap:13px}
+  .admin-login-feature-icon{width:40px;height:40px;flex-basis:40px;font-size:21px}
+  .admin-login-brand-bottom p{margin-top:9px;font-size:10px}
+  .admin-login-content{padding:12px clamp(24px,3vw,45px)}
+  .admin-login-content-inner{max-width:420px}
+  .admin-login-platform{padding:11px 15px;margin-bottom:10px}
+  .admin-login-institution-logo-wrap{height:52px;width:95px;min-width:95px}
+  .admin-login-card{padding:clamp(18px,2.2vh,26px) 30px}
+  .admin-login-card .admin-login-eyebrow{margin-bottom:7px}
+  .admin-login-card h2{font-size:29px;margin-bottom:6px}
+  .admin-login-subtitle{font-size:12px;margin-bottom:15px;line-height:1.55}
+  .admin-login-field{margin-bottom:11px}
+  .admin-login-field label{font-size:11px;margin-bottom:5px}
+  .admin-login-field input{min-height:42px;padding:9px 12px;font-size:13px}
+  .admin-login-password button{height:38px;width:40px;top:2px}
+  .admin-login-password-actions{margin:-3px 0 10px;font-size:10px}
+  .admin-login-submit{height:44px;margin-top:3px;padding:10px 14px;font-size:13px}
+  .admin-login-card-footer{margin-top:12px;padding-top:10px;font-size:10px}
+  .admin-login-developer{margin-top:9px;padding-top:10px;gap:3px}
+  .admin-login-developer-caption{font-size:9px}
+  .admin-login-developer-link{font-size:25px}
+  .admin-login-developer-description{font-size:10px}
+  .patrona-webnia-cta{margin-top:4px;padding:6px 12px;font-size:10px}
+  .patrona-webnia-whatsapp{margin-top:4px;width:39px;height:39px}
+  .patrona-webnia-whatsapp svg{width:22px;height:22px}
+  .admin-login-network{display:none}
+}
+@media (min-width:851px) and (max-height:689px){
+  .admin-login-content{padding:15px 25px}
+}
+/* Isotipo en el lateral derecho de la composición, fuera del bloque de lectura. */
+@media (min-width:851px){
+  .admin-login-brand::before{background-position:88% 58%!important;background-size:min(36%,260px) auto!important;opacity:.13!important}
+}
