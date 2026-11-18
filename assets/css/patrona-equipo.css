@@ -19,3 +19,18 @@
 .patrona-team-empty{text-align:center;padding:30px;color:#60748c}
 @media(max-width:800px){.patrona-team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.patrona-team-lead{grid-template-columns:1fr}.patrona-cycle-nav button{width:140px;height:140px}.patrona-cycle-nav button strong{font-size:20px}}
 @media(max-width:480px){.patrona-cycle-nav{gap:12px}.patrona-cycle-nav button{width:125px;height:125px}.patrona-cycle-nav button strong{font-size:17px}.patrona-cycle-nav button span{font-size:13px}.patrona-team-grid{gap:14px}.patrona-team-person img,.patrona-team-placeholder{height:175px}}
+
+
+/* Vista de ciclos: los cuatro círculos se reemplazan por el equipo seleccionado. */
+.patrona-team-intro[hidden],.patrona-team-back-wrap[hidden]{display:none!important}
+.patrona-team-intro{min-height:300px;display:flex;flex-direction:column;justify-content:center}
+.patrona-team-hint{text-align:center;color:#657991;font-size:14px;margin:0 0 10px}
+.patrona-team-back-wrap{display:flex;justify-content:flex-start;margin:6px 0 28px}
+.patrona-team-back{background:#0e477e;color:#fff;border:0;border-radius:9px;padding:12px 19px;font:inherit;font-weight:700;cursor:pointer;box-shadow:0 4px 12px #0b315d24}
+.patrona-team-back:hover{background:#1765a2}
+.patrona-team-panel{max-width:1180px;margin:0 auto;min-height:360px}
+.patrona-team-lead{grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:34px}
+.patrona-team-lead:not(:has(>img)){display:block;max-width:100%;padding:12px 0 24px}
+.patrona-team-lead:not(:has(>img))>div{max-width:780px}
+.patrona-team-lead:not(:has(>img)) h3{font-size:clamp(22px,2.5vw,30px)}
+@media(max-width:800px){.patrona-team-lead{grid-template-columns:1fr}.patrona-team-intro{min-height:280px}}
