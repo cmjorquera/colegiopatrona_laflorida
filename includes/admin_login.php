@@ -27,7 +27,7 @@ foreach (['primario' => '#F0A000', 'secundario' => '#EF6C00', 'terciario' => '#1
     <title>Administración | <?= cms_e($nombreInstitucion) ?></title>
     <link rel="stylesheet" href="assets/admin/css/admin-login.css?v=20261113-fondo-login">
     <link rel="stylesheet" href="assets/admin/css/seduc-colegios.css?v=20261113-escudos">
-    <link rel="stylesheet" href="assets/admin/css/patrona-login-premium.css?v=3">
+    <link rel="stylesheet" href="assets/admin/css/patrona-login-premium.css?v=4">
 </head>
 <body class="admin-login" style="<?php foreach ($loginColors as $key => $color): ?>--login-<?= $key ?>:<?= cms_e($color) ?>;<?php endforeach; ?><?php if ($imagenLogin !== ''): ?>--login-photo:url(&quot;<?= cms_e($imagenLogin) ?>&quot;);<?php endif; ?>">
     <main class="admin-login-shell">
@@ -36,6 +36,7 @@ foreach (['primario' => '#F0A000', 'secundario' => '#EF6C00', 'terciario' => '#1
                 <div class="patrona-login-logo-frame"><?php if($logoInstitucion!==''):?><img class="admin-login-logo" src="<?= cms_e($logoInstitucion) ?>" alt="<?= cms_e($nombreInstitucion) ?>" id="institution-logo" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="patrona-crest-fallback" hidden aria-label="Patrona de Lourdes">PL</span><?php else:?><span class="patrona-crest-fallback" aria-label="Patrona de Lourdes">PL</span><?php endif;?></div>
                 <span class="admin-login-brand-kicker">Gestión de sitio web</span>
             </div>
+            <div class="patrona-login-art" aria-hidden="true"></div>
             <div class="admin-login-intro">
                 <p class="admin-login-eyebrow"><span class="admin-login-status-dot"></span> Plataforma de gestión de páginas web</p>
                 <h1 id="institution-title">Tu colegio.<br><span>Tu sitio web.</span><br>Todo bajo control.</h1>
@@ -50,7 +51,8 @@ foreach (['primario' => '#F0A000', 'secundario' => '#EF6C00', 'terciario' => '#1
             </div>
             <div class="admin-login-brand-bottom">
                 <div class="admin-login-colorband" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-                <p>Plataforma web administrable desarrollada por <strong>webnia.cl</strong> · <?=cms_e($esloganLogin)?></p>
+                <p>Plataforma web administrable desarrollada por <strong>webnia.cl</strong></p>
+                <p class="patrona-login-real-motto">«En los lugares desiertos construiremos con ladrillos nuevos»</p>
             </div>
         </section>
         <section class="admin-login-content" aria-labelledby="login-title">
