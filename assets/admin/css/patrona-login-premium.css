@@ -1,0 +1,23 @@
+/* Acceso premium Patrona de Lourdes · Webnia 2026 */
+.admin-login-brand{background-color:#0b2949!important;background-position:center center!important;background-size:cover!important}
+.admin-login-brand::after{width:4px}
+.patrona-login-logo-frame{display:flex;align-items:center;justify-content:center;width:192px;height:78px;border-radius:14px;background:#fff;box-shadow:0 12px 30px #00172a2e;overflow:hidden;padding:8px}
+.patrona-login-logo-frame .admin-login-logo{width:100%;height:100%;padding:0;object-fit:contain;background:none;box-shadow:none;border-radius:0}
+.patrona-crest-fallback{display:grid;place-items:center;width:68px;height:64px;border:3px solid #1c5b93;border-radius:14px 14px 24px 24px;color:#174a7d;font:900 28px Georgia,serif;letter-spacing:-.08em;background:linear-gradient(145deg,#fff,#e8f4ff)}
+.patrona-crest-fallback[hidden]{display:none}
+.patrona-crest-fallback.small{width:56px;height:52px;font-size:22px}
+.admin-login-brand h1{font-size:clamp(44px,4.6vw,70px);letter-spacing:-.052em;line-height:1.07;margin:0 0 16px;max-width:690px}
+.admin-login-brand h1 span{color:#b6dbf6}
+.patrona-login-school-name{font-size:12px!important;font-weight:850!important;text-transform:uppercase;letter-spacing:.16em;color:#f5c75d!important;margin:0 0 16px!important}
+.admin-login-intro>p:not(.admin-login-eyebrow):not(.patrona-login-school-name){max-width:580px}
+.admin-login-brand-bottom p{max-width:620px;line-height:1.65}
+.admin-login-brand-bottom p strong{color:#f6d06f}
+.admin-login-institution-logo-wrap{overflow:hidden}
+.admin-login-institution-logo-wrap img[hidden]{display:none}
+.admin-login-platform-institution{background:linear-gradient(115deg,#11385e,#286da7)}
+.admin-login-developer{gap:7px}
+.patrona-webnia-cta{margin-top:10px;padding:9px 16px;border-radius:999px;background:#e4effa;color:#174f81;font-size:12px;font-weight:800;text-decoration:none;transition:background .2s}
+.patrona-webnia-cta:hover{background:#d2e6fa}
+.admin-login-network{margin-top:12px!important}
+.admin-login-network-heading{font-size:10px!important;letter-spacing:.08em}
+@media(max-width:850px){.patrona-login-logo-frame{width:160px;height:68px}.admin-login-brand h1{font-size:clamp(38px,7vw,55px)}}
