@@ -16,7 +16,7 @@ function patrona_rich_clean(string $html): string {
     libxml_clear_errors();libxml_use_internal_errors($previous);
     $root=$dom->getElementById('rich-root');
     if(!$root)return htmlspecialchars(strip_tags($html),ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
-    $allowed=['p','br','strong','b','em','i','u','s','strike','ul','ol','li','blockquote','a','div'];
+    $allowed=['p','br','strong','b','em','i','u','s','strike','ul','ol','li','blockquote','a','div','span'];
     $clean=function(DOMNode $parent)use(&$clean,$allowed,$dom):void{
         for($node=$parent->firstChild;$node;){
             $next=$node->nextSibling;
@@ -33,7 +33,9 @@ function patrona_rich_clean(string $html): string {
                     $node=$next;continue;
                 }
                 $href=$tag==='a'?$node->getAttribute('href'):'';
+                $style=$tag==='span'?$node->getAttribute('style'):'';
                 while($node->attributes->length)$node->removeAttributeNode($node->attributes->item(0));
+                if($tag==='span' && preg_match('/(?:^|;)\\s*color\\s*:\\s*(#[0-9a-fA-F]{6})\\s*(?:;|$)/',$style,$match))$node->setAttribute('style','color:'.$match[1]);
                 if($tag==='a' && preg_match('~^(https?://|mailto:|/|#)~i',$href)){
                     $node->setAttribute('href',$href);
                     $node->setAttribute('rel','noopener noreferrer');
