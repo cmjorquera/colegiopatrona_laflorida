@@ -1,0 +1,37 @@
+AJUSTE DE IDENTIDAD VISUAL Y LOGIN — 2026-11-18
+
+OBJETIVO
+- Pantalla admin de La Florida visualmente más cercana al login de Tabancura.
+- Identificar claramente plataforma de administración web hecha por webnia.cl.
+- Incorporar logo del colegio en login, encabezado público y panel lateral, con fallback PL.
+- Mantener formularios de login, sesiones, permisos y contenedores sin alteraciones.
+
+ARCHIVOS
+- admin.php: resuelve logo de rutas existentes en hosting; usa primera imagen publicada del carrusel hero_principal si está disponible; fallback a imagen local. Sidebar resuelve logo real.
+- includes/admin_login.php: titular de producto CMS, crédito Webnia, botón a webnia.cl, logo con fallback; sin exponer teléfono privado.
+- assets/admin/css/patrona-login-premium.css: diseño fotográfico, tipografía y emblema.
+- index.php y assets/css/patrona-identity.css: escudo visible en cabecera pública, con fallback.
+- assets/admin/css/patrona-admin-menu.css: emblema lateral y marca de agua fallback.
+
+LOGO: El repositorio GitHub no contiene archivos de imagen versionados. Si el archivo existe en hosting, se mostrará. Rutas buscadas:
+ assets/imagenes/LOGO-COLEGIO--Sin-fondo.png
+ assets/imagenes/logo-colegio-1024x598.jpg
+ imagenes/logo-colegio-1024x598.jpg
+ imagenes/LOGO-COLEGIO--Sin-fondo.png
+Si ninguna existe, el sistema mostrará un monograma PL para no dejar imágenes rotas. Para usar el escudo oficial, subir el PNG a assets/imagenes/LOGO-COLEGIO--Sin-fondo.png desde cPanel.
+
+FONDO LOGIN: se busca imagen publicada del primer slide hero_principal en seccion_item y ruta física válida. Si no hay imagen se busca imagen de respaldo local. Si no existe, mantiene fondo degradado azul sin enlaces externos.
+
+WHATSAPP: pendiente número comercial autorizado en formato internacional +56 9 XXXX XXXX. No publicar número personal ni enlaces de WhatsApp sin confirmación.
+
+BASE DE DATOS: NO requiere SQL ni cambios de estructura; solo consultas SELECT existentes.
+
+DEPLOY MANUAL:
+cd /home3/crist668/colegiolaflorida.webnia.cl
+git pull origin main
+php -l admin.php
+php -l index.php
+php -l includes/admin_login.php
+Ctrl+F5 en navegador.
+
+PENDIENTE: validar visualmente en hosting; conexión de terminal cPanel no disponible en herramientas de esta conversación.
