@@ -48,7 +48,7 @@ usort($top,static fn(array $a,array $b):int=>($a['orden']??0)<=>($b['orden']??0)
 <meta name="description" content="Colegio Patrona de Lourdes, La Florida.">
 <title>Colegio Patrona de Lourdes | La Florida</title>
 <link rel="stylesheet" href="assets/css/patrona.css?v=5">
-<link rel="stylesheet" href="assets/css/patrona-cms-v6.css?v=3">
+<link rel="stylesheet" href="assets/css/patrona-cms-v6.css?v=4">
 <link rel="stylesheet" href="assets/css/patrona-equipo.css?v=7">
 <style>
 .brand-name{font-size:13px;font-weight:800;color:#153c6b;letter-spacing:.03em}.patrona-cms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
@@ -87,6 +87,6 @@ $contactUrl=patrona_cms_url($headerConfig['url_contacto_flotante']??'#contacto')
 </div>
 <?php patrona_render_modal_institucional($sections); ?>
 <?php if($showFooter): ?><footer id="contacto"><div class="wrap footer-row"><strong>COLEGIO PATRONA DE LOURDES <small>LA FLORIDA</small></strong><span><?=patrona_e((string)($footerConfig['texto']??'Portada en desarrollo · Contenido institucional administrado desde el CMS'))?></span></div></footer><?php endif; ?>
-<script defer src="assets/js/patrona-cms-v6.js?v=2"></script>
+<script defer src="assets/js/patrona-cms-v6.js?v=3"></script>
 <script defer src="assets/js/patrona-equipo.js?v=6"></script>
 </body></html>
