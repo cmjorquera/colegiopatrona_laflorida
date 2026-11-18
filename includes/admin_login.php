@@ -27,7 +27,7 @@ foreach (['primario' => '#F0A000', 'secundario' => '#EF6C00', 'terciario' => '#1
     <title>Administración | <?= cms_e($nombreInstitucion) ?></title>
     <link rel="stylesheet" href="assets/admin/css/admin-login.css?v=20261113-fondo-login">
     <link rel="stylesheet" href="assets/admin/css/seduc-colegios.css?v=20261113-escudos">
-    <link rel="stylesheet" href="assets/admin/css/patrona-login-premium.css?v=2">
+    <link rel="stylesheet" href="assets/admin/css/patrona-login-premium.css?v=3">
 </head>
 <body class="admin-login" style="<?php foreach ($loginColors as $key => $color): ?>--login-<?= $key ?>:<?= cms_e($color) ?>;<?php endforeach; ?><?php if ($imagenLogin !== ''): ?>--login-photo:url(&quot;<?= cms_e($imagenLogin) ?>&quot;);<?php endif; ?>">
     <main class="admin-login-shell">
@@ -95,8 +95,22 @@ foreach (['primario' => '#F0A000', 'secundario' => '#EF6C00', 'terciario' => '#1
                     <span class="admin-login-developer-caption">Desarrollado por</span>
                     <a href="https://webnia.cl/" target="_blank" rel="noopener noreferrer" class="admin-login-developer-link">webnia<span>.cl</span></a>
                     <span class="admin-login-developer-description">Diseño, desarrollo y administración de sitios web institucionales</span>
-                    <a class="patrona-webnia-cta" href="https://webnia.cl/" target="_blank" rel="noopener noreferrer">Conoce Webnia.cl <span aria-hidden="true">↗</span></a>
-                    <a class="patrona-webnia-whatsapp" href="https://wa.me/56988302735?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20un%20sitio%20web%20administrable" target="_blank" rel="noopener noreferrer" aria-label="Consultar a Webnia por WhatsApp" title="Consultar a Webnia por WhatsApp"><svg viewBox="0 0 32 32" width="25" height="25" aria-hidden="true" fill="currentColor"><path d="M16 .8A15.1 15.1 0 0 0 3 23.6L.9 31l7.6-2a15.2 15.2 0 1 0 7.5-28.2Zm0 27.6a12.3 12.3 0 0 1-6.3-1.7l-.5-.3-4.5 1.2 1.2-4.4-.3-.5a12.4 12.4 0 1 1 10.4 5.7Zm6.8-9.2c-.4-.2-2.2-1.1-2.5-1.2-.3-.1-.5-.2-.7.2-.2.4-1 1.2-1.2 1.4-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3-1.9-1.1-1-1.9-2.2-2.1-2.6-.2-.4 0-.6.2-.8l.6-.7c.2-.2.3-.4.4-.6.1-.2.1-.5 0-.7l-1.1-2.6c-.3-.7-.6-.6-.8-.6h-.7c-.3 0-.7.1-1 .5-.3.4-1.3 1.3-1.3 3.1s1.3 3.5 1.5 3.8c.2.2 2.6 4 6.3 5.6.9.4 1.6.6 2.2.7.9.3 1.7.2 2.4.2.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.7.2-1.8-.1-.2-.3-.3-.7-.5Z"/></svg></a>
+                    <div class="patrona-login-social" aria-label="Canales de Webnia">
+                      <a class="patrona-social-webnia" href="https://webnia.cl/" target="_blank" rel="noopener noreferrer" title="Sitio web de Webnia" aria-label="Visitar Webnia.cl">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.3"/><path d="M2.7 12h18.6M12 2.7a15 15 0 0 1 0 18.6M12 2.7a15 15 0 0 0 0 18.6"/></svg>
+                      </a>
+                      <a class="patrona-social-whatsapp" href="https://wa.me/56988302735?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20un%20sitio%20web%20administrable" target="_blank" rel="noopener noreferrer" aria-label="Contactar a Webnia por WhatsApp" title="WhatsApp de Webnia">
+                        <svg viewBox="0 0 32 32" aria-hidden="true" fill="currentColor"><path d="M16 .8A15.1 15.1 0 0 0 3 23.6L.9 31l7.6-2a15.2 15.2 0 1 0 7.5-28.2Zm0 27.6a12.3 12.3 0 0 1-6.3-1.7l-.5-.3-4.5 1.2 1.2-4.4-.3-.5a12.4 12.4 0 1 1 10.4 5.7Zm6.8-9.2c-.4-.2-2.2-1.1-2.5-1.2-.3-.1-.5-.2-.7.2-.2.4-1 1.2-1.4-.1-.4-.2-1.6-.6-3-1.9-1.1-1-1.9-2.2-2.1-2.6-.2-.4 0-.6.2-.8l.6-.7c.2-.2.3-.4.4-.6.1-.2.1-.5 0-.7l-1.1-2.6c-.3-.7-.6-.6-.8-.6h-.7c-.3 0-.7.1-1 .5-.3.4-1.3 1.3-1.3 3.1s1.3 3.5 1.5 3.8c.2.2 2.6 4 6.3 5.6.9.4 1.6.6 2.2.7.9.3 1.7.2 2.4.2.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.7.2-1.8-.1-.2-.3-.3-.7-.5Z"/></svg>
+                      </a>
+                      <?php
+                        // Enlace configurable: sin URL verificada no se atribuye una cuenta ajena a Webnia.
+                        $instagramWebnia = getenv('WEBNIA_INSTAGRAM_URL') ?: '';
+                        $instagramWebnia = preg_match('~^https://(?:www\\.)?instagram\\.com/[A-Za-z0-9_.]+/?$~', $instagramWebnia) ? $instagramWebnia : '';
+                      ?>
+                      <?php if($instagramWebnia!==''):?><a class="patrona-social-instagram" href="<?=cms_e($instagramWebnia)?>" target="_blank" rel="noopener noreferrer" title="Instagram de Webnia" aria-label="Instagram de Webnia"><?php else:?><span class="patrona-social-instagram patrona-social-pending" title="Instagram de Webnia: enlace pendiente de configurar" aria-label="Instagram de Webnia pendiente"><?php endif;?>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.8" cy="6.3" r="1" fill="currentColor" stroke="none"/></svg>
+                      <?php if($instagramWebnia!==''):?></a><?php else:?></span><?php endif;?>
+                    </div>
                 </div>
                 <section class="admin-login-network" aria-label="Administración institucional">
                     <span class="admin-login-network-heading">Una plataforma creada para tu comunidad educativa</span></section>
