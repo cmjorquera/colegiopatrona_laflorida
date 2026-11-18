@@ -122,6 +122,7 @@ function patrona_cms_render(array $s): void {
                 <div class="patrona-course-grid" role="group" aria-label="Cursos de <?=patrona_e($names[0].' '.$names[1])?>">
                   <?php foreach($courses[$key] as $course):?>
                     <button type="button" class="patrona-course-button" data-course="<?=patrona_e($course)?>" aria-pressed="false">
+                      <span class="patrona-course-cycle-dot" aria-hidden="true"><?=patrona_e($key==='jardin'?'J':($key==='basica_1'?'1°':($key==='basica_2'?'2°':'M')))?></span>
                       <strong><?=patrona_e($courseLabel($key,$course))?></strong>
                       <span><?=patrona_e($key==='jardin'?'JARDÍN':($key==='media'?'MEDIA':'BÁSICO'))?></span>
                     </button>
