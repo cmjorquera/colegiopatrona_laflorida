@@ -60,7 +60,7 @@ usort($top,static fn(array $a,array $b):int=>($a['orden']??0)<=>($b['orden']??0)
 <main>
 <?php foreach($top as $c) patrona_render($c); ?>
 <?php
-$excluded=['topbar','header_principal','hero_principal','tab_destacados_home','footer_principal','presentacion_home','vida_escolar_home'];
+$excluded=['topbar','header_principal','hero_principal','tab_destacados_home','footer_principal','presentacion_home','vida_escolar_home','modal_institucional'];
 foreach($sections as $section) {
  if(in_array((string)($section['nombre_interno']??''),$excluded,true)) continue;
  patrona_cms_render($section);
