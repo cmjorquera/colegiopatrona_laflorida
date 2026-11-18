@@ -28,7 +28,7 @@ function patrona_cms_site(): array {
             foreach ($configs->get_result()->fetch_all(MYSQLI_ASSOC) as $row) $section['config'][$row['clave']]=$row['valor'];
             $result['sections'][]=$section;
         }
-        $result['menus']=$db->query('SELECT id_menu,nombre,url,icono,id_padre,orden FROM menus WHERE estado=1 ORDER BY orden,id_menu')->fetch_all(MYSQLI_ASSOC);
+        $result['menus']=$db->query('SELECT id_menu,nombre,url,icono,orden FROM menus WHERE estado=1 ORDER BY orden,id_menu')->fetch_all(MYSQLI_ASSOC);
         $result['subs']=$db->query('SELECT id_menu,nombre,url,icono,orden FROM sub_menus WHERE estado=1 ORDER BY orden,id_sub_menu')->fetch_all(MYSQLI_ASSOC);
         $result['connected']=true;
         $db->close();
