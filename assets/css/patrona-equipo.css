@@ -65,3 +65,24 @@
  #organizacion-colegio.patrona-team-active .patrona-team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
  #organizacion-colegio.patrona-team-active .patrona-team-lead{grid-template-columns:1fr}
 }
+
+
+/* Carrusel docente: cinco retratos visibles en escritorio, fotos redondas */
+#organizacion-colegio .patrona-team-carousel-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:22px 0 18px}
+#organizacion-colegio .patrona-team-carousel-heading .patrona-team-subheading{margin:0}
+#organizacion-colegio .patrona-team-carousel-controls{display:flex;gap:8px}
+#organizacion-colegio .patrona-team-carousel-controls button{border:1px solid #bdd8f0;background:#fff;color:#0b477a;border-radius:50%;width:40px;height:40px;font-size:27px;cursor:pointer}
+#organizacion-colegio .patrona-team-carousel-controls button:disabled{opacity:.35;cursor:default}
+#organizacion-colegio .patrona-team-viewport{overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;scroll-behavior:smooth}
+#organizacion-colegio .patrona-team-viewport::-webkit-scrollbar{display:none}
+#organizacion-colegio.patrona-team-active .patrona-team-grid{display:flex;gap:18px;align-items:stretch}
+#organizacion-colegio.patrona-team-active .patrona-team-person{flex:0 0 calc((100% - 72px)/5);min-width:0;scroll-snap-align:start;border:1px solid #e0eaf4;border-radius:16px;padding:12px 10px 16px;box-shadow:0 7px 18px #0b315d0d;background:#fff}
+#organizacion-colegio.patrona-team-active .patrona-team-person img,#organizacion-colegio.patrona-team-active .patrona-team-placeholder{height:auto;width:min(100%,165px);aspect-ratio:1;object-fit:cover;border-radius:50%;margin:0 auto;border:4px solid #d3e9fb}
+#organizacion-colegio.patrona-team-active .patrona-team-person h4{font-size:13px}
+#organizacion-colegio .patrona-team-carousel-dots{display:flex;justify-content:center;gap:8px;margin:18px 0}
+#organizacion-colegio .patrona-team-carousel-dots button{width:8px;height:8px;border:0;border-radius:20px;background:#c3d8ea;padding:0;cursor:pointer}
+#organizacion-colegio .patrona-team-carousel-dots button[aria-current=true]{background:#0b477a;width:22px}
+@media(max-width:1200px){#organizacion-colegio.patrona-team-active .patrona-team-person{flex-basis:calc((100% - 36px)/3)}}
+@media(max-width:720px){#organizacion-colegio.patrona-team-active .patrona-team-person{flex-basis:calc((100% - 14px)/2)}}
+@media(max-width:430px){#organizacion-colegio.patrona-team-active .patrona-team-person{flex-basis:80%}}
+@media(prefers-reduced-motion:reduce){#organizacion-colegio .patrona-team-viewport{scroll-behavior:auto}}
