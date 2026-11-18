@@ -7,6 +7,15 @@ function selectCycle(key,focus=false){
  panels.forEach(p=>{p.hidden=p.id!=='team-panel-'+key;});
  if(focus)chosen.focus({preventScroll:true});
 }
+const globalCourses=[...root.querySelectorAll('[data-global-course]')];
+globalCourses.forEach(button=>button.addEventListener('click',()=>{
+ const cycle=button.dataset.globalCycle,course=button.dataset.globalCourse;
+ selectCycle(cycle);
+ globalCourses.forEach(other=>other.setAttribute('aria-pressed',String(other===button)));
+ const panel=root.querySelector('#team-panel-'+cycle);
+ const local=[...panel.querySelectorAll('[data-course]')].find(item=>item.dataset.course===course);
+ local?.click();
+}));
 tabs.forEach((b,i)=>{
  b.addEventListener('click',()=>selectCycle(b.dataset.teamTab));
  b.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?tabs.length-1:(i+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;selectCycle(tabs[n].dataset.teamTab,true);});
