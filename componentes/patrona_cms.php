@@ -83,17 +83,15 @@ function patrona_cms_render(array $s): void {
         <section class="section patrona-team" id="organizacion-colegio">
           <div class="wrap">
             <div class="patrona-centered-heading"><span class="patrona-kicker">NUESTRO EQUIPO</span><h2><?=patrona_e((string)($config['titulo_bloque']??'Organización del Colegio'))?></h2><p><?=patrona_e((string)($config['subtitulo_bloque']??'Conoce a quienes acompañan el aprendizaje en cada etapa.'))?></p></div>
-            <div class="patrona-team-intro" data-team-intro>
-              <div class="patrona-cycle-nav" aria-label="Selecciona un ciclo">
-              <?php foreach($cycles as $key=>$names):?><button type="button" data-team-tab="<?=patrona_e($key)?>" aria-controls="team-panel-<?=patrona_e($key)?>" aria-expanded="false"><strong><?=patrona_e($names[0])?></strong><span><?=patrona_e($names[1])?></span></button><?php endforeach;?>
-              </div>
-              <p class="patrona-team-hint">Selecciona un ciclo para conocer a sus profesores y equipo de coordinación.</p>
-            </div>
-            <div class="patrona-team-back-wrap" data-team-back-wrap hidden>
-              <button type="button" class="patrona-team-back" data-team-back>← Volver a los ciclos</button>
+            <div class="patrona-team-tabs" role="tablist" aria-label="Ciclos educativos">
+              <?php foreach($cycles as $key=>$names):?>
+                <button type="button" role="tab" class="patrona-team-tab" data-team-tab="<?=patrona_e($key)?>" id="team-tab-<?=patrona_e($key)?>" aria-controls="team-panel-<?=patrona_e($key)?>" aria-selected="<?= $key==='jardin'?'true':'false' ?>" tabindex="<?= $key==='jardin'?'0':'-1' ?>">
+                  <strong><?=patrona_e($names[0])?></strong><span><?=patrona_e($names[1])?></span>
+                </button>
+              <?php endforeach;?>
             </div>
             <?php foreach($cycles as $key=>$names):?>
-              <div class="patrona-team-panel" role="tabpanel" id="team-panel-<?=patrona_e($key)?>" aria-labelledby="team-tab-<?=patrona_e($key)?>" hidden>
+              <div class="patrona-team-panel" role="tabpanel" id="team-panel-<?=patrona_e($key)?>" aria-labelledby="team-tab-<?=patrona_e($key)?>" <?= $key==='jardin'?'':'hidden' ?>>
                 <?php $people=$grouped[$key]??[];if(!$people):?><p class="patrona-team-empty">Próximamente conocerás al equipo de este ciclo.</p><?php else:?>
                 <?php
                   $coordinators=[];$teachers=[];
