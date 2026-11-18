@@ -100,3 +100,19 @@
  .admin-login-developer-link{font-size:28px}
  .patrona-login-social a,.patrona-login-social .patrona-social-pending{width:43px;height:43px}
 }
+
+/* Identidad Lourdes: ilustración institucional real, sin fotografía simulada. */
+.admin-login-brand{isolation:isolate;overflow:hidden}
+.admin-login-brand::before{background-image:none!important;opacity:0!important}
+.patrona-login-art{position:absolute;z-index:0;right:-5%;top:15%;width:min(53%,460px);height:69%;pointer-events:none;border-radius:50% 50% 12px 12px;background:radial-gradient(ellipse at 48% 44%,rgba(86,169,231,.38),rgba(23,89,150,.15) 56%,transparent 73%);filter:drop-shadow(0 18px 30px rgba(0,13,34,.16))}
+.patrona-login-art::before{content:"";position:absolute;inset:4% 8% 3%;border:3px solid rgba(125,199,246,.6);border-bottom:0;border-radius:48% 48% 4px 4px;box-shadow:0 0 0 9px rgba(22,107,176,.16)}
+.patrona-login-art::after{content:"";position:absolute;inset:7% 4% 0%;background:url("../../imagenes/cropped-logo-cuadrado-sin-fondo-2-192x192.png") center 48%/contain no-repeat;opacity:.85;mix-blend-mode:screen}
+.admin-login-brand-top,.admin-login-intro,.admin-login-brand-bottom{position:relative;z-index:2}
+.admin-login-intro{max-width:72%;text-shadow:0 2px 14px rgba(0,20,42,.28)}
+.admin-login-brand-bottom{max-width:75%}
+.admin-login-brand-bottom .patrona-login-real-motto{font-size:clamp(11px,1vw,14px);font-weight:700;font-style:italic;color:#ffe1a1;letter-spacing:.015em;margin:4px 0 0;line-height:1.45}
+.admin-login-brand::after{background:#e9a72c!important}
+@media(min-width:851px){.admin-login-brand{background-image:radial-gradient(circle at 86% 44%,#1b70ad 0%,#103e69 38%,#0a294b 76%)!important}}
+@media(max-width:1250px) and (min-width:851px){.patrona-login-art{width:49%;right:-10%;opacity:.7}.admin-login-intro{max-width:78%}.admin-login-brand h1{font-size:clamp(36px,3.6vw,52px)}}
+@media(max-width:850px){.patrona-login-art{right:-18%;top:10%;width:60%;height:82%;opacity:.24}.admin-login-intro,.admin-login-brand-bottom{max-width:100%}}
+@media(prefers-reduced-motion:no-preference){.patrona-login-art{animation:patrona-art-appear 1.2s ease-out both}@keyframes patrona-art-appear{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}}
