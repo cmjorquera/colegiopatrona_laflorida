@@ -211,7 +211,7 @@ $subsByMenu=[]; foreach($publicSubs as $sub){$subsByMenu[(int)$sub['id_menu']][]
 <div class="admin-shell">
 <aside class="admin-sidebar">
   <div class="sidebar-watermark" aria-hidden="true"></div>
-  <div class="sidebar-brand"><span class="sidebar-brand-icon"><img src="<?=h((string)($institution['logo_header']??'assets/imagenes/logo-colegio-1024x598.jpg'))?>" alt="" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden aria-hidden="true" class="patrona-logo-fallback">PL</span></span><span><strong>Patrona de Lourdes</strong><small>La Florida · Panel CMS</small></span></div>
+  <div class="sidebar-brand"><span class="sidebar-brand-icon"><?php $sidebarLogo='';foreach(['assets/imagenes/LOGO-COLEGIO--Sin-fondo.png','assets/imagenes/logo-colegio-1024x598.jpg','imagenes/logo-colegio-1024x598.jpg'] as $candidate){if(is_file(__DIR__.'/'.$candidate)){$sidebarLogo=$candidate;break;}} ?><?php if($sidebarLogo!==''):?><img src="<?=h($sidebarLogo)?>" alt="Escudo del colegio" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden aria-hidden="true" class="patrona-logo-fallback">PL</span><?php else:?><span aria-hidden="true" class="patrona-logo-fallback">PL</span><?php endif;?></span><span><strong>Patrona de Lourdes</strong><small>La Florida · Panel CMS</small></span></div>
   <nav class="sidebar-nav" aria-label="Navegación administrativa">
     <span class="nav-group-label">PRINCIPAL</span>
     <a class="nav-item <?= $panel==='dashboard'?'active':'' ?>" href="admin.php?panel=dashboard"><i class="bi bi-grid-1x2"></i> Dashboard</a>
