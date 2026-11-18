@@ -14,7 +14,7 @@ try{
  mysqli_report(MYSQLI_REPORT_ERROR|MYSQLI_REPORT_STRICT);
  $db=new mysqli($cfg['host'],$cfg['user'],$cfg['pass'],$cfg['db']);$db->set_charset('utf8mb4');
  $q=$db->prepare('SELECT * FROM seccion WHERE id_seccion=? AND id_institucion=2 LIMIT 1');$q->bind_param('i',$requested);$q->execute();$section=$q->get_result()->fetch_assoc();
- if(!$section||!in_array((string)$section['nombre_interno'],$allowed,true))throw new RuntimeException('Contenedor no disponible en este editor.');
+ if(!$section||in_array((string)$section['nombre_interno'],['hero_principal','sellos_home','noticias_home','tab_comunidad_home'],true))throw new RuntimeException('Este contenedor tiene un editor especializado.');
  $sid=(int)$section['id_seccion'];$name=(string)$section['nombre_interno'];
  if($_SERVER['REQUEST_METHOD']==='POST'){
   if(!hash_equals((string)$_SESSION['patrona_csrf'],(string)($_POST['csrf']??'')))throw new RuntimeException('Sesión vencida.');
