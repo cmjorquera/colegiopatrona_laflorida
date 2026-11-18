@@ -96,6 +96,7 @@ foreach (['primario' => '#F0A000', 'secundario' => '#EF6C00', 'terciario' => '#1
                     <a href="https://webnia.cl/" target="_blank" rel="noopener noreferrer" class="admin-login-developer-link">webnia<span>.cl</span></a>
                     <span class="admin-login-developer-description">Diseño, desarrollo y administración de sitios web institucionales</span>
                     <a class="patrona-webnia-cta" href="https://webnia.cl/" target="_blank" rel="noopener noreferrer">Conoce Webnia.cl <span aria-hidden="true">↗</span></a>
+                    <a class="patrona-webnia-whatsapp" href="https://wa.me/56988302735?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20un%20sitio%20web%20administrable" target="_blank" rel="noopener noreferrer" aria-label="Consultar a Webnia por WhatsApp">Consultar por WhatsApp <span aria-hidden="true">↗</span></a>
                 </div>
                 <section class="admin-login-network" aria-label="Administración institucional">
                     <span class="admin-login-network-heading">Una plataforma creada para tu comunidad educativa</span></section>
