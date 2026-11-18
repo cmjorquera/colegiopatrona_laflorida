@@ -153,8 +153,35 @@ if (!$logged):
         error_log('Patrona CMS identidad login: ' . $e->getMessage());
     }
     $institution['nombre'] = $institution['nombre'] ?? 'Colegio Patrona de Lourdes - La Florida';
-    $institution['logo_header'] = 'assets/imagenes/LOGO-COLEGIO--Sin-fondo.png';
+    // Priorizar imágenes institucionales realmente presentes en el hosting.
+    $assetCandidates = [
+        trim((string)($institution['logo_header'] ?? '')),
+        'assets/imagenes/LOGO-COLEGIO--Sin-fondo.png',
+        'assets/imagenes/logo-colegio-1024x598.jpg',
+        'imagenes/logo-colegio-1024x598.jpg',
+        'imagenes/LOGO-COLEGIO--Sin-fondo.png'
+    ];
+    $institution['logo_header'] = '';
+    foreach ($assetCandidates as $candidate) {
+        if ($candidate !== '' && preg_match('~^(?:assets|imagenes|uploads)/[a-zA-Z0-9_./%-]+$~', $candidate) && is_file(__DIR__ . '/' . $candidate)) {
+            $institution['logo_header'] = $candidate;
+            break;
+        }
+    }
+    // Usar una fotografía publicada por el CMS si existe; de lo contrario, poster institucional.
     $institution['imagen_login'] = '';
+    try {
+        $photo = $connection->query("SELECT si.imagen FROM seccion_item si INNER JOIN seccion s ON s.id_seccion=si.id_seccion WHERE s.id_institucion=2 AND s.nombre_interno='hero_principal' AND si.visible='si' AND si.imagen IS NOT NULL AND si.imagen<>'' ORDER BY si.orden,si.id_item LIMIT 1")->fetch_assoc();
+        $candidate = trim((string)($photo['imagen'] ?? ''));
+        if ($candidate !== '' && preg_match('~^(?:assets|imagenes|uploads)/[a-zA-Z0-9_./%-]+$~', $candidate) && is_file(__DIR__ . '/' . $candidate)) {
+            $institution['imagen_login'] = $candidate;
+        }
+    } catch (Throwable $photoError) { error_log('Patrona login foto: '.$photoError->getMessage()); }
+    if ($institution['imagen_login'] === '') {
+        foreach (['imagenes/hero-patrona.png','assets/imagenes/hero-patrona.png','assets/imagenes/logo-colegio-1024x598.jpg'] as $candidate) {
+            if (is_file(__DIR__ . '/' . $candidate)) { $institution['imagen_login'] = $candidate; break; }
+        }
+    }
     function cms_e(?string $value): string { return h((string)$value); }
     require __DIR__ . '/includes/admin_login.php';
     exit;
@@ -184,7 +211,7 @@ $subsByMenu=[]; foreach($publicSubs as $sub){$subsByMenu[(int)$sub['id_menu']][]
 <div class="admin-shell">
 <aside class="admin-sidebar">
   <div class="sidebar-watermark" aria-hidden="true"></div>
-  <div class="sidebar-brand"><span class="sidebar-brand-icon"><img src="assets/imagenes/LOGO-COLEGIO--Sin-fondo.png" alt="" onerror="this.style.display='none'"></span><span><strong>Patrona de Lourdes</strong><small>La Florida · Panel CMS</small></span></div>
+  <div class="sidebar-brand"><span class="sidebar-brand-icon"><img src="<?=h((string)($institution['logo_header']??'assets/imagenes/logo-colegio-1024x598.jpg'))?>" alt="" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden aria-hidden="true" class="patrona-logo-fallback">PL</span></span><span><strong>Patrona de Lourdes</strong><small>La Florida · Panel CMS</small></span></div>
   <nav class="sidebar-nav" aria-label="Navegación administrativa">
     <span class="nav-group-label">PRINCIPAL</span>
     <a class="nav-item <?= $panel==='dashboard'?'active':'' ?>" href="admin.php?panel=dashboard"><i class="bi bi-grid-1x2"></i> Dashboard</a>
