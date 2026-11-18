@@ -48,6 +48,7 @@ usort($top,static fn(array $a,array $b):int=>($a['orden']??0)<=>($b['orden']??0)
 <meta name="description" content="Colegio Patrona de Lourdes, La Florida.">
 <title>Colegio Patrona de Lourdes | La Florida</title>
 <link rel="stylesheet" href="assets/css/patrona.css?v=5">
+<link rel="stylesheet" href="assets/css/patrona-cms-v6.css?v=1">
 <style>
 .brand-name{font-size:13px;font-weight:800;color:#153c6b;letter-spacing:.03em}.patrona-cms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
 .patrona-cms-card{border:1px solid #e3e7ed;border-radius:12px;padding:20px;overflow:hidden}
@@ -67,6 +68,23 @@ foreach($sections as $section) {
 }
 ?>
 </main>
+<?php
+// Accesos flotantes: URLs configurables desde seccion_config de header_principal.
+$schoolListUrl=patrona_cms_url($headerConfig['url_utiles_escolares']??'');
+$contactUrl=patrona_cms_url($headerConfig['url_contacto_flotante']??'#contacto');
+?>
+<div class="patrona-actions" aria-label="Accesos rápidos">
+  <button type="button" data-patrona-chat aria-expanded="false" aria-controls="patrona-actions-chat" title="Información y consultas" aria-label="Información y consultas">☏</button>
+  <?php if($schoolListUrl!=='#'):?><a href="<?=patrona_e($schoolListUrl)?>" target="_blank" rel="noopener noreferrer" download=""><?= '📄' ?></a><?php else:?><button type="button" disabled title="Lista de útiles aún no publicada" aria-label="Lista de útiles aún no publicada">📄</button><?php endif;?>
+  <a href="<?=patrona_e($contactUrl)?>" title="Contacto" aria-label="Contacto">✉</a>
+</div>
+<div class="patrona-actions-panel" id="patrona-actions-chat" data-patrona-panel hidden>
+  <button type="button" class="patrona-actions-panel-close" data-patrona-panel-close aria-label="Cerrar">×</button>
+  <h3>¿Necesitas ayuda?</h3>
+  <p>Este espacio está preparado para conectar el chat institucional. Por ahora puedes utilizar el acceso a Contacto.</p>
+  <a href="#contacto">Ir a contacto →</a>
+</div>
 <?php patrona_render_modal_institucional($sections); ?>
 <?php if($showFooter): ?><footer id="contacto"><div class="wrap footer-row"><strong>COLEGIO PATRONA DE LOURDES <small>LA FLORIDA</small></strong><span><?=patrona_e((string)($footerConfig['texto']??'Portada en desarrollo · Contenido institucional administrado desde el CMS'))?></span></div></footer><?php endif; ?>
+<script defer src="assets/js/patrona-cms-v6.js?v=1"></script>
 </body></html>
