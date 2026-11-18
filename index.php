@@ -78,6 +78,8 @@ $contactUrl=patrona_cms_url($headerConfig['url_contacto_flotante']??'#contacto')
   <button type="button" data-patrona-chat aria-expanded="false" aria-controls="patrona-actions-chat" title="Información y consultas" aria-label="Información y consultas">☏</button>
   <?php if($schoolListUrl!=='#'):?><a href="<?=patrona_e($schoolListUrl)?>" target="_blank" rel="noopener noreferrer" download=""><?= '📄' ?></a><?php else:?><button type="button" disabled title="Lista de útiles aún no publicada" aria-label="Lista de útiles aún no publicada">📄</button><?php endif;?>
   <a href="<?=patrona_e($contactUrl)?>" title="Contacto" aria-label="Contacto">✉</a>
+  <?php $enrollmentUrl=patrona_cms_url($headerConfig['url_matriculas']??'#contacto'); ?>
+  <a class="patrona-enrollment-float" href="<?=patrona_e($enrollmentUrl)?>" title="¡Matricúlate aquí!" aria-label="¡Matricúlate aquí!"><span aria-hidden="true">🎓</span><span class="patrona-enrollment-label">¡Matricúlate aquí!</span></a>
 </div>
 <div class="patrona-actions-panel" id="patrona-actions-chat" data-patrona-panel hidden>
   <button type="button" class="patrona-actions-panel-close" data-patrona-panel-close aria-label="Cerrar">×</button>
