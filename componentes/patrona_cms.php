@@ -132,8 +132,8 @@ function patrona_cms_render(array $s): void {
                     </div>
                   </article>
                 <?php endforeach;?>
-                <div class="patrona-course-heading"><h3>Cursos</h3><p>Selecciona un curso para conocer a sus profesores.</p></div>
-                <div class="patrona-course-grid" role="group" aria-label="Cursos de <?=patrona_e($names[0].' '.$names[1])?>">
+                <div class="patrona-course-heading" hidden style="display:none"><h3>Cursos</h3><p>Selecciona un curso para conocer a sus profesores.</p></div>
+                <div class="patrona-course-grid" hidden style="display:none" role="group" aria-label="Cursos de <?=patrona_e($names[0].' '.$names[1])?>">
                   <?php foreach($courses[$key] as $course):?>
                     <button type="button" class="patrona-course-button" data-course="<?=patrona_e($course)?>" aria-pressed="false">
                       <span class="patrona-course-cycle-dot" aria-hidden="true"><?=patrona_e($key==='jardin'?'J':($key==='basica_1'?'1°':($key==='basica_2'?'2°':'M')))?></span>
