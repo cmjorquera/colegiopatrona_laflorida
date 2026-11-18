@@ -171,3 +171,18 @@
 @keyframes patrona-enrollment-pulse{0%,100%{box-shadow:0 0 0 4px #f28b1630,0 9px 24px #80470b40}50%{box-shadow:0 0 0 11px #f28b1609,0 9px 24px #80470b40}}
 @media(max-width:600px){.patrona-enrollment-label{font-size:11px;padding:8px 9px;right:calc(100% + 8px)}.patrona-actions .patrona-enrollment-float{width:52px;height:52px}}
 @media(prefers-reduced-motion:reduce){.patrona-actions .patrona-enrollment-float{animation:none}}
+
+
+/* Navegación permanente por todos los cursos: sobre las pestañas de ciclo */
+.patrona-team .patrona-all-courses{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:22px auto 20px;width:100%;max-width:1440px}
+.patrona-team .patrona-all-courses-group{min-width:0;padding:13px 10px 15px;border:1px solid #dce7f2;border-radius:16px;background:#f5f9fd;text-align:center}
+.patrona-team .patrona-all-courses-name{display:block;color:#163d6e;font-size:12px;font-weight:800;margin-bottom:12px}
+.patrona-team .patrona-all-courses-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.patrona-team .patrona-course-circle{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;padding:3px;border-radius:50%;border:2px solid #15426f;background:#fff;color:#123c69;font-size:12px;font-weight:800;cursor:pointer;transition:background .2s,color .2s,transform .2s,box-shadow .2s}
+.patrona-team .patrona-course-circle:hover{transform:translateY(-2px);background:#dbeeff}
+.patrona-team .patrona-course-circle[aria-pressed="true"]{background:#163f72;color:#fff;box-shadow:0 0 0 3px #80b7ec}
+.patrona-team .patrona-course-circle:focus-visible{outline:3px solid #e99826;outline-offset:3px}
+.patrona-team .patrona-course-heading,.patrona-team .patrona-course-grid{display:none}
+@media(max-width:950px){.patrona-team .patrona-all-courses{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:550px){.patrona-team .patrona-all-courses{gap:8px}.patrona-team .patrona-all-courses-group{padding:10px 5px}.patrona-team .patrona-all-courses-name{font-size:10px}.patrona-team .patrona-all-courses-row{gap:5px}.patrona-team .patrona-course-circle{width:39px;height:39px;font-size:10px}}
+@media(prefers-reduced-motion:reduce){.patrona-team .patrona-course-circle{transition:none}}
