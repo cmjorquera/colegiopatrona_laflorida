@@ -1,2 +1,8 @@
-(()=>{'use strict';const tabs=[...document.querySelectorAll('[data-team-tab]')];if(!tabs.length)return;function select(tab,focus=false){tabs.forEach(t=>{const active=t===tab;t.setAttribute('aria-selected',String(active));t.tabIndex=active?0:-1;const panel=document.getElementById(t.getAttribute('aria-controls'));if(panel)panel.hidden=!active;});if(focus)tab.focus();}
-tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>select(tab));tab.addEventListener('keydown',e=>{if(!['ArrowRight','ArrowLeft','Home','End'].includes(e.key))return;e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?tabs.length-1:(i+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;select(tabs[n],true);});});})();
+(()=>{'use strict';
+const root=document.querySelector('#organizacion-colegio'),intro=root?.querySelector('[data-team-intro]'),backWrap=root?.querySelector('[data-team-back-wrap]'),back=root?.querySelector('[data-team-back]'),buttons=[...(root?.querySelectorAll('[data-team-tab]')||[])],panels=[...(root?.querySelectorAll('.patrona-team-panel')||[])];
+if(!root||!intro||!backWrap||!buttons.length)return;
+function show(key){intro.hidden=true;backWrap.hidden=false;buttons.forEach(b=>b.setAttribute('aria-expanded',String(b.dataset.teamTab===key)));panels.forEach(p=>{p.hidden=p.id!=='team-panel-'+key;});back.focus({preventScroll:true});}
+function reset(){panels.forEach(p=>p.hidden=true);buttons.forEach(b=>b.setAttribute('aria-expanded','false'));backWrap.hidden=true;intro.hidden=false;buttons[0].focus({preventScroll:true});}
+buttons.forEach(b=>b.addEventListener('click',()=>show(b.dataset.teamTab)));
+back?.addEventListener('click',reset);
+})();
