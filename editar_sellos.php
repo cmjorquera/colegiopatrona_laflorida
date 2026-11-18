@@ -76,33 +76,71 @@ try{
 }catch(Throwable $e){error_log('Patrona editor sellos: '.$e->getMessage());$error=$e->getMessage();}
 $editing=null;$editId=(int)($_GET['item']??0);foreach($items as $i)if((int)$i['id_item']===$editId)$editing=$i;
 ?>
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sellos del colegio | CMS</title><link rel="stylesheet" href="assets/admin/css/patrona-panel.css"><style>
-body{background:#f3f6fb;font-family:Arial,sans-serif;color:#1a2e4a}.container{max-width:1100px;margin:30px auto;padding:0 20px}.card{background:#fff;border:1px solid #dfe6f0;border-radius:12px;padding:24px;margin:20px 0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field{display:flex;flex-direction:column;gap:6px}.field input,.field textarea,.field select{padding:11px;border:1px solid #cbd5e1;border-radius:7px}.btn{background:#003b6f;color:#fff;border:0;border-radius:7px;padding:11px 17px;cursor:pointer;text-decoration:none;display:inline-block}.muted{color:#65758a}.item{display:flex;gap:15px;align-items:center;border-bottom:1px solid #e3e8f0;padding:14px 0}.item img{width:95px;height:95px;object-fit:contain}.actions{margin-left:auto;display:flex;gap:8px}.alert{padding:12px;background:#eaf6ef;border-radius:8px}@media(max-width:650px){.grid{grid-template-columns:1fr}.item{flex-wrap:wrap}.actions{margin-left:0}}
-</style></head><body><div class="container"><p><a href="admin.php?panel=contenedores">← Volver a contenedores</a> · <a href="index.php#sellos-home" target="_blank">Ver sitio público</a></p>
-<h1>Sellos del colegio</h1><p class="muted">Mismo esquema de Tabancura: seccion, seccion_config y seccion_item. Los sellos sin imagen no se publican.</p>
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sellos institucionales | Panel CMS</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=2">
+<style>
+.seal-panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:25px;margin:22px 0;box-shadow:0 5px 20px #102d5208}
+.seal-panel h2{font-size:19px;margin:0 0 20px;color:#102d52}
+.seal-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.seal-field{display:flex;flex-direction:column;gap:8px;color:#294261;font-weight:600;font-size:13px}
+.seal-field input,.seal-field textarea,.seal-field select{font:inherit;font-weight:400;width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:11px;background:#fff;color:#162b49}
+.seal-field input:focus,.seal-field textarea:focus,.seal-field select:focus{outline:2px solid #87baff;border-color:#2879c6}
+.seal-btn{display:inline-flex;align-items:center;justify-content:center;background:#286ed0;color:#fff!important;border:0;border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;text-decoration:none;font-size:13px}
+.seal-btn:hover{background:#1859b4}
+.seal-muted{color:#64748b}
+.seal-item{display:flex;gap:16px;align-items:center;padding:15px 0;border-bottom:1px solid #e5ebf3}
+.seal-item:last-child{border-bottom:0}.seal-item img{width:90px;height:90px;object-fit:contain;border:1px solid #e5ebf3;border-radius:9px;padding:6px}
+.seal-actions{margin-left:auto;display:flex;gap:8px}
+.seal-panel .alert{padding:13px;border-radius:8px;background:#e7f5ee}
+.seal-toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.seal-toolbar a{color:#2879c6;font-weight:600;font-size:13px}
+.seal-pill{display:inline-flex;gap:7px;align-items:center;background:#e9f2fc;color:#20599b;padding:7px 12px;border-radius:20px;font-size:12px;font-weight:700}
+@media(max-width:850px){.seal-fields{grid-template-columns:1fr}.seal-item{flex-wrap:wrap}.seal-actions{margin-left:0}.admin-sidebar{display:none}.admin-main{padding:20px}}
+</style></head><body>
+<div class="admin-shell">
+<aside class="admin-sidebar">
+<div class="sidebar-brand"><span class="sidebar-brand-icon"><i class="bi bi-mortarboard" style="font-size:24px;color:#183a64"></i></span><span><strong>Patrona de Lourdes</strong><small>La Florida · Panel CMS</small></span></div>
+<nav class="sidebar-nav">
+<span class="nav-group-label">PRINCIPAL</span>
+<a class="nav-item" href="admin.php?panel=dashboard"><i class="bi bi-grid-1x2"></i> Inicio</a>
+<span class="nav-group-label">GESTIÓN DEL SITIO</span>
+<a class="nav-item active" href="admin.php?panel=contenedores"><i class="bi bi-layers"></i> Contenedores</a>
+<a class="nav-item" href="index.php" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Ver sitio público</a>
+</nav>
+<div class="sidebar-bottom"><div class="admin-user"><span class="avatar"><i class="bi bi-person"></i></span><span><strong><?=se((string)($_SESSION['patrona_admin_nombre']??'Administrador'))?></strong><small>Administrador institucional</small></span></div><a class="logout" href="admin.php?panel=contenedores"><i class="bi bi-arrow-left"></i> Volver al panel</a></div>
+</aside>
+<div class="admin-content">
+<header class="topbar"><span><i class="bi bi-list"></i> Panel de administración <span class="topbar-muted">/ Contenedores / Sellos institucionales</span></span><a href="index.php#sellos-home" target="_blank" rel="noopener">Ver sitio <i class="bi bi-arrow-up-right"></i></a></header>
+<main class="admin-main">
+<div class="page-heading"><div><div class="eyebrow">COLEGIO PATRONA DE LOURDES · LA FLORIDA</div><h1>Sellos institucionales</h1><p>Administra las imágenes, descripciones, enlaces y el orden de los sellos del colegio.</p></div><span class="seal-pill"><i class="bi bi-award"></i> Contenedor sellos_home</span></div>
+<div class="seal-toolbar"><a href="admin.php?panel=contenedores"><i class="bi bi-arrow-left"></i> Volver a contenedores</a><a href="index.php#sellos-home" target="_blank" rel="noopener"><i class="bi bi-eye"></i> Vista pública</a></div>
 <?php if($error):?><div class="alert" style="background:#ffeded"><?=se($error)?></div><?php endif;?>
 <?php if($notice):?><div class="alert"><?=se($notice)?></div><?php endif;?>
 <?php if($sid):?>
-<div class="card"><h2>Configuración del bloque</h2><form method="post"><input type="hidden" name="csrf" value="<?=se($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="config"><div class="grid">
-<label class="field">Título del bloque<input name="titulo_bloque" maxlength="180" value="<?=se((string)($configs['titulo_bloque']??'Sellos del colegio'))?>"></label>
-<label class="field">Texto pequeño sobre el título<input name="subtitulo_bloque" maxlength="180" value="<?=se((string)($configs['subtitulo_bloque']??''))?>"></label>
-</div><p><button class="btn">Guardar configuración</button></p></form></div>
-<div class="card"><h2><?= $editing?'Editar sello':'Agregar sello' ?></h2><form method="post" enctype="multipart/form-data">
+<div class="seal-panel"><h2>Configuración del bloque</h2><form method="post"><input type="hidden" name="csrf" value="<?=se($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="config"><div class="seal-fields">
+<label class="seal-field">Título del bloque<input name="titulo_bloque" maxlength="180" value="<?=se((string)($configs['titulo_bloque']??'Sellos del colegio'))?>"></label>
+<label class="seal-field">Texto pequeño sobre el título<input name="subtitulo_bloque" maxlength="180" value="<?=se((string)($configs['subtitulo_bloque']??''))?>"></label>
+</div><p><button class="seal-btn">Guardar configuración</button></p></form></div>
+<div class="seal-panel"><h2><?= $editing?'Editar sello':'Agregar sello' ?></h2><form method="post" enctype="multipart/form-data">
 <input type="hidden" name="csrf" value="<?=se($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="save"><input type="hidden" name="id_item" value="<?= (int)($editing['id_item']??0) ?>">
-<div class="grid">
-<label class="field">Imagen del sello (JPG, PNG o WebP; máximo 5 MB)<input type="file" name="imagen" accept="image/jpeg,image/png,image/webp" <?= $editing?'':'required' ?>></label>
-<label class="field">Nombre (opcional, accesibilidad)<input name="titulo" maxlength="180" value="<?=se((string)($editing['titulo']??''))?>"></label>
-<label class="field">Enlace externo (opcional)<input type="url" name="url" value="<?=se((string)($editing['url']??''))?>" placeholder="https://..."></label>
-<label class="field">Orden<input type="number" name="orden" min="1" value="<?= (int)($editing['orden']??count($items)+1) ?>"></label>
-<label class="field">Visibilidad<select name="visible"><option value="si" <?=($editing['visible']??'si')==='si'?'selected':''?>>Visible</option><option value="no" <?=($editing['visible']??'si')==='no'?'selected':''?>>Oculto</option></select></label>
-<label class="field" style="grid-column:1/-1">Descripción del reverso (máximo 600 caracteres)<textarea name="descripcion" maxlength="600" rows="4"><?=se((string)($editing['descripcion']??''))?></textarea></label>
+<div class="seal-fields">
+<label class="seal-field">Imagen del sello (JPG, PNG o WebP; máximo 5 MB)<input type="file" name="imagen" accept="image/jpeg,image/png,image/webp" <?= $editing?'':'required' ?>></label>
+<label class="seal-field">Nombre (opcional, accesibilidad)<input name="titulo" maxlength="180" value="<?=se((string)($editing['titulo']??''))?>"></label>
+<label class="seal-field">Enlace externo (opcional)<input type="url" name="url" value="<?=se((string)($editing['url']??''))?>" placeholder="https://..."></label>
+<label class="seal-field">Orden<input type="number" name="orden" min="1" value="<?= (int)($editing['orden']??count($items)+1) ?>"></label>
+<label class="seal-field">Visibilidad<select name="visible"><option value="si" <?=($editing['visible']??'si')==='si'?'selected':''?>>Visible</option><option value="no" <?=($editing['visible']??'si')==='no'?'selected':''?>>Oculto</option></select></label>
+<label class="seal-field" style="grid-column:1/-1">Descripción del reverso (máximo 600 caracteres)<textarea name="descripcion" maxlength="600" rows="4"><?=se((string)($editing['descripcion']??''))?></textarea></label>
 </div>
 <?php if(!empty($editing['imagen'])):?><p>Imagen actual: <img src="<?=se((string)$editing['imagen'])?>" alt="" style="height:90px;max-width:160px;object-fit:contain"></p><?php endif;?>
-<p><button class="btn">Guardar sello</button> <?php if($editing):?><a href="editar_sellos.php">Cancelar edición</a><?php endif;?></p></form></div>
-<div class="card"><h2>Sellos registrados (<?=count($items)?>)</h2>
-<?php if(!$items):?><p class="muted">No hay sellos. Agrega el primero para mostrar el bloque en la página pública.</p><?php endif;?>
-<?php foreach($items as $i):?><div class="item">
+<p><button class="seal-btn">Guardar sello</button> <?php if($editing):?><a href="editar_sellos.php">Cancelar edición</a><?php endif;?></p></form></div>
+<div class="seal-panel"><h2>Sellos registrados (<?=count($items)?>)</h2>
+<?php if(!$items):?><p class="seal-muted">No hay sellos. Agrega el primero para mostrar el bloque en la página pública.</p><?php endif;?>
+<?php foreach($items as $i):?><div class="seal-item">
 <?php if(!empty($i['imagen'])):?><img src="<?=se((string)$i['imagen'])?>" alt=""><?php endif;?>
 <div><strong><?=se((string)($i['titulo']?:'Sello sin nombre'))?></strong><br><small><?=se((string)$i['visible'])?> · Orden <?= (int)$i['orden'] ?></small></div>
-<div class="actions"><a class="btn" href="editar_sellos.php?item=<?=(int)$i['id_item']?>">Editar</a><form method="post" onsubmit="return confirm('¿Eliminar este sello?')"><input type="hidden" name="csrf" value="<?=se($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="delete"><input type="hidden" name="id_item" value="<?=(int)$i['id_item']?>"><button class="btn" style="background:#a72828">Eliminar</button></form></div></div><?php endforeach;?>
-</div><?php endif;?></div></body></html>
+<div class="seal-actions"><a class="seal-btn" href="editar_sellos.php?item=<?=(int)$i['id_item']?>">Editar</a><form method="post" onsubmit="return confirm('¿Eliminar este sello?')"><input type="hidden" name="csrf" value="<?=se($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="delete"><input type="hidden" name="id_item" value="<?=(int)$i['id_item']?>"><button class="seal-btn" style="background:#a72828">Eliminar</button></form></div></div><?php endforeach;?>
+</div><?php endif;?>
+</main></div></div></body></html>
