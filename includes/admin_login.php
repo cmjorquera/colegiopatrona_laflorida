@@ -3,11 +3,11 @@
 $institution = isset($institution) && is_array($institution) ? $institution : [];
 
 $nombreInstitucion = trim((string) ($institution['nombre'] ?? '')) ?: 'Colegio Patrona de Lourdes - La Florida';
-$logoInstitucion = trim((string) ($institution['logo_header'] ?? '')) ?: 'assets/imagenes/LOGO-COLEGIO--Sin-fondo.png';
+$logoInstitucion = trim((string) ($institution['logo_header'] ?? '')) ?: '';
 $imagenLogin = trim((string) ($institution['imagen_login'] ?? '')) ?: '';
 $esloganLogin = trim((string) ($institution['eslogan'] ?? '')) ?: 'Un colegio para aprender, compartir y crecer.';
 foreach (['logoInstitucion', 'imagenLogin'] as $variable) {
-    if (!preg_match('~^(?:uploads|assets)/[a-zA-Z0-9_./%-]+$~', ${$variable})) {
+    if (!preg_match('~^(?:uploads|assets|imagenes)/[a-zA-Z0-9_./%-]+$~', ${$variable})) {
         ${$variable} = '';
     }
 }
@@ -27,18 +27,20 @@ foreach (['primario' => '#F0A000', 'secundario' => '#EF6C00', 'terciario' => '#1
     <title>Administración | <?= cms_e($nombreInstitucion) ?></title>
     <link rel="stylesheet" href="assets/admin/css/admin-login.css?v=20261113-fondo-login">
     <link rel="stylesheet" href="assets/admin/css/seduc-colegios.css?v=20261113-escudos">
+    <link rel="stylesheet" href="assets/admin/css/patrona-login-premium.css?v=1">
 </head>
 <body class="admin-login" style="<?php foreach ($loginColors as $key => $color): ?>--login-<?= $key ?>:<?= cms_e($color) ?>;<?php endforeach; ?><?php if ($imagenLogin !== ''): ?>--login-photo:url(&quot;<?= cms_e($imagenLogin) ?>&quot;);<?php endif; ?>">
     <main class="admin-login-shell">
-        <section class="admin-login-brand" aria-labelledby="institution-title" style="background-color:#102d4d;background-image:linear-gradient(90deg,rgba(5,31,58,.94) 0%,rgba(8,39,72,.81) 47%,rgba(7,34,64,.42) 100%),url('<?= cms_e($imagenLogin) ?>');background-position:center,center;background-size:cover,cover;background-repeat:no-repeat,no-repeat;">
+        <section class="admin-login-brand" aria-labelledby="institution-title" style="background-color:#102d4d;background-image:linear-gradient(90deg,rgba(5,31,58,.94) 0%,rgba(8,39,72,.81) 47%,rgba(7,34,64,.42) 100%),<?= $imagenLogin!=='' ? "url('".cms_e($imagenLogin)."')" : "none" ?>;background-position:center,center;background-size:cover,cover;background-repeat:no-repeat,no-repeat;">
             <div class="admin-login-brand-top">
-                <img class="admin-login-logo" src="<?= cms_e($logoInstitucion) ?>" alt="<?= cms_e($nombreInstitucion) ?>" id="institution-logo">
+                <div class="patrona-login-logo-frame"><?php if($logoInstitucion!==''):?><img class="admin-login-logo" src="<?= cms_e($logoInstitucion) ?>" alt="<?= cms_e($nombreInstitucion) ?>" id="institution-logo" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="patrona-crest-fallback" hidden aria-label="Patrona de Lourdes">PL</span><?php else:?><span class="patrona-crest-fallback" aria-label="Patrona de Lourdes">PL</span><?php endif;?></div>
                 <span class="admin-login-brand-kicker">Gestión de sitio web</span>
             </div>
             <div class="admin-login-intro">
                 <p class="admin-login-eyebrow"><span class="admin-login-status-dot"></span> Plataforma de gestión de páginas web</p>
-                <h1 id="institution-title"><?= cms_e($nombreInstitucion) ?></h1>
-                <p>Sistema de administración del sitio web institucional: organiza páginas, publica noticias y gestiona imágenes, videos y usuarios.</p>
+                <h1 id="institution-title">Tu colegio.<br><span>Tu sitio web.</span><br>Todo bajo control.</h1>
+                <p class="patrona-login-school-name"><?=cms_e($nombreInstitucion)?></p>
+                <p>Un espacio para gestionar el sitio institucional: actualiza contenidos, noticias, imágenes y secciones desde un solo lugar.</p>
                 <div class="admin-login-feature-grid" aria-label="Funciones del gestor web">
                     <div class="admin-login-feature"><span class="admin-login-feature-icon" aria-hidden="true">▤</span><span><strong>Páginas web</strong><small>Crea y organiza contenidos.</small></span></div>
                     <div class="admin-login-feature"><span class="admin-login-feature-icon" aria-hidden="true">▣</span><span><strong>Noticias</strong><small>Publica novedades y comunicados.</small></span></div>
@@ -48,14 +50,14 @@ foreach (['primario' => '#F0A000', 'secundario' => '#EF6C00', 'terciario' => '#1
             </div>
             <div class="admin-login-brand-bottom">
                 <div class="admin-login-colorband" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-                <p><?= cms_e($esloganLogin) ?></p>
+                <p>Plataforma web administrable desarrollada por <strong>webnia.cl</strong> · <?=cms_e($esloganLogin)?></p>
             </div>
         </section>
         <section class="admin-login-content" aria-labelledby="login-title">
             <div class="admin-login-content-inner">
                 <div class="admin-login-platform admin-login-platform-institution" aria-label="Identidad del Colegio Patrona de Lourdes - La Florida">
                     <div class="admin-login-institution-logo-wrap">
-                        <img src="<?= cms_e($logoInstitucion) ?>" alt="Logo de <?= cms_e($nombreInstitucion) ?>" class="admin-login-institution-logo">
+                        <?php if($logoInstitucion!==''):?><img src="<?= cms_e($logoInstitucion) ?>" alt="Logo de <?= cms_e($nombreInstitucion) ?>" class="admin-login-institution-logo" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="patrona-crest-fallback small" hidden aria-label="Patrona de Lourdes">PL</span><?php else:?><span class="patrona-crest-fallback small" aria-label="Patrona de Lourdes">PL</span><?php endif;?>
                     </div>
                     <div class="admin-login-platform-copy">
                         <span class="admin-login-platform-eyebrow">Panel de administración web</span>
@@ -92,11 +94,11 @@ foreach (['primario' => '#F0A000', 'secundario' => '#EF6C00', 'terciario' => '#1
                 <div class="admin-login-developer" aria-label="Créditos de desarrollo">
                     <span class="admin-login-developer-caption">Desarrollado por</span>
                     <a href="https://webnia.cl/" target="_blank" rel="noopener noreferrer" class="admin-login-developer-link">webnia<span>.cl</span></a>
-                    <span class="admin-login-developer-description">Desarrollo de sitios web y plataformas de gestión</span>
+                    <span class="admin-login-developer-description">Diseño, desarrollo y administración de sitios web institucionales</span>
+                    <a class="patrona-webnia-cta" href="https://webnia.cl/" target="_blank" rel="noopener noreferrer">Conoce Webnia.cl <span aria-hidden="true">↗</span></a>
                 </div>
                 <section class="admin-login-network" aria-label="Administración institucional">
-                    <span class="admin-login-network-heading">Colegio Patrona de Lourdes</span>
-                    <p class="admin-login-network-heading">Colegio Patrona de Lourdes · La Florida</p></section>
+                    <span class="admin-login-network-heading">Una plataforma creada para tu comunidad educativa</span></section>
             </div>
         </section>
     </main>
