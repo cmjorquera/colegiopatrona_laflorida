@@ -34,6 +34,8 @@ panels.forEach(panel=>{
    const matches=assigned===target||(!assigned&&role.includes(target));
    card.hidden=!matches;if(matches)count++;
   });
+  // Los docentes demo o sin curso asignado siguen visibles hasta completar sus asignaciones en el CMS.
+  if(count===0){cards.forEach(card=>{const assigned=(card.dataset.personCourse||'').trim();if(!assigned){card.hidden=false;count++;}});}
   if(empty)empty.hidden=count>0;if(viewport)viewport.hidden=count===0;if(heading)heading.hidden=count===0;
   if(dots)dots.hidden=count===0;
   if(viewport)viewport.scrollLeft=0;
