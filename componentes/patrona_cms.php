@@ -127,7 +127,27 @@ function patrona_cms_render(array $s): void {
         <?php
         return;
     }
-    if (!$items && !array_filter($config,static fn($v)=>trim((string)$v)!=='')) return;
+    if (str_contains($name,'galeria')) {
+        $photos=array_values(array_filter($items,static fn(array $i):bool=>trim((string)($i['imagen']??''))!==''));
+        if(!$photos)return;
+        ?><section class="section wrap patrona-gallery" id="galeria-home"><h2><?=patrona_e((string)($config['titulo_bloque']??'Galería'))?></h2><div class="patrona-gallery-grid">
+        <?php foreach($photos as $photo):?><figure><img loading="lazy" src="<?=patrona_e((string)$photo['imagen'])?>" alt="<?=patrona_e((string)($photo['titulo']??''))?>"><figcaption><?=patrona_e((string)($photo['titulo']??''))?></figcaption></figure><?php endforeach;?></div></section>
+        <style>.patrona-gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}.patrona-gallery-grid figure{margin:0}.patrona-gallery-grid img{width:100%;height:230px;object-fit:cover;border-radius:12px}.patrona-gallery-grid figcaption{padding:8px;color:#003b6f}</style><?php return;
+    }
+    if(str_contains($name,'podcast')){
+        $episodes=array_values(array_filter($items,static fn(array $i):bool=>trim((string)($i['url']??''))!==''));
+        if(!$episodes)return;
+        ?><section class="section wrap patrona-podcast" id="podcast-home"><h2><?=patrona_e((string)($config['titulo_bloque']??'Podcast'))?></h2><div class="patrona-cms-grid">
+        <?php foreach($episodes as $episode):$url=patrona_cms_url($episode['url']??'');if($url==='#')continue;?>
+        <article class="patrona-cms-card"><?php if(!empty($episode['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$episode['imagen'])?>" alt=""><?php endif;?><h3><?=patrona_e((string)($episode['titulo']??''))?></h3><p><?=patrona_e(strip_tags(html_entity_decode((string)($episode['descripcion']??''),ENT_QUOTES|ENT_HTML5,'UTF-8')))?></p><a href="<?=patrona_e($url)?>" target="_blank" rel="noopener noreferrer">Escuchar episodio →</a></article>
+        <?php endforeach;?></div></section><?php return;
+    }
+    if(str_contains($name,'estadisticas')||str_contains($name,'numeros')){
+        if(!$items)return;
+        ?><section class="section wrap patrona-stats" id="estadisticas-home"><h2><?=patrona_e((string)($config['titulo_bloque']??'Nuestro colegio en números'))?></h2><div class="patrona-cms-grid">
+        <?php foreach($items as $stat):?><article class="patrona-cms-card"><strong style="font-size:32px;color:#003b6f"><?=patrona_e((string)($stat['etiqueta']??''))?></strong><h3><?=patrona_e((string)($stat['titulo']??''))?></h3><p><?=patrona_e((string)($stat['descripcion']??''))?></p></article><?php endforeach;?></div></section><?php return;
+    }
+    if (!$items) return;
     $id='seccion-'.(int)$s['id_seccion'];
     $title=(string)($config['titulo_bloque']??$config['titulo']??'');
     $type=(string)($s['tipo_seccion']??'content');
