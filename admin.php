@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if($nombre===''||mb_strlen($nombre)>180||mb_strlen($url)>255)throw new RuntimeException('Datos inválidos.');
             if($url!=='' && $url!=='#' && !preg_match('~^(https?://|/|#|[a-zA-Z0-9_])~',$url))throw new RuntimeException('URL no válida.');
             if($id>0){$q=$db->prepare('UPDATE menus SET nombre=?,url=?,estado=? WHERE id_menu=?');$q->bind_param('ssii',$nombre,$url,$estado,$id);}
-            else{$orden=(int)$db->query('SELECT COALESCE(MAX(orden),0)+1 AS orden FROM menus')->fetch_assoc()['orden'];$q=$db->prepare('INSERT INTO menus(nombre,url,icono,orden,estado) VALUES (?,?,"",?,?)');$q->bind_param('ssii',$nombre,$url,$orden,$estado);}
+            else{$orden=(int)$db->query('SELECT COALESCE(MAX(orden),0)+1 AS orden FROM menus')->fetch_assoc()['orden'];$q=$db->prepare('INSERT INTO menus(nombre,url,icono,orden,estado,fecha_creacion,hora_creacion,ip_creacion) VALUES (?,?,"",?,?,CURDATE(),CURTIME(),"127.0.0.1")');$q->bind_param('ssii',$nombre,$url,$orden,$estado);}
             $q->execute();$_SESSION['patrona_notice']='Menú público guardado.';
         }catch(Throwable $e){error_log('Patrona guardar menu: '.$e->getMessage());$_SESSION['patrona_notice']='No fue posible guardar el menú. Comprueba el esquema de menus.';}
         header('Location: admin.php?panel=menus');exit;
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if($url!=='' && $url!=='#' && !preg_match('~^(https?://|/|#|[a-zA-Z0-9_])~',$url))throw new RuntimeException('URL no válida.');
             $q=$db->prepare('SELECT id_menu FROM menus WHERE id_menu=?');$q->bind_param('i',$padre);$q->execute();if(!$q->get_result()->fetch_assoc())throw new RuntimeException('Menú padre no existe.');
             if($id>0){$q=$db->prepare('UPDATE sub_menus SET id_menu=?,nombre=?,url=?,estado=? WHERE id_sub_menu=?');$q->bind_param('issii',$padre,$nombre,$url,$estado,$id);}
-            else{$o=$db->prepare('SELECT COALESCE(MAX(orden),0)+1 AS orden FROM sub_menus WHERE id_menu=?');$o->bind_param('i',$padre);$o->execute();$orden=(int)$o->get_result()->fetch_assoc()['orden'];$q=$db->prepare('INSERT INTO sub_menus(id_menu,nombre,url,icono,orden,estado) VALUES (?,?,?,"",?,?)');$q->bind_param('issii',$padre,$nombre,$url,$orden,$estado);}
+            else{$o=$db->prepare('SELECT COALESCE(MAX(orden),0)+1 AS orden FROM sub_menus WHERE id_menu=?');$o->bind_param('i',$padre);$o->execute();$orden=(int)$o->get_result()->fetch_assoc()['orden'];$q=$db->prepare('INSERT INTO sub_menus(id_menu,nombre,url,icono,orden,estado,fecha_creacion,hora_creacion,ip_creacion) VALUES (?,?,?,"",?,?,CURDATE(),CURTIME(),"127.0.0.1")');$q->bind_param('issii',$padre,$nombre,$url,$orden,$estado);}
             $q->execute();$_SESSION['patrona_notice']='Submenú guardado.';
         }catch(Throwable $e){error_log('Patrona guardar submenu: '.$e->getMessage());$_SESSION['patrona_notice']='No fue posible guardar el submenú.';}
         header('Location: admin.php?panel=menus');exit;
