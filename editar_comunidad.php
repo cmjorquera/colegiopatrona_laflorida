@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__.'/includes/rich_editor.php';
 declare(strict_types=1);
+require_once __DIR__.'/includes/rich_editor.php';
 $sessionDir='/home3/crist668/php_sessions_patrona';
 if(!is_dir($sessionDir)||!is_writable($sessionDir)){http_response_code(503);exit('Sesiones no disponibles');}
 session_save_path($sessionDir);session_start();
