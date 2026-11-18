@@ -65,6 +65,59 @@ function patrona_cms_render(array $s): void {
         <?php
         return;
     }
+    if ($name==='equipo_docente_home') {
+        if(!$items)return;
+        $cycles=[
+            'jardin'=>['Jardín','Educación inicial'],
+            'basica_1'=>['Básica','1.er ciclo'],
+            'basica_2'=>['Básica','2.º ciclo'],
+            'media'=>['Enseñanza','Media']
+        ];
+        $grouped=[];
+        foreach($items as $item){
+            $cycle=trim((string)($item['etiqueta']??''));
+            if(!isset($cycles[$cycle]))continue;
+            $grouped[$cycle][]=$item;
+        }
+        ?>
+        <section class="section patrona-team" id="organizacion-colegio">
+          <div class="wrap">
+            <div class="patrona-centered-heading"><span class="patrona-kicker">NUESTRO EQUIPO</span><h2><?=patrona_e((string)($config['titulo_bloque']??'Organización del Colegio'))?></h2><p><?=patrona_e((string)($config['subtitulo_bloque']??'Conoce a quienes acompañan el aprendizaje en cada etapa.'))?></p></div>
+            <div class="patrona-cycle-nav" role="tablist" aria-label="Ciclos del colegio">
+            <?php foreach($cycles as $key=>$names):?><button type="button" role="tab" data-team-tab="<?=patrona_e($key)?>" id="team-tab-<?=patrona_e($key)?>" aria-controls="team-panel-<?=patrona_e($key)?>" aria-selected="<?= $key==='jardin'?'true':'false' ?>" tabindex="<?= $key==='jardin'?'0':'-1' ?>"><strong><?=patrona_e($names[0])?></strong><span><?=patrona_e($names[1])?></span></button><?php endforeach;?>
+            </div>
+            <?php foreach($cycles as $key=>$names):?>
+              <div class="patrona-team-panel" role="tabpanel" id="team-panel-<?=patrona_e($key)?>" aria-labelledby="team-tab-<?=patrona_e($key)?>" <?= $key==='jardin'?'':'hidden' ?>>
+                <?php $people=$grouped[$key]??[];if(!$people):?><p class="patrona-team-empty">Próximamente conocerás al equipo de este ciclo.</p><?php else:?>
+                <?php
+                  $coordinators=[];$teachers=[];
+                  foreach($people as $person){
+                    if(stripos((string)($person['subtitulo']??''),'coordin')!==false||stripos((string)($person['subtitulo']??''),'director')!==false)$coordinators[]=$person;
+                    else $teachers[]=$person;
+                  }
+                ?>
+                <?php foreach($coordinators as $person):?>
+                  <article class="patrona-team-lead">
+                    <?php if(!empty($person['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$person['imagen'])?>" alt="<?=patrona_e((string)$person['titulo'])?>"><?php endif;?>
+                    <div><span class="patrona-kicker">COORDINACIÓN DEL CICLO</span><h3><?=patrona_e((string)$person['titulo'])?></h3><strong><?=patrona_e((string)($person['subtitulo']??'Coordinación'))?></strong>
+                    <?php $email=(string)($person['url']??'');if(filter_var($email,FILTER_VALIDATE_EMAIL)):?><a href="mailto:<?=patrona_e($email)?>"><?=patrona_e($email)?></a><?php endif;?>
+                    <?php if(!empty($person['descripcion'])):?><div class="patrona-rich-text"><?=patrona_rich_clean((string)$person['descripcion'])?></div><?php endif;?></div>
+                  </article>
+                <?php endforeach;?>
+                <?php if($teachers):?><h3 class="patrona-team-subheading">Profesores jefes y equipo docente</h3><div class="patrona-team-grid">
+                <?php foreach($teachers as $person):$email=(string)($person['url']??'');?><article class="patrona-team-person">
+                  <?php if(!empty($person['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$person['imagen'])?>" alt="<?=patrona_e((string)$person['titulo'])?>"><?php else:?><div class="patrona-team-placeholder" aria-hidden="true">👤</div><?php endif;?>
+                  <h4><?=patrona_e((string)$person['titulo'])?></h4><span class="patrona-team-role"><?=patrona_e((string)($person['subtitulo']??'Docente'))?></span>
+                  <?php if(filter_var($email,FILTER_VALIDATE_EMAIL)):?><a href="mailto:<?=patrona_e($email)?>"><?=patrona_e($email)?></a><?php endif;?>
+                  <?php if(!empty($person['descripcion'])):?><details><summary>Ver información</summary><div class="patrona-rich-text"><?=patrona_rich_clean((string)$person['descripcion'])?></div></details><?php endif;?>
+                </article><?php endforeach;?></div><?php endif;?>
+                <?php endif;?>
+              </div>
+            <?php endforeach;?>
+          </div>
+        </section>
+        <?php return;
+    }
     if ($name==='noticias_home') {
         if (!$items) return;
         $clean=static function($v):string {return trim(preg_replace('/\\s+/u',' ',strip_tags(html_entity_decode((string)$v,ENT_QUOTES|ENT_HTML5,'UTF-8')))??'');};
