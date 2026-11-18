@@ -75,7 +75,7 @@ function patrona_cms_render(array $s): void {
         <section class="section patrona-news" id="noticias-home"><div class="wrap">
         <div class="patrona-news-heading"><h2>Noticias</h2></div>
         <div class="patrona-news-grid">
-        <?php foreach(array_slice($items,0,3) as $item):
+        <?php foreach(array_slice($items,0,6) as $item):
           $url=patrona_cms_url($item['url']??$item['boton_1_url']??'');
           $title=$clean($item['titulo']??'');
           $desc=$clean($item['descripcion']??$item['subtitulo']??'');
