@@ -13,3 +13,8 @@
 .patrona-public-nav>ul>li.submenu-open>.patrona-nav-expand{transform:rotate(180deg)}
 @media(max-width:1050px){.site-header .nav{flex-wrap:wrap;justify-content:space-between;row-gap:8px;padding-block:8px}.patrona-public-nav{order:3;width:100%}.patrona-public-nav>ul{justify-content:center;flex-wrap:wrap;gap:4px 12px}.patrona-public-nav .patrona-nav-submenu{min-width:210px}.patrona-public-nav>ul>li:last-child>.patrona-nav-submenu{right:0;left:auto}}
 @media(max-width:620px){.patrona-public-nav>ul{justify-content:flex-start}.patrona-public-nav>ul>li{position:static}.patrona-public-nav .patrona-nav-submenu{left:10px;right:10px;top:auto;width:auto;max-width:none}.patrona-public-nav>ul>li:last-child>.patrona-nav-submenu{right:10px;left:10px}}
+
+/* Evitar que el estilo global .nav ul convierta los submenús en filas. */
+.site-header .patrona-public-nav .patrona-nav-submenu{flex-direction:column;align-items:stretch;gap:0}
+.site-header .patrona-public-nav>ul>li:hover>.patrona-nav-submenu,.site-header .patrona-public-nav>ul>li:focus-within>.patrona-nav-submenu,.site-header .patrona-public-nav>ul>li.submenu-open>.patrona-nav-submenu{display:flex}
+@media(max-width:1000px){.site-header .nav .patrona-public-nav{display:block}}
