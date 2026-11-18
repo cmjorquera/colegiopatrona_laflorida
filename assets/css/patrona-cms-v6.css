@@ -122,7 +122,7 @@
 .patrona-podcast-out{color:#fff}
 .patrona-podcast-social{padding:26px 0}
 .patrona-social-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
-.patrona-social-header h2{font:700 21px/1.3 inherit;color:#102d51;margin:0 0 10px}
+.patrona-social-header h2{font-size:21px;font-weight:700;line-height:1.3;color:#102d51;margin:0 0 10px}
 .patrona-social-header strong{color:#073b70;font-size:20px}
 .patrona-social-header a{border:1px solid #9eb0c1;border-radius:5px;padding:12px;color:#0b3b6d;text-decoration:none;white-space:nowrap}
 .patrona-social-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
