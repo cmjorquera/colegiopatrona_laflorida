@@ -110,13 +110,13 @@ function patrona_cms_render(array $s): void {
                     <?php if(!empty($person['descripcion'])):?><div class="patrona-rich-text"><?=patrona_rich_clean((string)$person['descripcion'])?></div><?php endif;?></div>
                   </article>
                 <?php endforeach;?>
-                <?php if($teachers):?><h3 class="patrona-team-subheading">Profesores jefes y equipo docente</h3><div class="patrona-team-grid">
+                <?php if($teachers):?><div class="patrona-team-carousel-heading"><h3 class="patrona-team-subheading">Profesores jefes y equipo docente</h3><div class="patrona-team-carousel-controls"><button type="button" data-team-prev aria-label="Profesores anteriores">‹</button><button type="button" data-team-next aria-label="Profesores siguientes">›</button></div></div><div class="patrona-team-viewport" data-team-viewport tabindex="0" aria-label="Carrusel de profesores"><div class="patrona-team-grid" data-team-track>
                 <?php foreach($teachers as $person):$email=(string)($person['url']??'');?><article class="patrona-team-person">
                   <?php if(!empty($person['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$person['imagen'])?>" alt="<?=patrona_e((string)$person['titulo'])?>"><?php else:?><div class="patrona-team-placeholder" aria-hidden="true">👤</div><?php endif;?>
                   <h4><?=patrona_e((string)$person['titulo'])?></h4><span class="patrona-team-role"><?=patrona_e((string)($person['subtitulo']??'Docente'))?></span>
                   <?php if(filter_var($email,FILTER_VALIDATE_EMAIL)):?><a href="mailto:<?=patrona_e($email)?>"><?=patrona_e($email)?></a><?php endif;?>
                   <?php if(!empty($person['descripcion'])):?><details><summary>Ver información</summary><div class="patrona-rich-text"><?=patrona_rich_clean((string)$person['descripcion'])?></div></details><?php endif;?>
-                </article><?php endforeach;?></div><?php endif;?>
+                </article><?php endforeach;?></div></div><div class="patrona-team-carousel-dots" data-team-dots></div><?php endif;?>
                 <?php endif;?>
               </div>
             <?php endforeach;?>
