@@ -1,0 +1,26 @@
+IMPLEMENTACION MENÚS Y SIDEBAR — LA FLORIDA (2026-11-18)
+
+REFERENCIAS:
+- Repositorio cmjorquera/colegio_sanpablo: includes/cms_helpers.php, admin.php, includes/admin_layout.php.
+- Colegio San Pablo gestiona navegación pública mediante tablas menus y sub_menus, con edición, orden y estados.
+- La Florida dispone de esas tablas según SQL local crist668_colegio_patrona_laflorida.sql (menus contiene id_padre opcional; sub_menus depende de id_menu). No crear tablas paralelas.
+- No copiar admin_layout.php completo, pues San Pablo depende de tablas admin_menu/admin_submenu, permisos y auditoría específicos.
+
+CAMBIOS:
+- includes/patrona_cms_public.php obtiene menús y submenús activos, y aísla errores de navegación para no dejar la portada sin contenido.
+- index.php construye jerarquía menus/sub_menus; solo si no existen menús se mantienen enlaces provisionales de header_principal o config/portada.php.
+- assets/css/patrona-nav.css, assets/js/patrona-nav.js crean desplegables accesibles con mouse, teclado y clic.
+- admin.php agrega panel Menú público para crear/editar menús y submenús; mantiene CSRF y autorización institucional.
+- Sidebar admin: grupos Contenidos del sitio y Navegación con subitems desplegables; se conserva Dashboard y Ver sitio público.
+- assets/admin/css/patrona-admin-menu.css, assets/admin/js/patrona-sidebar.js: estilo azul institucional y marca de agua basada en assets/imagenes/LOGO-COLEGIO--Sin-fondo.png (archivo no versionado; debe existir en hosting).
+- SQL manual: sql/18_menu_publico_patrona.sql, carga NO destructiva de los 6 menús y 9 submenús de capturas. Rutas pendientes son anclas ilustrativas. No insertar datos vía GitHub ni Code Mode.
+
+CONTROL:
+- Base crist668_colegio_patrona_laflorida, id_institucion 2.
+- ANTES de SQL respaldar BD. Ejecutar manualmente en phpMyAdmin y revisar menú público.
+- EN SERVIDOR: git pull origin main; php -l admin.php; php -l index.php; php -l includes/patrona_cms_public.php.
+- CSS caché / menú móvil verificar visualmente.
+- Tabla sub_menus no posee jerarquía de tercer nivel. Flechas de nivel 3 en referencia deben implementarse por separado si se requieren.
+- Repo solo versiona texto; logo watermark requiere archivo existente en cPanel, no aparece en árbol GitHub.
+- No copiar menús San Pablo (son de otra institución).
+- Pendiente evolución: ordenación drag/drop, auditoría completa y páginas definitivas; no afirmar paridad funcional plena aún.
