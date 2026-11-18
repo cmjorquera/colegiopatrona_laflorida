@@ -1,0 +1,21 @@
+/* Equipo docente por ciclos */
+.patrona-team{padding:90px 0;background:#fff}
+.patrona-cycle-nav{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin:20px auto 40px}
+.patrona-cycle-nav button{width:178px;height:178px;border-radius:50%;border:2px solid #0c315a;background:#76afe9;box-shadow:4px 5px 0 #0c315a;color:#082c55;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:transform .2s,background .2s;font:inherit;text-align:center}
+.patrona-cycle-nav button strong{font-size:25px;font-weight:900;text-transform:uppercase}.patrona-cycle-nav button span{font-size:17px;font-weight:800}
+.patrona-cycle-nav button:hover{transform:translateY(-5px)}.patrona-cycle-nav button[aria-selected=true]{background:#153d74;color:#fff;transform:translateY(-7px)}
+.patrona-team-panel[hidden]{display:none}.patrona-team-panel{animation:patrona-family-in .35s ease}
+.patrona-team-lead{display:grid;grid-template-columns:minmax(200px,350px) 1fr;align-items:center;gap:38px;padding:24px 0 35px;border-bottom:1px solid #dce4ee}
+.patrona-team-lead>img{width:100%;height:340px;object-fit:cover;border-radius:22px}
+.patrona-team-lead h3{font-size:clamp(24px,3vw,34px);color:#0b305b;margin:0 0 12px}.patrona-team-lead strong{display:block;color:#0b477a}.patrona-team-lead a,.patrona-team-person a{display:block;color:#1765a2;margin-top:7px;overflow-wrap:anywhere}
+.patrona-team-subheading{font-size:26px;margin:32px 0 20px;color:#0b305b}
+.patrona-team-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+.patrona-team-person{text-align:center;padding-bottom:16px}
+.patrona-team-person img,.patrona-team-placeholder{width:100%;height:230px;object-fit:cover;border-radius:16px;background:#e5eef6}
+.patrona-team-placeholder{display:grid;place-items:center;font-size:60px}
+.patrona-team-person h4{font-size:15px;margin:12px 0 7px;color:#0b305b;text-transform:uppercase}
+.patrona-team-role{display:inline-block;border-radius:20px;background:#e5e8ec;color:#213a55;padding:4px 12px;font-size:12px;font-weight:800}
+.patrona-team-person a{font-size:12px}.patrona-team-person details{font-size:13px;margin-top:10px;text-align:left}.patrona-team-person summary{cursor:pointer;color:#1765a2}
+.patrona-team-empty{text-align:center;padding:30px;color:#60748c}
+@media(max-width:800px){.patrona-team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.patrona-team-lead{grid-template-columns:1fr}.patrona-cycle-nav button{width:140px;height:140px}.patrona-cycle-nav button strong{font-size:20px}}
+@media(max-width:480px){.patrona-cycle-nav{gap:12px}.patrona-cycle-nav button{width:125px;height:125px}.patrona-cycle-nav button strong{font-size:17px}.patrona-cycle-nav button span{font-size:13px}.patrona-team-grid{gap:14px}.patrona-team-person img,.patrona-team-placeholder{height:175px}}
