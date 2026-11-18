@@ -35,3 +35,11 @@ php -l includes/admin_login.php
 Ctrl+F5 en navegador.
 
 PENDIENTE: validar visualmente en hosting; conexión de terminal cPanel no disponible en herramientas de esta conversación.
+
+AJUSTE 2026-11-18 — REPASO LOGIN EN PESTAÑA CONECTADA
+- Se leyó en navegador conectado la pestaña Administración | Colegio Patrona de Lourdes - La Florida. El documento presenta login, logo institucional, texto Webnia y accesos comerciales.
+- Se corrigió fondo para usar sólo el isotipo cuadrado del colegio de assets/imagenes/cropped-logo-cuadrado-sin-fondo-2-192x192.png; la URL CSS es relativa a assets/admin/css/, por eso ../../imagenes/ resuelve a assets/imagenes.
+- Se ajustó distribución para pantallas de escritorio sin ocultar formulario; recuperación parcial de tamaño de letra y espaciados frente a versión excesivamente compacta.
+- Se agrupó en una fila de íconos: globo para webnia.cl, WhatsApp +56988302735, Instagram. Instagram se presenta como marcador sin vínculo hasta confirmar la URL oficial. Se puede configurar en variable de entorno WEBNIA_INSTAGRAM_URL apuntando al perfil instagram.com permitido.
+- Cambios en includes/admin_login.php y assets/admin/css/patrona-login-premium.css. No hay SQL.
+- Verificación visual de diseño en el servidor después del git pull aún pendiente.
