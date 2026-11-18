@@ -1,0 +1,15 @@
+/* Menú público inspirado en la navegación jerárquica de San Pablo.
+   Respeta la identidad azul de Colegio Patrona de Lourdes. */
+.site-header{z-index:1100}
+.patrona-public-nav>ul{display:flex;align-items:center;gap:clamp(4px,1vw,18px);margin:0;padding:0;list-style:none}
+.patrona-public-nav>ul>li{position:relative;display:flex;align-items:center;min-width:0}
+.patrona-public-nav>ul>li>a{display:block;white-space:nowrap;font-size:clamp(11px,.82vw,14px);font-weight:700;padding:11px 5px}
+.patrona-public-nav .patrona-nav-expand{display:inline-flex;justify-content:center;align-items:center;width:22px;height:30px;padding:0;background:transparent;border:0;color:#173c6b;font-size:18px;cursor:pointer}
+.patrona-public-nav .patrona-nav-submenu{display:none;position:absolute;top:100%;left:0;z-index:1103;list-style:none;margin:0;padding:8px 0;min-width:250px;width:max-content;max-width:min(350px,calc(100vw - 30px));background:#102d52;color:#fff;border-radius:0 0 9px 9px;box-shadow:0 13px 30px #0925483d}
+.patrona-public-nav .patrona-nav-submenu li{display:block}
+.patrona-public-nav .patrona-nav-submenu a{display:block;color:#fff;white-space:normal;padding:11px 16px;font-size:13px;line-height:1.4}
+.patrona-public-nav .patrona-nav-submenu a:hover,.patrona-public-nav .patrona-nav-submenu a:focus-visible{background:#21578f}
+.patrona-public-nav>ul>li:hover>.patrona-nav-submenu,.patrona-public-nav>ul>li:focus-within>.patrona-nav-submenu,.patrona-public-nav>ul>li.submenu-open>.patrona-nav-submenu{display:block}
+.patrona-public-nav>ul>li.submenu-open>.patrona-nav-expand{transform:rotate(180deg)}
+@media(max-width:1050px){.site-header .nav{flex-wrap:wrap;justify-content:space-between;row-gap:8px;padding-block:8px}.patrona-public-nav{order:3;width:100%}.patrona-public-nav>ul{justify-content:center;flex-wrap:wrap;gap:4px 12px}.patrona-public-nav .patrona-nav-submenu{min-width:210px}.patrona-public-nav>ul>li:last-child>.patrona-nav-submenu{right:0;left:auto}}
+@media(max-width:620px){.patrona-public-nav>ul{justify-content:flex-start}.patrona-public-nav>ul>li{position:static}.patrona-public-nav .patrona-nav-submenu{left:10px;right:10px;top:auto;width:auto;max-width:none}.patrona-public-nav>ul>li:last-child>.patrona-nav-submenu{right:10px;left:10px}}
