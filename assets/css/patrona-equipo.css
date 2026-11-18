@@ -34,3 +34,34 @@
 .patrona-team-lead:not(:has(>img))>div{max-width:780px}
 .patrona-team-lead:not(:has(>img)) h3{font-size:clamp(22px,2.5vw,30px)}
 @media(max-width:800px){.patrona-team-lead{grid-template-columns:1fr}.patrona-team-intro{min-height:280px}}
+
+
+/* Vista horizontal: círculo activo a la izquierda, docentes a la derecha. */
+#organizacion-colegio .wrap{width:calc(100% - 64px);max-width:1660px;margin-inline:auto}
+#organizacion-colegio [data-team-tab][hidden]{display:none!important}
+#organizacion-colegio.patrona-team-active .wrap{display:grid;grid-template-columns:minmax(185px,230px) minmax(0,1fr);column-gap:clamp(24px,4vw,75px);align-items:start}
+#organizacion-colegio.patrona-team-active .patrona-centered-heading{grid-column:1/-1;margin-bottom:24px}
+#organizacion-colegio.patrona-team-active .patrona-team-intro{grid-column:1;grid-row:2;min-height:0;display:block;position:sticky;top:100px}
+#organizacion-colegio.patrona-team-active .patrona-cycle-nav{margin:0;justify-content:flex-start}
+#organizacion-colegio.patrona-team-active .patrona-cycle-nav button{width:185px;height:185px;background:#173f73;color:#fff;box-shadow:5px 6px 0 #0b315d}
+#organizacion-colegio.patrona-team-active .patrona-team-hint{display:none}
+#organizacion-colegio.patrona-team-active .patrona-team-back-wrap{grid-column:1;grid-row:3;justify-content:flex-start;margin:20px 0 0}
+#organizacion-colegio.patrona-team-active .patrona-team-panel:not([hidden]){grid-column:2;grid-row:2/span 3;width:100%;max-width:none;min-width:0;min-height:260px;margin:0}
+#organizacion-colegio.patrona-team-active .patrona-team-lead{grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:24px;padding-top:0}
+#organizacion-colegio.patrona-team-active .patrona-team-lead>img{height:230px}
+#organizacion-colegio.patrona-team-active .patrona-team-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+#organizacion-colegio.patrona-team-active .patrona-team-person img,#organizacion-colegio.patrona-team-active .patrona-team-placeholder{height:clamp(150px,17vw,230px)}
+@media(max-width:1050px){
+ #organizacion-colegio.patrona-team-active .patrona-team-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:720px){
+ #organizacion-colegio .wrap{width:calc(100% - 30px)}
+ #organizacion-colegio.patrona-team-active .wrap{grid-template-columns:1fr;row-gap:12px}
+ #organizacion-colegio.patrona-team-active .patrona-team-intro{grid-column:1;grid-row:2;position:static}
+ #organizacion-colegio.patrona-team-active .patrona-cycle-nav{justify-content:center}
+ #organizacion-colegio.patrona-team-active .patrona-cycle-nav button{width:132px;height:132px}
+ #organizacion-colegio.patrona-team-active .patrona-team-back-wrap{grid-column:1;grid-row:3;justify-content:center;margin:0 0 12px}
+ #organizacion-colegio.patrona-team-active .patrona-team-panel:not([hidden]){grid-column:1;grid-row:4}
+ #organizacion-colegio.patrona-team-active .patrona-team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #organizacion-colegio.patrona-team-active .patrona-team-lead{grid-template-columns:1fr}
+}
