@@ -1,0 +1,9 @@
+ETAPA 8 - COMUNIDAD ESCOLAR / FAMILIAS
+Implementado en rama main.
+Se usa el contenedor existente tab_comunidad_home y sus tablas seccion, seccion_item, seccion_config. Los items de la pestaña Familias se identifican por etiqueta='familias'. No se crean tablas ni se modifica la BD manualmente.
+Archivos:
+- editar_comunidad.php: CRUD de items de Familias, carga de imagen JPG/PNG/WebP hasta 5MB, CSRF, validacion de sesion, institucion 2, enlaces HTTP(S), visibilidad y orden.
+- componentes/patrona_cms.php: muestra pestana Familias con tarjetas, solo si existen items visibles de etiqueta familias.
+- admin.php: habilita el lapiz de tab_comunidad_home.
+Pendiente: verificar php -l y CRUD en servidor, mejorar paridad exacta del panel de Tabancura, agregar Estudiantes y Actividades posteriormente. No copiar contenido de Tabancura ni modificar portada superior.
+Comandos: cd /home3/crist668/colegiolaflorida.webnia.cl && git pull origin main && php -l editar_comunidad.php && php -l componentes/patrona_cms.php && php -l admin.php.
