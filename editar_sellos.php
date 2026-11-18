@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/includes/rich_editor.php';
 declare(strict_types=1);
 $sessionPath='/home3/crist668/php_sessions_patrona';
 if (!is_dir($sessionPath)||!is_writable($sessionPath)) {http_response_code(503);exit('Sesiones no disponibles');}
@@ -36,7 +37,7 @@ try{
     $db->commit();
    }catch(Throwable $e){$db->rollback();throw $e;}
   }elseif($action==='save'){
-   $id=max(0,(int)($_POST['id_item']??0));$titulo=trim((string)($_POST['titulo']??''));$desc=trim((string)($_POST['descripcion']??''));$url=trim((string)($_POST['url']??''));
+   $id=max(0,(int)($_POST['id_item']??0));$titulo=trim((string)($_POST['titulo']??''));$desc=patrona_rich_clean((string)($_POST['descripcion']??''));$url=trim((string)($_POST['url']??''));
    if(mb_strlen($titulo)>180||mb_strlen($desc)>600)throw new RuntimeException('Título o descripción demasiado largos.');
    if($url!==''&&!preg_match('~^https?://[^\\s]+$~i',$url))throw new RuntimeException('El enlace debe comenzar por https:// o http://');
    $old=null;
@@ -99,7 +100,7 @@ $editing=null;$editId=(int)($_GET['item']??0);foreach($items as $i)if((int)$i['i
 .seal-toolbar a{color:#2879c6;font-weight:600;font-size:13px}
 .seal-pill{display:inline-flex;gap:7px;align-items:center;background:#e9f2fc;color:#20599b;padding:7px 12px;border-radius:20px;font-size:12px;font-weight:700}
 @media(max-width:850px){.seal-fields{grid-template-columns:1fr}.seal-item{flex-wrap:wrap}.seal-actions{margin-left:0}.admin-sidebar{display:none}.admin-main{padding:20px}}
-</style></head><body>
+</style><?php patrona_rich_assets(); ?></head><body>
 <div class="admin-shell">
 <aside class="admin-sidebar">
 <div class="sidebar-brand"><span class="sidebar-brand-icon"><i class="bi bi-mortarboard" style="font-size:24px;color:#183a64"></i></span><span><strong>Patrona de Lourdes</strong><small>La Florida · Panel CMS</small></span></div>
@@ -132,7 +133,7 @@ $editing=null;$editId=(int)($_GET['item']??0);foreach($items as $i)if((int)$i['i
 <label class="seal-field">Enlace externo (opcional)<input type="url" name="url" value="<?=se((string)($editing['url']??''))?>" placeholder="https://..."></label>
 <label class="seal-field">Orden<input type="number" name="orden" min="1" value="<?= (int)($editing['orden']??count($items)+1) ?>"></label>
 <label class="seal-field">Visibilidad<select name="visible"><option value="si" <?=($editing['visible']??'si')==='si'?'selected':''?>>Visible</option><option value="no" <?=($editing['visible']??'si')==='no'?'selected':''?>>Oculto</option></select></label>
-<label class="seal-field" style="grid-column:1/-1">Descripción del reverso (máximo 600 caracteres)<textarea name="descripcion" maxlength="600" rows="4"><?=se((string)($editing['descripcion']??''))?></textarea></label>
+<label class="seal-field" style="grid-column:1/-1">Descripción del reverso (máximo 600 caracteres)<textarea name="descripcion" maxlength="600" rows="4" data-rich-editor><?=se((string)($editing['descripcion']??''))?></textarea></label>
 </div>
 <?php if(!empty($editing['imagen'])):?><p>Imagen actual: <img src="<?=se((string)$editing['imagen'])?>" alt="" style="height:90px;max-width:160px;object-fit:contain"></p><?php endif;?>
 <p><button class="seal-btn">Guardar sello</button> <?php if($editing):?><a href="editar_sellos.php">Cancelar edición</a><?php endif;?></p></form></div>
