@@ -16,6 +16,27 @@ $topbarConfig=$sectionsByName['topbar']['config']??[];
 $headerConfig=$sectionsByName['header_principal']['config']??[];
 $footerConfig=$sectionsByName['footer_principal']['config']??[];
 $showFooter=isset($sectionsByName['footer_principal']);
+$quickItems=$sectionsByName['tab_destacados_home']['items']??[];
+if($quickItems){
+ foreach($portada['contenedores'] as &$block){
+  if(($block['clave']??'')==='accesos'){
+   $block['datos']['items']=array_map(static fn(array $i):array=>[
+    'titulo'=>(string)($i['titulo']??''),
+    'texto'=>(string)($i['descripcion']??''),
+    'url'=>patrona_cms_url($i['url']??''),
+    'icono'=>(string)($i['etiqueta']??'↗')
+   ],$quickItems);
+  }
+ }
+ unset($block);
+}
+$headerItems=$sectionsByName['header_principal']['items']??[];
+if($headerItems){
+ $portada['menu']=array_map(static fn(array $i):array=>[
+ 'texto'=>(string)($i['titulo']??''),
+ 'url'=>patrona_cms_url($i['url']??'')
+ ],$headerItems);
+}
 // El bloque superior es la portada original aprobada visualmente.
 // El CMS empieza DESPUÉS de los cuatro accesos rápidos.
 $top=array_values(array_filter($portada['contenedores']??[],fn(array $c):bool=>(($c['clave']??'')==='hero'&&$showHero)||(($c['clave']??'')==='accesos'&&$showQuick)));
