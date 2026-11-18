@@ -1,0 +1,8 @@
+ETAPA 15 - REDISEÑO DE CONTENEDORES
+Noticias: solo tres tarjetas visibles en escritorio; resto mediante carrusel horizontal con flechas y puntos, responsive 2/1. No se eliminan noticias.
+Comunidad escolar: tarjetas con imagen y detalle desplegable in situ (sin navegación externa obligatoria).
+Galería: mosaico con primera imagen destacada, hover, lightbox accesible por teclado, cerrar con Escape, flechas anterior/siguiente.
+Estadísticas: tarjetas de colores, con imagen opcional de seccion_item.imagen y cifra de etiqueta. SQL opcional sql/15_demo_estadisticas_imagenes.sql para fotos ficticias.
+Accesos flotantes derechos: consultas (panel informativo, NO chatbot real), lista de útiles (botón inactivo hasta configurar URL real), contacto (#contacto por defecto). Se requieren los destinos reales del chat y PDF y confirmar la tercera función definitiva.
+Archivos: componentes/patrona_cms.php, index.php, assets/css/patrona-cms-v6.css, assets/js/patrona-cms-v6.js. No se alteró la cabecera ni el hero aprobados. No se ejecutó SQL ni se verificó PHP en servidor.
+Verificar: git pull origin main; php -l index.php; php -l componentes/patrona_cms.php; navegador escritorio/móvil; teclado en lightbox; descripciones; scroll de noticias; modal institucional; archivos de imágenes externas.
