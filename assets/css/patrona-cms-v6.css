@@ -161,3 +161,13 @@
  #comunidad-escolar .patrona-family-card[data-position="1"]{transform:translateX(68%) rotateY(-35deg) scale(.73)}
  #comunidad-escolar .patrona-family-card[data-position="-2"],#comunidad-escolar .patrona-family-card[data-position="2"]{opacity:0;pointer-events:none}
 }
+
+
+/* Acceso destacado de matrícula: cuarto botón flotante */
+.patrona-actions .patrona-enrollment-float{position:relative;width:58px;height:58px;overflow:visible;background:#f28b16;color:#fff;border:2px solid #fff;box-shadow:0 0 0 5px #f28b1633,0 9px 24px #80470b40;animation:patrona-enrollment-pulse 2.8s ease-in-out infinite;text-decoration:none}
+.patrona-actions .patrona-enrollment-float:hover,.patrona-actions .patrona-enrollment-float:focus-visible{background:#d96c00;animation-play-state:paused;transform:scale(1.07)}
+.patrona-enrollment-float>span:first-child{font-size:25px}
+.patrona-enrollment-label{position:absolute;right:calc(100% + 13px);top:50%;transform:translateY(-50%);white-space:nowrap;background:#f28b16;color:#fff;border-radius:9px;padding:10px 13px;font-size:13px;font-weight:800;box-shadow:0 6px 18px #09294e25}
+@keyframes patrona-enrollment-pulse{0%,100%{box-shadow:0 0 0 4px #f28b1630,0 9px 24px #80470b40}50%{box-shadow:0 0 0 11px #f28b1609,0 9px 24px #80470b40}}
+@media(max-width:600px){.patrona-enrollment-label{font-size:11px;padding:8px 9px;right:calc(100% + 8px)}.patrona-actions .patrona-enrollment-float{width:52px;height:52px}}
+@media(prefers-reduced-motion:reduce){.patrona-actions .patrona-enrollment-float{animation:none}}
