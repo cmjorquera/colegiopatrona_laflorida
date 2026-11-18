@@ -1,0 +1,7 @@
+ETAPA 12 - EDITOR DE NOTICIAS ESTILO TABANCURA
+Commit 6f60b116dc44bcf93fb04b15a7bb989237235aad en main.
+Archivo editar_noticias.php. Se conserva la logica CRUD anterior sobre seccion_item, seccion noticias_home e institucion 2. No hay migracion SQL.
+Interfaz: barra superior CMS, tabs General / Items / Diseno / Vista previa, listado de miniaturas, toggle de visibilidad, alternancia listado/tarjetas, editor desplegable con carga de imagen y previsualizacion, arrastrar filas para guardar orden en MySQL.
+Acciones nuevas POST toggle y reorder, con token CSRF y consultas preparadas. Reorder valida que los IDs recibidos coincidan exactamente con todos los items del contenedor y actualiza en transaccion.
+LIMITACIONES: pestana Diseno es demostrativa y aun no modifica configuracion visual; Vista previa es representacion de tarjetas, no un iframe del sitio. Reordenar con arrastre requiere navegador con drag/drop de escritorio. No se ha probado PHP lint ni operaciones reales en cPanel. El administrador general y los demas editores permanecen sin cambios.
+Verificar en cPanel: cd /home3/crist668/colegiolaflorida.webnia.cl && git pull origin main && php -l editar_noticias.php. Probar crear, editar, ocultar, reordenar y borrar una noticia de prueba. No copiar noticias de Tabancura a La Florida.
