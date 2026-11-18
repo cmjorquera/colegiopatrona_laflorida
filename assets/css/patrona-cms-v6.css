@@ -136,3 +136,28 @@
 @media(max-width:850px){.patrona-news-card{flex-basis:calc((100% - 22px)/2)}}
 @media(max-width:600px){.patrona-news>.wrap,.patrona-gallery>.wrap,.patrona-stats>.wrap,.patrona-family>.wrap,.patrona-podcast>.wrap{width:calc(100% - 28px)}.patrona-news-card{flex-basis:100%}.patrona-gallery-grid{grid-auto-rows:145px;gap:8px}.patrona-stat-card{min-height:190px}.patrona-family-deck{height:340px}.patrona-family-stage{min-height:350px}.patrona-family-3d .patrona-family-card{width:min(235px,78%);margin-left:calc(-1 * min(117.5px,39%));height:310px}.patrona-family-3d .patrona-family-card>img{height:190px}.patrona-podcast-audio{padding:24px 18px;min-height:0}.patrona-podcast-header{flex-wrap:wrap}.patrona-podcast-social{padding:15px 0}}
 @media(prefers-reduced-motion:reduce){.patrona-social-grid img{transition:none}}
+
+
+/* Comunidad escolar: aprovechar el ancho sin perder el efecto de profundidad */
+#comunidad-escolar .wrap{width:min(1740px,calc(100% - 48px));max-width:1740px}
+#comunidad-escolar .patrona-family-stage{gap:6px}
+#comunidad-escolar .patrona-family-deck{min-width:0;overflow:hidden}
+#comunidad-escolar .patrona-family-card{width:min(340px,52%);margin-left:calc(-1 * min(170px,26%))}
+#comunidad-escolar .patrona-family-card[data-position="-1"]{transform:translateX(-112%) rotateY(25deg) scale(.88);opacity:.88}
+#comunidad-escolar .patrona-family-card[data-position="1"]{transform:translateX(112%) rotateY(-25deg) scale(.88);opacity:.88}
+#comunidad-escolar .patrona-family-card[data-position="-2"]{transform:translateX(-197%) rotateY(38deg) scale(.73);opacity:.56}
+#comunidad-escolar .patrona-family-card[data-position="2"]{transform:translateX(197%) rotateY(-38deg) scale(.73);opacity:.56}
+@media(max-width:1000px){
+ #comunidad-escolar .patrona-family-card{width:min(290px,55%);margin-left:calc(-1 * min(145px,27.5%))}
+ #comunidad-escolar .patrona-family-card[data-position="-1"]{transform:translateX(-90%) rotateY(30deg) scale(.82)}
+ #comunidad-escolar .patrona-family-card[data-position="1"]{transform:translateX(90%) rotateY(-30deg) scale(.82)}
+ #comunidad-escolar .patrona-family-card[data-position="-2"]{transform:translateX(-155%) rotateY(42deg) scale(.67)}
+ #comunidad-escolar .patrona-family-card[data-position="2"]{transform:translateX(155%) rotateY(-42deg) scale(.67)}
+}
+@media(max-width:700px){
+ #comunidad-escolar .wrap{width:calc(100% - 24px)}
+ #comunidad-escolar .patrona-family-card{width:min(235px,78%);margin-left:calc(-1 * min(117.5px,39%))}
+ #comunidad-escolar .patrona-family-card[data-position="-1"]{transform:translateX(-68%) rotateY(35deg) scale(.73)}
+ #comunidad-escolar .patrona-family-card[data-position="1"]{transform:translateX(68%) rotateY(-35deg) scale(.73)}
+ #comunidad-escolar .patrona-family-card[data-position="-2"],#comunidad-escolar .patrona-family-card[data-position="2"]{opacity:0;pointer-events:none}
+}
