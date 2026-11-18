@@ -84,3 +84,19 @@
   .admin-login-content{padding:15px 25px}
 }
 /* La transparencia del isotipo se ajusta para que sea visible sin distraer. */
+
+/* Variante no interactiva: Instagram se activa al configurar URL oficial. */
+.patrona-login-social .patrona-social-pending{width:43px;height:43px;display:grid;place-items:center;border:1px solid #d8e3ef;border-radius:50%;background:#fff;color:#b6498a;opacity:.7;cursor:help}
+.patrona-login-social .patrona-social-pending svg{width:24px;height:24px}
+@media(min-width:851px) and (min-height:760px){
+ .admin-login-content-inner{max-width:445px}
+ .admin-login-platform{padding:14px 16px}
+ .admin-login-card{padding:24px 32px}
+ .admin-login-card h2{font-size:32px}
+ .admin-login-subtitle{font-size:13px;margin-bottom:17px}
+ .admin-login-field input{min-height:46px;font-size:14px}
+ .admin-login-field{margin-bottom:13px}
+ .admin-login-submit{height:48px}
+ .admin-login-developer-link{font-size:28px}
+ .patrona-login-social a,.patrona-login-social .patrona-social-pending{width:43px;height:43px}
+}
