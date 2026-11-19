@@ -86,6 +86,7 @@ usort($top,static fn(array $a,array $b):int=>($a['orden']??0)<=>($b['orden']??0)
 <link rel="stylesheet" href="assets/css/patrona-nav.css?v=3">
 <link rel="stylesheet" href="assets/css/patrona-footer.css?v=1">
 <link rel="stylesheet" href="assets/css/patrona-mobile.css?v=1">
+<link rel="stylesheet" href="assets/css/patrona-actions-icons.css?v=1">
 <link rel="stylesheet" href="assets/css/patrona-identity.css?v=2">
 <style>
 .brand-name{font-size:13px;font-weight:800;color:var(--pl-navy);letter-spacing:.03em}.patrona-cms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--pl-space-5)}
