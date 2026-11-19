@@ -12,7 +12,7 @@ foreach($sections as $section){$sectionsByName[(string)$section['nombre_interno'
 $showTopbar=isset($sectionsByName['topbar']);
 $showHeader=isset($sectionsByName['header_principal']);
 $publicLogo='';
-foreach(['assets/imagenes/LOGO-COLEGIO--Sin-fondo.png','assets/imagenes/logo-colegio-1024x598.jpg','imagenes/logo-colegio-1024x598.jpg','imagenes/LOGO-COLEGIO--Sin-fondo.png'] as $logoCandidate){
+foreach(['assets/imagenes/cropped-logo-cuadrado-sin-fondo-2-180x180.png','assets/imagenes/LOGO-COLEGIO--Sin-fondo.png','assets/imagenes/logo-colegio-1024x598.jpg','imagenes/logo-colegio-1024x598.jpg','imagenes/LOGO-COLEGIO--Sin-fondo.png'] as $logoCandidate){
  if(is_file(__DIR__.'/'.$logoCandidate)){$publicLogo=$logoCandidate;break;}
 }
 $showHero=isset($sectionsByName['hero_principal']);
@@ -149,9 +149,19 @@ foreach($topbarItems as $topbarItem){
  </div><div class="patrona-topbar-social" aria-label="Redes sociales"><?php foreach($topbarSocial as $entry):?><a href="<?=patrona_e($entry['href'])?>" target="_blank" rel="noopener noreferrer" aria-label="<?=patrona_e($entry['label'])?>" title="<?=patrona_e($entry['label'])?>"><i class="bi <?=patrona_e($entry['icon'])?>" aria-hidden="true"></i></a><?php endforeach;?></div>
  <?php else:?><span class="patrona-topbar-message"><?=patrona_e((string)($topbarConfig['texto']??'Sitio en desarrollo'))?></span><?php endif;?>
 </div></div><?php endif; ?>
+<style>
+/* Menú público: logo y navegación equilibrados sin botón de contacto. */
+@media(min-width:1024px){
+.site-header .wrap.nav{max-width:1540px;width:calc(100% - 64px);margin-inline:auto;gap:20px}
+.site-header .brand{flex-shrink:0}
+.site-header .patrona-public-nav{margin-left:auto}
+.site-header .patrona-brand-emblem{flex-shrink:0}
+}
+@media(min-width:1600px){.site-header .wrap.nav{width:calc(100% - 120px)}}
+</style>
 <?php if($showHeader): ?><header class="site-header"><div class="wrap nav"><a class="brand" href="#inicio" aria-label="Inicio Colegio Patrona de Lourdes"><span class="patrona-brand-emblem"><?php if($publicLogo!==''):?><img src="<?=patrona_e($publicLogo)?>" alt="Escudo del Colegio Patrona de Lourdes" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="patrona-brand-monogram" hidden>PL</span><?php else:?><span class="patrona-brand-monogram">PL</span><?php endif;?></span><span class="brand-name"><?=patrona_e((string)($headerConfig['titulo_bloque']??'COLEGIO PATRONA DE LOURDES'))?></span><span class="brand-sede">LA FLORIDA</span></a>
 <button class="patrona-mobile-toggle" type="button" aria-label="Abrir menú de navegación" aria-controls="patrona-public-navigation" aria-expanded="false"><span></span><span></span><span></span></button><nav class="patrona-public-nav" id="patrona-public-navigation" aria-label="Navegación principal"><ul><?php foreach (($portada['menu']??[]) as $m): $children=$m['children']??[]; ?><li class="<?= $children?'has-submenu':'' ?>"><a href="<?=patrona_e((string)$m['url'])?>"><?=patrona_e((string)$m['texto'])?></a><?php if($children):?><button type="button" class="patrona-nav-expand" aria-label="Desplegar <?=patrona_e((string)$m['texto'])?>" aria-expanded="false">⌄</button><ul class="patrona-nav-submenu"><?php foreach($children as $child):?><li><a href="<?=patrona_e((string)$child['url'])?>"><?=patrona_e((string)$child['texto'])?></a></li><?php endforeach;?></ul><?php endif;?></li><?php endforeach;?></ul></nav>
-<a class="nav-cta" href="<?=patrona_e(patrona_cms_url($headerConfig['enlace']??'#contacto'))?>"><?=patrona_e((string)($headerConfig['boton_texto']??'Contáctanos'))?> ↗</a></div></header><?php endif; ?>
+</div></header><?php endif; ?>
 <main>
 <?php foreach($top as $c) patrona_render($c); ?>
 <?php
