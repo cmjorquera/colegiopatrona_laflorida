@@ -1,0 +1,38 @@
+CONTENEDOR 1 — BARRA SUPERIOR (topbar, id_seccion=27, id_institucion=2)
+Fecha: 2026-11-19
+Rama: main
+
+OBJETIVO
+Sustituir el formulario genérico por un editor especializado, semejante al de San Pablo, sin alterar el diseño del resto de la portada.
+
+ARCHIVOS
+- editar_topbar.php: editor de identidad, contacto y redes sociales.
+- admin.php: lápiz de topbar redirige al editor especializado.
+- index.php: renderiza contactos y redes guardados en MySQL.
+- assets/css/patrona-topbar.css: estilos responsive del contenedor.
+
+DATOS
+Se reutilizan seccion, seccion_config y seccion_item; NO se crean tablas ni se ejecutan migraciones.
+seccion_config: titulo_bloque (identidad) y texto (mensaje alternativo).
+seccion_item: etiqueta (tipo), titulo (nombre), url (dato o destino), visible, orden.
+Tipos: direccion, telefono, correo, enlace, instagram, facebook, youtube, linkedin, x.
+No se toca el resto de claves existentes de seccion_config.
+
+FUNCIONALIDADES
+- Edición de nombre institucional y mensaje alternativo.
+- Alta, edición, eliminación, orden numérico y visibilidad de elementos.
+- Vista previa del topbar en el editor.
+- Validación de email, teléfono y enlaces HTTP(S).
+- Protección CSRF y filtro por institución y sección.
+- Render público con enlaces tel:, mailto:, HTTP(S), iconos y responsive.
+- Sin elementos visibles, mantiene mensaje alternativo anterior.
+
+OPERACIÓN
+1. git pull --ff-only origin main en cPanel.
+2. Abrir admin.php?panel=contenedores, lápiz de Barra superior.
+3. Crear elementos reales; verificar vista pública y versión móvil.
+4. Verificar php -l editar_topbar.php y php -l index.php en servidor.
+No se modificó la base de datos mediante herramientas.
+
+NOTA
+Los campos genéricos históricos (subtitulo_bloque, enlace, boton_texto) permanecen intactos; ya no se presentan en el editor topbar.
