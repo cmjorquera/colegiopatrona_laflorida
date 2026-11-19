@@ -182,9 +182,14 @@ $contactUrl=patrona_cms_url($headerConfig['url_contacto_flotante']??'#contacto')
 </div>
 <?php patrona_render_modal_institucional($sections); ?>
 <?php if($showFooter): ?>
+<style>
+.patrona-footer .patrona-footer-logo{display:block;width:auto;max-width:130px;max-height:115px;object-fit:contain;object-position:left center;margin:0 0 18px}
+@media(max-width:640px){.patrona-footer .patrona-footer-logo{max-width:110px;max-height:100px}}
+</style>
 <footer id="contacto" class="patrona-footer">
   <div class="wrap patrona-footer-grid">
     <div class="patrona-footer-intro">
+      <?php if($publicLogo!==''):?><img src="<?=patrona_e($publicLogo)?>" alt="Escudo del Colegio Patrona de Lourdes" class="patrona-footer-logo" loading="lazy" decoding="async"><?php endif;?>
       <strong>COLEGIO PATRONA DE LOURDES <small>LA FLORIDA</small></strong>
       <?php if(trim((string)($footerConfig['texto']??''))!==''):?><p><?=patrona_e((string)$footerConfig['texto'])?></p><?php endif;?>
     </div>
