@@ -79,6 +79,7 @@ usort($top,static fn(array $a,array $b):int=>($a['orden']??0)<=>($b['orden']??0)
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Colegio Patrona de Lourdes, La Florida.">
 <title>Colegio Patrona de Lourdes | La Florida</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="assets/css/patrona-tokens.css?v=1">
 <link rel="stylesheet" href="assets/css/patrona.css?v=6">
 <link rel="stylesheet" href="assets/css/patrona-cms-v6.css?v=8">
@@ -88,12 +89,41 @@ usort($top,static fn(array $a,array $b):int=>($a['orden']??0)<=>($b['orden']??0)
 <link rel="stylesheet" href="assets/css/patrona-mobile.css?v=1">
 <link rel="stylesheet" href="assets/css/patrona-actions-icons.css?v=1">
 <link rel="stylesheet" href="assets/css/patrona-identity.css?v=2">
+<link rel="stylesheet" href="assets/css/patrona-topbar.css?v=1">
 <style>
 .brand-name{font-size:13px;font-weight:800;color:var(--pl-navy);letter-spacing:.03em}.patrona-cms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--pl-space-5)}
 .patrona-cms-card{border:1px solid var(--pl-line);border-radius:var(--pl-radius-md);padding:20px;overflow:hidden}
 .patrona-cms-card img{width:100%;height:210px;object-fit:cover;border-radius:var(--pl-radius-sm)}
 </style></head><body>
-<?php if($showTopbar): ?><div class="topline"><div class="wrap"><span>COLEGIO PATRONA DE LOURDES · LA FLORIDA</span><span><?=patrona_e((string)($topbarConfig['texto']??'Sitio en desarrollo'))?></span></div></div><?php endif; ?>
+<?php if($showTopbar): ?>
+<?php
+$topbarItems=$sectionsByName['topbar']['items']??[];
+$topbarIcons=['direccion'=>'bi-geo-alt-fill','telefono'=>'bi-telephone-fill','correo'=>'bi-envelope-fill','enlace'=>'bi-box-arrow-up-right','instagram'=>'bi-instagram','facebook'=>'bi-facebook','youtube'=>'bi-youtube','linkedin'=>'bi-linkedin','x'=>'bi-twitter-x'];
+$topbarContacts=[];$topbarSocial=[];
+foreach($topbarItems as $topbarItem){
+ $kind=(string)($topbarItem['etiqueta']??'');$value=trim((string)($topbarItem['url']??''));$label=trim((string)($topbarItem['titulo']??''));
+ if($label===''||!isset($topbarIcons[$kind]))continue;
+ $href='';
+ if($kind==='telefono' && preg_match('/^[+0-9 ()-]{6,30}$/',$value))$href='tel:'.preg_replace('/[^+0-9]/','',$value);
+ elseif($kind==='correo' && filter_var($value,FILTER_VALIDATE_EMAIL))$href='mailto:'.$value;
+ elseif($kind==='direccion')$href='';
+ elseif(filter_var($value,FILTER_VALIDATE_URL)&&in_array(strtolower((string)parse_url($value,PHP_URL_SCHEME)),['http','https'],true))$href=$value;
+ if($href===''&&$kind!=='direccion')continue;
+ $entry=['label'=>$label,'href'=>$href,'icon'=>$topbarIcons[$kind],'kind'=>$kind];
+ if(in_array($kind,['instagram','facebook','youtube','linkedin','x'],true))$topbarSocial[]=$entry;
+ else $topbarContacts[]=$entry;
+}
+?>
+<div class="topline patrona-topbar"><div class="wrap patrona-topbar-inner">
+ <span class="patrona-topbar-brand"><?=patrona_e((string)(($topbarConfig['titulo_bloque']??'')?:'COLEGIO PATRONA DE LOURDES · LA FLORIDA'))?></span>
+ <?php if($topbarContacts||$topbarSocial):?>
+ <div class="patrona-topbar-items">
+ <?php foreach($topbarContacts as $entry):?>
+ <?php if($entry['href']!==''):?><a href="<?=patrona_e($entry['href'])?>" <?=str_starts_with($entry['href'],'http')?'target="_blank" rel="noopener noreferrer"':''?>><i class="bi <?=patrona_e($entry['icon'])?>" aria-hidden="true"></i><span><?=patrona_e($entry['label'])?></span></a><?php else:?><span class="patrona-topbar-address"><i class="bi <?=patrona_e($entry['icon'])?>" aria-hidden="true"></i><?=patrona_e($entry['label'])?></span><?php endif;?>
+ <?php endforeach;?>
+ </div><div class="patrona-topbar-social" aria-label="Redes sociales"><?php foreach($topbarSocial as $entry):?><a href="<?=patrona_e($entry['href'])?>" target="_blank" rel="noopener noreferrer" aria-label="<?=patrona_e($entry['label'])?>" title="<?=patrona_e($entry['label'])?>"><i class="bi <?=patrona_e($entry['icon'])?>" aria-hidden="true"></i></a><?php endforeach;?></div>
+ <?php else:?><span class="patrona-topbar-message"><?=patrona_e((string)($topbarConfig['texto']??'Sitio en desarrollo'))?></span><?php endif;?>
+</div></div><?php endif; ?>
 <?php if($showHeader): ?><header class="site-header"><div class="wrap nav"><a class="brand" href="#inicio" aria-label="Inicio Colegio Patrona de Lourdes"><span class="patrona-brand-emblem"><?php if($publicLogo!==''):?><img src="<?=patrona_e($publicLogo)?>" alt="Escudo del Colegio Patrona de Lourdes" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="patrona-brand-monogram" hidden>PL</span><?php else:?><span class="patrona-brand-monogram">PL</span><?php endif;?></span><span class="brand-name"><?=patrona_e((string)($headerConfig['titulo_bloque']??'COLEGIO PATRONA DE LOURDES'))?></span><span class="brand-sede">LA FLORIDA</span></a>
 <button class="patrona-mobile-toggle" type="button" aria-label="Abrir menú de navegación" aria-controls="patrona-public-navigation" aria-expanded="false"><span></span><span></span><span></span></button><nav class="patrona-public-nav" id="patrona-public-navigation" aria-label="Navegación principal"><ul><?php foreach (($portada['menu']??[]) as $m): $children=$m['children']??[]; ?><li class="<?= $children?'has-submenu':'' ?>"><a href="<?=patrona_e((string)$m['url'])?>"><?=patrona_e((string)$m['texto'])?></a><?php if($children):?><button type="button" class="patrona-nav-expand" aria-label="Desplegar <?=patrona_e((string)$m['texto'])?>" aria-expanded="false">⌄</button><ul class="patrona-nav-submenu"><?php foreach($children as $child):?><li><a href="<?=patrona_e((string)$child['url'])?>"><?=patrona_e((string)$child['texto'])?></a></li><?php endforeach;?></ul><?php endif;?></li><?php endforeach;?></ul></nav>
 <a class="nav-cta" href="<?=patrona_e(patrona_cms_url($headerConfig['enlace']??'#contacto'))?>"><?=patrona_e((string)($headerConfig['boton_texto']??'Contáctanos'))?> ↗</a></div></header><?php endif; ?>
