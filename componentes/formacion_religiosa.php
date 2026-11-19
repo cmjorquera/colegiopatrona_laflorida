@@ -130,7 +130,7 @@ declare(strict_types=1);
 </div>
 <script>
 (function(){
-  const root=document.querySelector('.fr-page');if(!root)return;
+  const root=document.querySelector('.fr-page');if(!root)return;root.classList.add('fr-enhanced');
   const tabs=[...root.querySelectorAll('.fr-level-tab')];
   const show=(button,focus)=>{
     tabs.forEach(tab=>{const on=tab===button;tab.classList.toggle('is-active',on);tab.setAttribute('aria-selected',String(on));tab.tabIndex=on?0:-1;document.getElementById(tab.getAttribute('aria-controls')).hidden=!on;});
