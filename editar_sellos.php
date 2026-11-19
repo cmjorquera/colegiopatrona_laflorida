@@ -38,7 +38,7 @@ try{
    }catch(Throwable $e){$db->rollback();throw $e;}
   }elseif($action==='save'){
    $id=max(0,(int)($_POST['id_item']??0));$titulo=trim((string)($_POST['titulo']??''));$desc=patrona_rich_clean((string)($_POST['descripcion']??''));$url=trim((string)($_POST['url']??''));
-   if(mb_strlen($titulo)>180||mb_strlen($desc)>600)throw new RuntimeException('Título o descripción demasiado largos.');
+   if(mb_strlen($titulo)>180||mb_strlen(trim(html_entity_decode(strip_tags($desc),ENT_QUOTES|ENT_HTML5,'UTF-8')))>5000)throw new RuntimeException('Título o descripción demasiado largos.');
    if($url!==''&&!preg_match('~^https?://[^\\s]+$~i',$url))throw new RuntimeException('El enlace debe comenzar por https:// o http://');
    $old=null;
    if($id){$q=$db->prepare('SELECT imagen FROM seccion_item WHERE id_item=? AND id_seccion=?');$q->bind_param('ii',$id,$sid);$q->execute();$old=$q->get_result()->fetch_assoc();if(!$old)throw new RuntimeException('Sello no encontrado');}
@@ -166,7 +166,7 @@ $editing=null;$editId=(int)($_GET['item']??0);foreach($items as $i)if((int)$i['i
  <label class="seal-field">Nombre del sello<input name="titulo" id="sealTitle" maxlength="180" placeholder="Nombre institucional"></label>
  <label class="seal-field">Enlace externo (opcional)<input type="url" name="url" id="sealUrl" placeholder="https://..."></label>
  <label class="seal-field">Visibilidad<div class="seal-check"><input type="checkbox" id="sealVisible" checked><span id="sealVisibleText">Mostrar en la página</span></div><input type="hidden" name="visible" id="sealVisibleValue" value="si"></label>
- <label class="seal-field" style="grid-column:1/-1">Descripción del reverso (máximo 600 caracteres)<textarea name="descripcion" id="sealDescription" maxlength="600" rows="5" data-rich-editor></textarea></label>
+ <label class="seal-field" style="grid-column:1/-1">Descripción del reverso (máximo 5.000 caracteres)<textarea name="descripcion" id="sealDescription" maxlength="5000" rows="5" data-rich-editor></textarea></label>
  </div></div>
  <div class="seal-modal-foot"><button type="button" class="seal-secondary" onclick="closeSeal()">Cancelar</button><button class="seal-btn" type="submit"><i class="bi bi-check-circle"></i>&nbsp; Guardar sello</button></div>
  </form></div>
