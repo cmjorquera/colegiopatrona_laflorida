@@ -151,6 +151,21 @@ foreach($topbarItems as $topbarItem){
 </div></div><?php endif; ?>
 <style>
 /* Menú público: logo y navegación equilibrados sin botón de contacto. */
+/* Escudo protagonista: sobresale hacia la franja institucional y se compacta al desplazarse. */
+.site-header{z-index:30;overflow:visible;transition:box-shadow .3s ease}
+.site-header .wrap.nav{position:relative;transition:min-height .35s ease}
+.site-header .brand{position:relative;z-index:2;min-width:0}
+.site-header .patrona-brand-emblem{width:112px;height:112px;min-width:112px;display:grid;place-items:center;align-self:center;margin-top:-34px;margin-bottom:-12px;border:0;background:transparent;box-shadow:none;overflow:visible;transition:width .35s ease,height .35s ease,min-width .35s ease,margin .35s ease,transform .35s ease}
+.site-header .patrona-brand-emblem img{display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;filter:drop-shadow(0 5px 8px rgba(12,45,78,.16));transition:filter .3s ease}
+.site-header .brand:hover .patrona-brand-emblem{transform:translateY(-3px)}
+.site-header.is-scrolled{box-shadow:0 8px 24px rgba(8,37,70,.15)}
+.site-header.is-scrolled .wrap.nav{min-height:70px}
+.site-header.is-scrolled .patrona-brand-emblem{width:67px;height:67px;min-width:67px;margin-top:0;margin-bottom:0}
+@media(min-width:1024px){.site-header .wrap.nav{min-height:94px}.site-header .brand{gap:14px}}
+@media(max-width:1023px){.site-header .patrona-brand-emblem{width:76px;height:76px;min-width:76px;margin-top:-14px;margin-bottom:0}.site-header.is-scrolled .patrona-brand-emblem{width:55px;height:55px;min-width:55px}.site-header .wrap.nav{min-height:76px}.site-header.is-scrolled .wrap.nav{min-height:65px}}
+@media(max-width:560px){.site-header .patrona-brand-emblem{width:64px;height:64px;min-width:64px;margin-top:-8px}.site-header .brand-name{font-size:11px}.site-header .brand-sede{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.site-header,.site-header .wrap.nav,.site-header .patrona-brand-emblem,.site-header .patrona-brand-emblem img{transition:none}}
+
 @media(min-width:1024px){
 .site-header .wrap.nav{max-width:1540px;width:calc(100% - 64px);margin-inline:auto;gap:20px}
 .site-header .brand{flex-shrink:0}
@@ -240,6 +255,16 @@ $contactUrl=patrona_cms_url($headerConfig['url_contacto_flotante']??'#contacto')
   <div class="wrap patrona-footer-bottom"><span>© <?=date('Y')?> Colegio Patrona de Lourdes · La Florida</span></div>
 </footer>
 <?php endif; ?>
+<script>
+(function(){
+  const header=document.querySelector('.site-header');
+  if(!header)return;
+  let ticking=false;
+  const update=()=>{header.classList.toggle('is-scrolled',window.scrollY>65);ticking=false;};
+  window.addEventListener('scroll',()=>{if(!ticking){ticking=true;window.requestAnimationFrame(update)}},{passive:true});
+  update();
+})();
+</script>
 <script defer src="assets/js/patrona-cms-v6.js?v=3"></script>
 <script defer src="assets/js/patrona-equipo.js?v=8"></script>
 <script defer src="assets/js/patrona-nav.js?v=2"></script>
