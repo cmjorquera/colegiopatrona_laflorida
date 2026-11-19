@@ -56,7 +56,7 @@ try{
     $image='assets/uploads/secciones/sellos_home/'.$filename;
    }
    if($image==='')throw new RuntimeException('Debes subir una imagen para el sello.');
-   $visible=($_POST['visible']??'si')==='no'?'no':'si';$orden=max(1,(int)($_POST['orden']??1));
+   $visible=($_POST['visible']??'si')==='no'?'no':'si';$orden=max(1,(int)($_POST['orden']??(count($items)+1)));
    if($id){
     $q=$db->prepare("UPDATE seccion_item SET etiqueta='sello',titulo=?,descripcion=?,imagen=?,url=?,visible=?,orden=? WHERE id_item=? AND id_seccion=?");
     $q->bind_param('sssssiii',$titulo,$desc,$image,$url,$visible,$orden,$id,$sid);
@@ -64,6 +64,17 @@ try{
     $q=$db->prepare("INSERT INTO seccion_item(id_seccion,etiqueta,titulo,descripcion,imagen,url,visible,orden) VALUES(?,'sello',?,?,?,?,?,?)");
     $q->bind_param('isssssi',$sid,$titulo,$desc,$image,$url,$visible,$orden);
    }$q->execute();
+  }elseif($action==='reorder'){
+   $ids=array_values(array_filter(array_map('intval',explode(',',(string)($_POST['ids']??'')))));
+   $q=$db->prepare('SELECT id_item FROM seccion_item WHERE id_seccion=?');$q->bind_param('i',$sid);$q->execute();
+   $valid=array_map('intval',array_column($q->get_result()->fetch_all(MYSQLI_ASSOC),'id_item'));
+   sort($valid);$check=$ids;sort($check);
+   if($check!==$valid)throw new RuntimeException('Orden inválido.');
+   $db->begin_transaction();
+   try{$q=$db->prepare('UPDATE seccion_item SET orden=? WHERE id_item=? AND id_seccion=?');
+    foreach($ids as $pos=>$itemId){$order=$pos+1;$q->bind_param('iii',$order,$itemId,$sid);$q->execute();}
+    $db->commit();
+   }catch(Throwable $e){$db->rollback();throw $e;}
   }elseif($action==='delete'){
    $id=max(0,(int)($_POST['id_item']??0));
    $q=$db->prepare('DELETE FROM seccion_item WHERE id_item=? AND id_seccion=?');$q->bind_param('ii',$id,$sid);$q->execute();
@@ -100,6 +111,9 @@ $editing=null;$editId=(int)($_GET['item']??0);foreach($items as $i)if((int)$i['i
 .seal-toolbar a{color:#2879c6;font-weight:600;font-size:13px}
 .seal-pill{display:inline-flex;gap:7px;align-items:center;background:#e9f2fc;color:#20599b;padding:7px 12px;border-radius:20px;font-size:12px;font-weight:700}
 @media(max-width:850px){.seal-fields{grid-template-columns:1fr}.seal-item{flex-wrap:wrap}.seal-actions{margin-left:0}.admin-sidebar{display:none}.admin-main{padding:20px}}
+
+.seal-modal[hidden]{display:none!important}.seal-modal{position:fixed;inset:0;z-index:1100;background:#0b213a99;display:flex;align-items:center;justify-content:center;padding:20px}.seal-dialog{background:white;border-radius:14px;width:min(850px,100%);max-height:92vh;display:flex;flex-direction:column;box-shadow:0 24px 70px #091e3b55;overflow:hidden}.seal-modal-head,.seal-modal-foot{display:flex;align-items:center;justify-content:space-between;padding:17px 22px;background:#f8fafc;border-bottom:1px solid #dbe4f0}.seal-modal-foot{border-top:1px solid #dbe4f0;border-bottom:0;justify-content:flex-end;gap:10px}.seal-modal-body{overflow:auto;padding:22px}.seal-close{background:transparent;border:0;font-size:25px;cursor:pointer;color:#64748b}.seal-secondary{border:1px solid #cbd5e1;background:#fff;color:#173858;padding:10px 16px;border-radius:8px;cursor:pointer}.seal-list{width:100%;border-collapse:collapse}.seal-list th,.seal-list td{padding:12px;border-bottom:1px solid #e4ebf3;text-align:left}.seal-list th{font-size:11px;letter-spacing:.06em;background:#f4f7fb;color:#56708c}.seal-thumb{width:65px;height:65px;object-fit:contain}.seal-icon-btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid #cfdaea;background:white;border-radius:7px;width:35px;height:35px;cursor:pointer;color:#204b77}.seal-drag{cursor:grab;color:#7890a9}.seal-row.dragging{opacity:.45}.seal-tag{border-radius:99px;padding:5px 10px;font-size:12px;background:#e5f5ed;color:#148052}.seal-tag.off{background:#f1f3f6;color:#718096}.seal-preview{width:100%;height:140px;object-fit:contain;background:#f6f9fd;border:1px dashed #cbd5e1;border-radius:9px;margin-top:8px}.seal-toolbar-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.seal-help{font-size:12px;color:#6b7f99}.seal-panel{margin:12px 0}.seal-modal .seal-field textarea{min-height:115px}.seal-modal .seal-field input[type=checkbox]{width:auto}.seal-item-actions{display:flex;gap:6px}.seal-check{display:flex;align-items:center;gap:10px}.seal-check input{width:18px;height:18px}.seal-hidden-fields{opacity:.55}.seal-hidden-fields input:not([type=checkbox]),.seal-hidden-fields textarea{background:#f3f5f8}
+@media(max-width:650px){.seal-modal{padding:8px}.seal-fields{grid-template-columns:1fr}.seal-list{font-size:12px}.seal-list th:nth-child(3),.seal-list td:nth-child(3){display:none}}
 </style><?php patrona_rich_assets(); ?></head><body>
 <div class="admin-shell">
 <aside class="admin-sidebar">
@@ -125,23 +139,48 @@ $editing=null;$editId=(int)($_GET['item']??0);foreach($items as $i)if((int)$i['i
 <label class="seal-field">Título del bloque<input name="titulo_bloque" maxlength="180" value="<?=se((string)($configs['titulo_bloque']??'Sellos del colegio'))?>"></label>
 <label class="seal-field">Texto pequeño sobre el título<input name="subtitulo_bloque" maxlength="180" value="<?=se((string)($configs['subtitulo_bloque']??''))?>"></label>
 </div><p><button class="seal-btn">Guardar configuración</button></p></form></div>
-<div class="seal-panel"><h2><?= $editing?'Editar sello':'Agregar sello' ?></h2><form method="post" enctype="multipart/form-data">
-<input type="hidden" name="csrf" value="<?=se($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="save"><input type="hidden" name="id_item" value="<?= (int)($editing['id_item']??0) ?>">
-<div class="seal-fields">
-<label class="seal-field">Imagen del sello (JPG, PNG o WebP; máximo 5 MB)<input type="file" name="imagen" accept="image/jpeg,image/png,image/webp" <?= $editing?'':'required' ?>></label>
-<label class="seal-field">Nombre (opcional, accesibilidad)<input name="titulo" maxlength="180" value="<?=se((string)($editing['titulo']??''))?>"></label>
-<label class="seal-field">Enlace externo (opcional)<input type="url" name="url" value="<?=se((string)($editing['url']??''))?>" placeholder="https://..."></label>
-<label class="seal-field">Orden<input type="number" name="orden" min="1" value="<?= (int)($editing['orden']??count($items)+1) ?>"></label>
-<label class="seal-field">Visibilidad<select name="visible"><option value="si" <?=($editing['visible']??'si')==='si'?'selected':''?>>Visible</option><option value="no" <?=($editing['visible']??'si')==='no'?'selected':''?>>Oculto</option></select></label>
-<label class="seal-field" style="grid-column:1/-1">Descripción del reverso (máximo 600 caracteres)<textarea name="descripcion" maxlength="600" rows="4" data-rich-editor><?=se((string)($editing['descripcion']??''))?></textarea></label>
+
+<div class="seal-panel">
+ <div class="seal-toolbar-top"><div><h2 style="margin:0 0 7px">Sellos registrados (<?=count($items)?>)</h2><div class="seal-help"><i class="bi bi-grip-vertical"></i> Arrastra los sellos para cambiar su orden; se guarda automáticamente.</div></div><button type="button" class="seal-btn" onclick="openSeal()"><i class="bi bi-plus-circle"></i>&nbsp; Agregar sello</button></div>
+ <?php if(!$items):?><p class="seal-muted">No hay sellos registrados. Agrega el primero para mostrar el bloque.</p><?php else:?>
+ <div style="overflow-x:auto;margin-top:18px"><table class="seal-list"><thead><tr><th>ORDEN</th><th>IMAGEN</th><th>NOMBRE</th><th>VISIBLE</th><th>ACCIONES</th></tr></thead><tbody id="sealSortable">
+ <?php foreach($items as $idx=>$i):?><tr class="seal-row" draggable="true" data-id="<?=(int)$i['id_item']?>">
+ <td><span class="seal-drag" title="Arrastrar para ordenar"><i class="bi bi-grip-vertical"></i></span> <span class="seal-position"><?=$idx+1?></span></td>
+ <td><img class="seal-thumb" src="<?=se((string)$i['imagen'])?>" alt=""></td>
+ <td><strong><?=se((string)($i['titulo']?:'Sello sin nombre'))?></strong></td>
+ <td><span class="seal-tag <?=($i['visible']??'si')==='si'?'':'off'?>"><?=($i['visible']??'si')==='si'?'Visible':'Oculto'?></span></td>
+ <td><div class="seal-item-actions">
+ <button class="seal-icon-btn" type="button" title="Editar" onclick="openSeal(<?=(int)$i['id_item']?>)"><i class="bi bi-pencil-square"></i></button>
+ <button class="seal-icon-btn" type="button" title="Ver imagen" onclick="window.open(<?=json_encode((string)$i['imagen'],JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT)?>,'_blank','noopener')"><i class="bi bi-eye"></i></button>
+ <form method="post" onsubmit="return confirm('¿Eliminar este sello?')"><input type="hidden" name="csrf" value="<?=se($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="delete"><input type="hidden" name="id_item" value="<?=(int)$i['id_item']?>"><button class="seal-icon-btn" title="Eliminar"><i class="bi bi-trash"></i></button></form>
+ </div></td></tr><?php endforeach;?></tbody></table></div><?php endif;?>
 </div>
-<?php if(!empty($editing['imagen'])):?><p>Imagen actual: <img src="<?=se((string)$editing['imagen'])?>" alt="" style="height:90px;max-width:160px;object-fit:contain"></p><?php endif;?>
-<p><button class="seal-btn">Guardar sello</button> <?php if($editing):?><a href="editar_sellos.php">Cancelar edición</a><?php endif;?></p></form></div>
-<div class="seal-panel"><h2>Sellos registrados (<?=count($items)?>)</h2>
-<?php if(!$items):?><p class="seal-muted">No hay sellos. Agrega el primero para mostrar el bloque en la página pública.</p><?php endif;?>
-<?php foreach($items as $i):?><div class="seal-item">
-<?php if(!empty($i['imagen'])):?><img src="<?=se((string)$i['imagen'])?>" alt=""><?php endif;?>
-<div><strong><?=se((string)($i['titulo']?:'Sello sin nombre'))?></strong><br><small><?=se((string)$i['visible'])?> · Orden <?= (int)$i['orden'] ?></small></div>
-<div class="seal-actions"><a class="seal-btn" href="editar_sellos.php?item=<?=(int)$i['id_item']?>">Editar</a><form method="post" onsubmit="return confirm('¿Eliminar este sello?')"><input type="hidden" name="csrf" value="<?=se($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="delete"><input type="hidden" name="id_item" value="<?=(int)$i['id_item']?>"><button class="seal-btn" style="background:#a72828">Eliminar</button></form></div></div><?php endforeach;?>
-</div><?php endif;?>
+<form id="sealOrderForm" method="post" hidden><input type="hidden" name="csrf" value="<?=se($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="reorder"><input type="hidden" name="ids" id="sealOrderIds"></form>
+<div class="seal-modal" id="sealModal" hidden role="dialog" aria-modal="true" aria-labelledby="sealModalTitle">
+ <div class="seal-dialog">
+ <div class="seal-modal-head"><h2 id="sealModalTitle" style="margin:0;font-size:19px">Agregar sello</h2><button type="button" class="seal-close" aria-label="Cerrar" onclick="closeSeal()"><i class="bi bi-x-lg"></i></button></div>
+ <form method="post" enctype="multipart/form-data" id="sealForm" style="overflow:auto;display:flex;flex-direction:column">
+ <input type="hidden" name="csrf" value="<?=se($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="save"><input type="hidden" name="id_item" id="sealId" value="0">
+ <div class="seal-modal-body"><div class="seal-fields">
+ <label class="seal-field">Imagen del sello (JPG, PNG o WebP; máximo 5 MB)<input type="file" name="imagen" id="sealImage" accept="image/jpeg,image/png,image/webp"><img id="sealImagePreview" class="seal-preview" alt="Vista previa" hidden></label>
+ <label class="seal-field">Nombre del sello<input name="titulo" id="sealTitle" maxlength="180" placeholder="Nombre institucional"></label>
+ <label class="seal-field">Enlace externo (opcional)<input type="url" name="url" id="sealUrl" placeholder="https://..."></label>
+ <label class="seal-field">Visibilidad<div class="seal-check"><input type="checkbox" id="sealVisible" checked><span id="sealVisibleText">Mostrar en la página</span></div><input type="hidden" name="visible" id="sealVisibleValue" value="si"></label>
+ <label class="seal-field" style="grid-column:1/-1">Descripción del reverso (máximo 600 caracteres)<textarea name="descripcion" id="sealDescription" maxlength="600" rows="5" data-rich-editor></textarea></label>
+ </div></div>
+ <div class="seal-modal-foot"><button type="button" class="seal-secondary" onclick="closeSeal()">Cancelar</button><button class="seal-btn" type="submit"><i class="bi bi-check-circle"></i>&nbsp; Guardar sello</button></div>
+ </form></div>
+</div>
+<?php endif;?>
+<script>
+const sealData=<?=json_encode(array_map(static fn($i)=>['id'=>(int)$i['id_item'],'titulo'=>(string)($i['titulo']??''),'descripcion'=>(string)($i['descripcion']??''),'url'=>(string)($i['url']??''),'imagen'=>(string)($i['imagen']??''),'visible'=>(string)($i['visible']??'si')],$items),JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT)?>;
+const sealModal=document.getElementById('sealModal'),sealForm=document.getElementById('sealForm'),sealVisible=document.getElementById('sealVisible');
+function openSeal(id=0){const i=sealData.find(x=>x.id===id);sealForm.reset();document.getElementById('sealId').value=i?.id||0;document.getElementById('sealModalTitle').textContent=i?'Editar sello':'Agregar sello';document.getElementById('sealTitle').value=i?.titulo||'';document.getElementById('sealUrl').value=i?.url||'';document.getElementById('sealDescription').value=i?.descripcion||'';sealVisible.checked=!i||i.visible==='si';sealVisibility();const img=document.getElementById('sealImagePreview');img.hidden=!i?.imagen;if(i?.imagen)img.src=i.imagen;document.getElementById('sealImage').required=!i;sealModal.hidden=false;document.body.style.overflow='hidden';}
+function closeSeal(){sealModal.hidden=true;document.body.style.overflow='';}
+function sealVisibility(){document.getElementById('sealVisibleValue').value=sealVisible.checked?'si':'no';document.getElementById('sealVisibleText').textContent=sealVisible.checked?'Mostrar en la página':'Ocultar de la página';}
+sealVisible.addEventListener('change',sealVisibility);
+document.getElementById('sealImage').addEventListener('change',e=>{const f=e.target.files[0],img=document.getElementById('sealImagePreview');if(f){img.src=URL.createObjectURL(f);img.hidden=false;}});
+sealModal.addEventListener('click',e=>{if(e.target===sealModal)closeSeal();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sealModal.hidden)closeSeal();});
+const sortable=document.getElementById('sealSortable');if(sortable){let dragged=null;sortable.addEventListener('dragstart',e=>{dragged=e.target.closest('tr');if(dragged){dragged.classList.add('dragging');e.dataTransfer.effectAllowed='move';}});sortable.addEventListener('dragover',e=>{e.preventDefault();const row=e.target.closest('tr');if(row&&dragged&&row!==dragged){const rect=row.getBoundingClientRect();sortable.insertBefore(dragged,e.clientY<rect.top+rect.height/2?row:row.nextSibling);}});sortable.addEventListener('dragend',()=>{if(!dragged)return;dragged.classList.remove('dragging');dragged=null;const rows=[...sortable.querySelectorAll('tr')];rows.forEach((r,i)=>r.querySelector('.seal-position').textContent=i+1);document.getElementById('sealOrderIds').value=rows.map(r=>r.dataset.id).join(',');document.getElementById('sealOrderForm').submit();});}
+</script>
 </main></div></div></body></html>
