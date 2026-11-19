@@ -21,7 +21,7 @@ $topbarConfig=$sectionsByName['topbar']['config']??[];
 $headerConfig=$sectionsByName['header_principal']['config']??[];
 $footerConfig=$sectionsByName['footer_principal']['config']??[];
 $showFooter=isset($sectionsByName['footer_principal']);
-$quickItems=$sectionsByName['tab_destacados_home']['items']??[];
+$quickItems=array_slice($sectionsByName['tab_destacados_home']['items']??[],0,4);
 if($quickItems){
  foreach($portada['contenedores'] as &$block){
   if(($block['clave']??'')==='accesos'){
