@@ -18,3 +18,8 @@ td small,.kpi-card div>span,.card-footer,.topbar-muted{color:#5d6f85}
 .admin-sidebar .sidebar-watermark{pointer-events:none}
 .admin-sidebar .sidebar-brand-icon{flex-shrink:0}
 @media(min-width:701px){.admin-shell.sidebar-collapsed .admin-sidebar .sidebar-group-toggle{font-size:0;text-align:center;justify-content:center}.admin-shell.sidebar-collapsed .admin-sidebar .sidebar-subitems{display:none}}
+
+/* Navegación institucional unificada en dashboard y editores */
+.admin-sidebar{background:linear-gradient(180deg,#287fc8 0%,#15558e 48%,#0d325d 100%)}
+.admin-sidebar .sidebar-brand{background:#ffffff0b}
+.admin-sidebar .nav-item.active{background:#ffffff2b;border-left:3px solid #ffbc35}
