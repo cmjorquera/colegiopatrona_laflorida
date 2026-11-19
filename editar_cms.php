@@ -103,7 +103,9 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 <?php foreach(['titulo_bloque'=>'Título del bloque','subtitulo_bloque'=>'Subtítulo','texto'=>'Texto','enlace'=>'Enlace','boton_texto'=>'Texto del botón'] as $key=>$label):?><label class="cms-field"><?=ce($label)?><input name="<?=ce($key)?>" value="<?=ce($config[$key]??'')?>" maxlength="1000"></label><?php endforeach;?>
 </div><p><button class="cms-btn">Guardar configuración</button></p></form></section>
 <?php endif;?>
-<?php if(($section['nombre_interno']??'')==='galeria_home'):?>
+<?php if(($section['nombre_interno']??'')==='footer_principal'):?>
+<section class="cms-card"><h2>Vista previa</h2><p>El pie de página se actualiza en el sitio público después de guardar los cambios.</p><a class="cms-btn" href="index.php#contacto" target="_blank" rel="noopener">Ver pie de página ↗</a></section>
+<?php elseif(($section['nombre_interno']??'')==='galeria_home'):?>
 <section class="cms-card gallery-admin">
  <div class="gallery-heading"><div><h2>Ítems del contenedor</h2><p>Arrastra las imágenes para cambiar su orden. Los cambios se guardan al soltar.</p></div><button type="button" class="cms-btn" id="gallery-add"><i class="bi bi-plus-circle"></i> Agregar imagen</button></div>
  <div class="gallery-toolbar"><div class="gallery-views"><button type="button" class="active" data-gallery-view="list"><i class="bi bi-list-ul"></i> Listado</button><button type="button" data-gallery-view="cards"><i class="bi bi-grid-3x3-gap"></i> Tarjetas</button></div></div>
