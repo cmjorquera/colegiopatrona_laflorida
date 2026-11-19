@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+$isReligiousPage=defined('PATRONA_INTERIOR_PAGE') && PATRONA_INTERIOR_PAGE==='formacion-religiosa';
 $portada=require __DIR__.'/config/portada.php';
 require_once __DIR__.'/componentes/portada.php';
 require_once __DIR__.'/componentes/patrona_cms.php';
@@ -94,6 +95,11 @@ if(!empty($site['menus'])){
         'children'=>[]
     ],$portada['menu']??[]);
 }
+// Enlace a página interior pública, sin modificar menús en MySQL.
+foreach($publicMenus as &$publicMenu){
+ if(preg_match('/formaci[oó]n religiosa/iu',(string)($publicMenu['texto']??'')))$publicMenu['url']='formacion_religiosa.php';
+}
+unset($publicMenu);
 $portada['menu']=$publicMenus;
 // El bloque superior es la portada original aprobada visualmente.
 // El CMS empieza DESPUÉS de los cuatro accesos rápidos.
@@ -102,8 +108,8 @@ usort($top,static fn(array $a,array $b):int=>($a['orden']??0)<=>($b['orden']??0)
 ?>
 <!doctype html><html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Colegio Patrona de Lourdes, La Florida.">
-<title>Colegio Patrona de Lourdes | La Florida</title>
+<meta name="description" content="<?= $isReligiousPage ? 'Formación Religiosa del Colegio Patrona de Lourdes, La Florida: Club Buscadores del Grial y propuestas por nivel escolar.' : 'Colegio Patrona de Lourdes, La Florida.' ?>">
+<title><?= $isReligiousPage ? 'Formación Religiosa | Colegio Patrona de Lourdes' : 'Colegio Patrona de Lourdes | La Florida' ?></title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="assets/css/patrona-tokens.css?v=1">
 <link rel="stylesheet" href="assets/css/patrona.css?v=6">
@@ -115,6 +121,7 @@ usort($top,static fn(array $a,array $b):int=>($a['orden']??0)<=>($b['orden']??0)
 <link rel="stylesheet" href="assets/css/patrona-actions-icons.css?v=1">
 <link rel="stylesheet" href="assets/css/patrona-identity.css?v=2">
 <link rel="stylesheet" href="assets/css/patrona-topbar.css?v=1">
+<?php if($isReligiousPage):?><link rel="stylesheet" href="assets/css/patrona-formacion.css?v=1"><?php endif;?>
 <style>
 .brand-name{font-size:13px;font-weight:800;color:var(--pl-navy);letter-spacing:.03em}.patrona-cms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--pl-space-5)}
 .patrona-cms-card{border:1px solid var(--pl-line);border-radius:var(--pl-radius-md);padding:20px;overflow:hidden}
@@ -174,10 +181,13 @@ foreach($topbarItems as $topbarItem){
 }
 @media(min-width:1600px){.site-header .wrap.nav{width:calc(100% - 120px)}}
 </style>
-<?php if($showHeader): ?><header class="site-header"><div class="wrap nav"><a class="brand" href="#inicio" aria-label="Inicio Colegio Patrona de Lourdes"><span class="patrona-brand-emblem"><?php if($publicLogo!==''):?><img src="<?=patrona_e($publicLogo)?>" alt="Escudo del Colegio Patrona de Lourdes" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="patrona-brand-monogram" hidden>PL</span><?php else:?><span class="patrona-brand-monogram">PL</span><?php endif;?></span><span class="brand-name"><?=patrona_e((string)($headerConfig['titulo_bloque']??'COLEGIO PATRONA DE LOURDES'))?></span><span class="brand-sede">LA FLORIDA</span></a>
+<?php if($showHeader): ?><header class="site-header"><div class="wrap nav"><a class="brand" href="index.php#inicio" aria-label="Inicio Colegio Patrona de Lourdes"><span class="patrona-brand-emblem"><?php if($publicLogo!==''):?><img src="<?=patrona_e($publicLogo)?>" alt="Escudo del Colegio Patrona de Lourdes" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="patrona-brand-monogram" hidden>PL</span><?php else:?><span class="patrona-brand-monogram">PL</span><?php endif;?></span><span class="brand-name"><?=patrona_e((string)($headerConfig['titulo_bloque']??'COLEGIO PATRONA DE LOURDES'))?></span><span class="brand-sede">LA FLORIDA</span></a>
 <button class="patrona-mobile-toggle" type="button" aria-label="Abrir menú de navegación" aria-controls="patrona-public-navigation" aria-expanded="false"><span></span><span></span><span></span></button><nav class="patrona-public-nav" id="patrona-public-navigation" aria-label="Navegación principal"><ul><?php foreach (($portada['menu']??[]) as $m): $children=$m['children']??[]; ?><li class="<?= $children?'has-submenu':'' ?>"><a href="<?=patrona_e((string)$m['url'])?>"><?=patrona_e((string)$m['texto'])?></a><?php if($children):?><button type="button" class="patrona-nav-expand" aria-label="Desplegar <?=patrona_e((string)$m['texto'])?>" aria-expanded="false">⌄</button><ul class="patrona-nav-submenu"><?php foreach($children as $child):?><li><a href="<?=patrona_e((string)$child['url'])?>"><?=patrona_e((string)$child['texto'])?></a></li><?php endforeach;?></ul><?php endif;?></li><?php endforeach;?></ul></nav>
 </div></header><?php endif; ?>
-<main>
+<main id="inicio">
+<?php if($isReligiousPage):?>
+<?php require __DIR__.'/componentes/formacion_religiosa.php'; ?>
+<?php else:?>
 <?php foreach($top as $c) patrona_render($c); ?>
 <?php
 $excluded=['topbar','header_principal','hero_principal','tab_destacados_home','footer_principal','presentacion_home','vida_escolar_home','modal_institucional'];
@@ -186,6 +196,7 @@ foreach($sections as $section) {
  patrona_cms_render($section);
 }
 ?>
+<?php endif;?>
 </main>
 <?php
 // Accesos flotantes: URLs configurables desde seccion_config de header_principal.
@@ -205,7 +216,7 @@ $contactUrl=patrona_cms_url($headerConfig['url_contacto_flotante']??'#contacto')
   <p>Este espacio está preparado para conectar el chat institucional. Por ahora puedes utilizar el acceso a Contacto.</p>
   <a href="#contacto">Ir a contacto →</a>
 </div>
-<?php patrona_render_modal_institucional($sections); ?>
+<?php if(!$isReligiousPage) patrona_render_modal_institucional($sections); ?>
 <?php if($showFooter): ?>
 <style>
 .patrona-footer{position:relative;isolation:isolate;overflow:hidden;border-top:4px solid #efa52b}
