@@ -183,10 +183,20 @@ $contactUrl=patrona_cms_url($headerConfig['url_contacto_flotante']??'#contacto')
 <?php patrona_render_modal_institucional($sections); ?>
 <?php if($showFooter): ?>
 <style>
+.patrona-footer{position:relative;isolation:isolate;overflow:hidden;border-top:4px solid #efa52b}
+.patrona-footer::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 88% 50%,rgba(255,255,255,.055),transparent 43%)}
+.patrona-footer .patrona-footer-watermark{position:absolute;right:4%;top:50%;transform:translateY(-50%);width:min(32vw,400px);height:min(32vw,400px);object-fit:contain;opacity:.055;filter:grayscale(1) brightness(0) invert(1);pointer-events:none;z-index:0}
+.patrona-footer .patrona-footer-grid,.patrona-footer .patrona-footer-bottom{position:relative;z-index:1}
 .patrona-footer .patrona-footer-logo{display:block;width:auto;max-width:130px;max-height:115px;object-fit:contain;object-position:left center;margin:0 0 18px}
-@media(max-width:640px){.patrona-footer .patrona-footer-logo{max-width:110px;max-height:100px}}
+.patrona-footer .patrona-social-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.patrona-footer .patrona-social-link{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;min-width:46px;border:1px solid rgba(255,255,255,.28);border-radius:50%;color:#fff;text-decoration:none;background:rgba(255,255,255,.075);transition:transform .2s ease,background .2s ease,border-color .2s ease}
+.patrona-footer .patrona-social-link:hover,.patrona-footer .patrona-social-link:focus-visible{transform:translateY(-3px);background:#e9a23a;border-color:#e9a23a;color:#102f53}
+.patrona-footer .patrona-social-link svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:640px){.patrona-footer .patrona-footer-logo{max-width:110px;max-height:100px}.patrona-footer .patrona-footer-watermark{width:230px;height:230px;right:-50px;opacity:.035}}
+@media(prefers-reduced-motion:reduce){.patrona-footer .patrona-social-link{transition:none}}
 </style>
 <footer id="contacto" class="patrona-footer">
+  <?php if($publicLogo!==''):?><img src="<?=patrona_e($publicLogo)?>" alt="" aria-hidden="true" class="patrona-footer-watermark" loading="lazy"><?php endif;?>
   <div class="wrap patrona-footer-grid">
     <div class="patrona-footer-intro">
       <?php if($publicLogo!==''):?><img src="<?=patrona_e($publicLogo)?>" alt="Escudo del Colegio Patrona de Lourdes" class="patrona-footer-logo" loading="lazy" decoding="async"><?php endif;?>
@@ -207,7 +217,14 @@ $contactUrl=patrona_cms_url($headerConfig['url_contacto_flotante']??'#contacto')
     </div>
     <div class="patrona-footer-column">
       <h2>Redes sociales</h2>
-      <?php foreach(['instagram_url'=>'Instagram','facebook_url'=>'Facebook','youtube_url'=>'YouTube'] as $key=>$label):$url=patrona_cms_url($footerConfig[$key]??'');if($url==='#')continue;?><a href="<?=patrona_e($url)?>" target="_blank" rel="noopener noreferrer"><?=patrona_e($label)?> ↗</a><?php endforeach;?>
+      <div class="patrona-social-links" aria-label="Redes sociales del colegio">
+      <?php foreach(['instagram_url'=>'Instagram','facebook_url'=>'Facebook','youtube_url'=>'YouTube'] as $key=>$label):$url=patrona_cms_url($footerConfig[$key]??'');if($url==='#')continue;?>
+      <a class="patrona-social-link" href="<?=patrona_e($url)?>" target="_blank" rel="noopener noreferrer" aria-label="<?=patrona_e($label)?>" title="<?=patrona_e($label)?>">
+      <?php if($key==='instagram_url'):?><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="6" r=".7" fill="currentColor" stroke="none"/></svg>
+      <?php elseif($key==='facebook_url'):?><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3.5h-2.2c-2.4 0-3.6 1.5-3.6 3.8v2H7.4v3.5h2.3v7.7h3.6v-7.7h2.8l.5-3.5h-3.3V7.7c0-.7.3-1 1-1h1.2z"/></svg>
+      <?php else:?><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none"/></svg><?php endif;?>
+      </a><?php endforeach;?>
+      </div>
     </div>
   </div>
   <div class="wrap patrona-footer-bottom"><span>© <?=date('Y')?> Colegio Patrona de Lourdes · La Florida</span></div>
