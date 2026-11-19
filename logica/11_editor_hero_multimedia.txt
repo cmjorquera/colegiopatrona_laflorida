@@ -1,0 +1,16 @@
+EDITOR HERO PRINCIPAL — 2026-11-19
+Rama: main. Contenedor: hero_principal (id_seccion 29 en captura).
+Cambios:
+- editar_contenedor.php: conserva sesión institucional, CSRF y tablas seccion/seccion_item/seccion_config. Reutiliza menú lateral del administrador; permite contraerlo.
+- Ítems en vista Tarjetas/Listado, ordenar arrastrando, cambiar visibilidad, eliminar, agregar y editar desde modal.
+- Modal: etiqueta, título en tres líneas, descripción, dos botones, imagen JPG/PNG/WebP (8 MB), imagen móvil, YouTube o MP4 (50 MB). Validación MIME y rutas; los archivos nuevos se guardan en assets/uploads/hero y assets/videos.
+- index.php: si existen ítems visibles del hero en MySQL, se renderizan en lugar de los slides de ejemplo de config/portada.php. Si no existen, se mantiene el diseño de ejemplo.
+- componentes/portada.php: imagen móvil, YouTube, MP4 y dos botones; mantiene estructura y CSS públicos.
+- No se crean ni eliminan tablas. No se modifica el módulo Menú público ni header_principal.
+VALIDAR EN PRODUCCIÓN:
+1. git pull --ff-only origin main
+2. php -l editar_contenedor.php && php -l index.php && php -l componentes/portada.php
+3. Abrir editar_contenedor.php?id=29 y probar creación, carga, edición, ocultamiento y orden.
+4. Verificar permisos de escritura de assets/uploads/hero y assets/videos y límite upload_max_filesize/post_max_size en PHP.
+5. Verificar visualización pública en escritorio y móvil. Los cambios del carrusel se publican inmediatamente al guardar.
+Nota: no se han ejecutado pruebas contra la base de datos de producción ni pruebas visuales en navegador.
