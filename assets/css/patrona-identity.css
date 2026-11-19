@@ -5,6 +5,6 @@
 .patrona-brand-emblem img[hidden],.patrona-brand-monogram[hidden]{display:none}
 .patrona-brand-monogram{display:grid;place-items:center;width:42px;height:47px;border:2px solid #276aa2;border-radius:10px 10px 17px 17px;background:#fff;color:#174c7d;font:900 18px Georgia,serif}
 .site-header .brand-name{line-height:1.35;font-size:12px}
-.site-header .brand-sede{display:block;font-size:9px;letter-spacing:.15em}
-@media(max-width:1200px){.site-header .brand{min-width:190px;gap:7px}.patrona-brand-emblem{width:48px;height:48px;flex-basis:48px}.site-header .brand-name{font-size:11px}}
-@media(max-width:640px){.site-header .brand{min-width:0}.patrona-brand-emblem{width:43px;height:43px;flex-basis:43px}.site-header .brand-name{font-size:10px}}
+.site-header .brand-sede{display:block;font-size:var(--pl-text-xs);letter-spacing:.14em}
+@media(max-width:1200px){.site-header .brand{min-width:190px;gap:7px}.patrona-brand-emblem{width:48px;height:48px;flex-basis:48px}.site-header .brand-name{font-size:var(--pl-text-xs)}}
+@media(max-width:640px){.site-header .brand{min-width:0}.patrona-brand-emblem{width:44px;height:44px;flex-basis:44px}.site-header .brand-name{font-size:var(--pl-text-xs)}}

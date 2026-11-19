@@ -79,15 +79,16 @@ usort($top,static fn(array $a,array $b):int=>($a['orden']??0)<=>($b['orden']??0)
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Colegio Patrona de Lourdes, La Florida.">
 <title>Colegio Patrona de Lourdes | La Florida</title>
-<link rel="stylesheet" href="assets/css/patrona.css?v=5">
-<link rel="stylesheet" href="assets/css/patrona-cms-v6.css?v=7">
-<link rel="stylesheet" href="assets/css/patrona-equipo.css?v=8">
-<link rel="stylesheet" href="assets/css/patrona-nav.css?v=1">
-<link rel="stylesheet" href="assets/css/patrona-identity.css?v=1">
+<link rel="stylesheet" href="assets/css/patrona-tokens.css?v=1">
+<link rel="stylesheet" href="assets/css/patrona.css?v=6">
+<link rel="stylesheet" href="assets/css/patrona-cms-v6.css?v=8">
+<link rel="stylesheet" href="assets/css/patrona-equipo.css?v=9">
+<link rel="stylesheet" href="assets/css/patrona-nav.css?v=2">
+<link rel="stylesheet" href="assets/css/patrona-identity.css?v=2">
 <style>
-.brand-name{font-size:13px;font-weight:800;color:#153c6b;letter-spacing:.03em}.patrona-cms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
-.patrona-cms-card{border:1px solid #e3e7ed;border-radius:12px;padding:20px;overflow:hidden}
-.patrona-cms-card img{width:100%;height:210px;object-fit:cover;border-radius:8px}
+.brand-name{font-size:13px;font-weight:800;color:var(--pl-navy);letter-spacing:.03em}.patrona-cms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--pl-space-5)}
+.patrona-cms-card{border:1px solid var(--pl-line);border-radius:var(--pl-radius-md);padding:20px;overflow:hidden}
+.patrona-cms-card img{width:100%;height:210px;object-fit:cover;border-radius:var(--pl-radius-sm)}
 </style></head><body>
 <?php if($showTopbar): ?><div class="topline"><div class="wrap"><span>COLEGIO PATRONA DE LOURDES · LA FLORIDA</span><span><?=patrona_e((string)($topbarConfig['texto']??'Sitio en desarrollo'))?></span></div></div><?php endif; ?>
 <?php if($showHeader): ?><header class="site-header"><div class="wrap nav"><a class="brand" href="#inicio" aria-label="Inicio Colegio Patrona de Lourdes"><span class="patrona-brand-emblem"><?php if($publicLogo!==''):?><img src="<?=patrona_e($publicLogo)?>" alt="Escudo del Colegio Patrona de Lourdes" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="patrona-brand-monogram" hidden>PL</span><?php else:?><span class="patrona-brand-monogram">PL</span><?php endif;?></span><span class="brand-name"><?=patrona_e((string)($headerConfig['titulo_bloque']??'COLEGIO PATRONA DE LOURDES'))?></span><span class="brand-sede">LA FLORIDA</span></a>
@@ -110,7 +111,7 @@ $contactUrl=patrona_cms_url($headerConfig['url_contacto_flotante']??'#contacto')
 ?>
 <div class="patrona-actions" aria-label="Accesos rápidos">
   <button type="button" data-patrona-chat aria-expanded="false" aria-controls="patrona-actions-chat" title="Información y consultas" aria-label="Información y consultas">☏</button>
-  <?php if($schoolListUrl!=='#'):?><a href="<?=patrona_e($schoolListUrl)?>" target="_blank" rel="noopener noreferrer" download=""><?= '📄' ?></a><?php else:?><button type="button" disabled title="Lista de útiles aún no publicada" aria-label="Lista de útiles aún no publicada">📄</button><?php endif;?>
+  <?php if($schoolListUrl!=='#'):?><a href="<?=patrona_e($schoolListUrl)?>" target="_blank" rel="noopener noreferrer" download="" title="Lista de útiles escolares" aria-label="Descargar lista de útiles escolares"><span aria-hidden="true">📄</span></a><?php else:?><button type="button" disabled title="Lista de útiles aún no publicada" aria-label="Lista de útiles aún no publicada">📄</button><?php endif;?>
   <a href="<?=patrona_e($contactUrl)?>" title="Contacto" aria-label="Contacto">✉</a>
   <?php $enrollmentUrl=patrona_cms_url($headerConfig['url_matriculas']??'#contacto'); ?>
   <a class="patrona-enrollment-float" href="<?=patrona_e($enrollmentUrl)?>" title="¡Matricúlate aquí!" aria-label="¡Matricúlate aquí!"><span aria-hidden="true">🎓</span><span class="patrona-enrollment-label">¡Matricúlate aquí!</span></a>

@@ -81,7 +81,7 @@ $editing=null;$editId=(int)($_GET['item']??0);foreach($items as $i)if((int)$i['i
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sellos institucionales | Panel CMS</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=2">
+<link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=4">
 <style>
 .seal-panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:25px;margin:22px 0;box-shadow:0 5px 20px #102d5208}
 .seal-panel h2{font-size:19px;margin:0 0 20px;color:#102d52}

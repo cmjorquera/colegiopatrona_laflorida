@@ -22,7 +22,8 @@ function patrona_render(array $contenedor): void {
    <div class="hero-media" aria-hidden="true">
    <?php $video = (string)($slide['video'] ?? ''); $poster=(string)($slide['imagen']??''); ?>
    <?php if ($video !== ''): ?>
-   <video class="hero-background-video" autoplay muted loop playsinline preload="metadata" <?= $poster!==''?'poster="'.patrona_e($poster).'"':'' ?>><source src="<?= patrona_e($video) ?>" type="video/mp4"></video>
+   <?php // El video se carga solo en pantallas >=768px, sin ahorro de datos ni movimiento reducido; si no, se ve el póster administrado. ?>
+   <video class="hero-background-video" muted loop playsinline preload="none" data-hero-video <?= $poster!==''?'poster="'.patrona_e($poster).'"':'' ?>><source data-src="<?= patrona_e($video) ?>" type="video/mp4"></video>
    <?php elseif ($poster !== ''): ?><img src="<?= patrona_e($poster) ?>" alt="" style="width:100%;height:100%;object-fit:cover">
    <?php endif; ?>
    </div>
@@ -40,8 +41,29 @@ function patrona_render(array $contenedor): void {
  <?php if ($dots): ?><div class="patrona-carousel-dots"><?php foreach ($slides as $i=>$slide): ?><button type="button" data-dot="<?= $i ?>" aria-label="Ir a diapositiva <?= $i+1 ?>" aria-current="<?= $i===0?'true':'false' ?>"></button><?php endforeach; ?></div><?php endif; ?>
  <?php endif; ?>
  </section>
- <style>.patrona-carousel{position:relative;display:block!important;width:100%}.patrona-slide{position:relative;width:100%;min-height:min(760px,85svh);display:flex;align-items:center}.patrona-slide .hero-media{width:100%;height:100%}.patrona-slide .hero-video-content{width:100%}.patrona-slide[hidden]{display:none!important}.patrona-carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;background:#002b55bb;color:#fff;border:0;border-radius:50%;width:44px;height:44px;font-size:32px;cursor:pointer}.patrona-carousel-arrow.prev{left:20px}.patrona-carousel-arrow.next{right:20px}.patrona-carousel-dots{position:absolute;bottom:20px;left:0;right:0;display:flex;justify-content:center;gap:10px;z-index:6}.patrona-carousel-dots button{width:11px;height:11px;border-radius:50%;border:1px solid white;background:#ffffff70;cursor:pointer}.patrona-carousel-dots button[aria-current="true"]{background:white}</style>
- <script>document.querySelectorAll('[data-carousel]').forEach(function(root){const slides=[...root.querySelectorAll('[data-slide]')];const dots=[...root.querySelectorAll('[data-dot]')];let current=0;function show(n){current=(n+slides.length)%slides.length;slides.forEach((s,i)=>{s.hidden=i!==current;const v=s.querySelector('video');if(v){if(i===current)v.play().catch(()=>{});else v.pause();}});dots.forEach((d,i)=>d.setAttribute('aria-current',i===current?'true':'false'));}root.querySelector('[data-prev]')?.addEventListener('click',()=>show(current-1));root.querySelector('[data-next]')?.addEventListener('click',()=>show(current+1));dots.forEach((d,i)=>d.addEventListener('click',()=>show(i)));});</script>
+ <style>.patrona-carousel{position:relative;display:block!important;width:100%}.patrona-slide{position:relative;width:100%;min-height:min(760px,85svh);display:flex;align-items:center}.patrona-slide .hero-media{width:100%;height:100%}.patrona-slide .hero-video-content{width:100%}.patrona-slide[hidden]{display:none!important}.patrona-carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;background:#002b55bb;color:#fff;border:0;border-radius:50%;width:var(--pl-target,44px);height:var(--pl-target,44px);font-size:32px;line-height:1;cursor:pointer;transition:background-color var(--pl-dur-fast,150ms) ease}.patrona-carousel-arrow:hover{background:var(--pl-navy,#153c6b)}.patrona-carousel-arrow.prev{left:20px}.patrona-carousel-arrow.next{right:20px}.patrona-carousel-dots{position:absolute;bottom:20px;left:0;right:0;display:flex;justify-content:center;gap:10px;z-index:6}.patrona-carousel-dots button{width:11px;height:11px;border-radius:50%;border:1px solid white;background:#ffffff70;cursor:pointer}.patrona-carousel-dots button[aria-current="true"]{background:white}</style>
+ <script>
+ (function(){
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)'),wide=window.matchMedia('(min-width: 768px)');
+  const saveData=!!(navigator.connection&&navigator.connection.saveData);
+  const canPlay=()=>wide.matches&&!reduced.matches&&!saveData;
+  function start(v){
+   if(!v||!canPlay())return;
+   if(!v.dataset.loaded){v.querySelectorAll('source[data-src]').forEach(s=>{s.src=s.dataset.src;});v.dataset.loaded='1';v.load();}
+   v.play().catch(()=>{});
+  }
+  document.querySelectorAll('[data-carousel]').forEach(function(root){
+   const slides=[...root.querySelectorAll('[data-slide]')],dots=[...root.querySelectorAll('[data-dot]')];let current=0;
+   function syncVideo(){slides.forEach((s,i)=>{const v=s.querySelector('[data-hero-video]');if(!v)return;if(i===current&&canPlay())start(v);else v.pause();});}
+   function show(n){current=(n+slides.length)%slides.length;slides.forEach((s,i)=>{s.hidden=i!==current;});dots.forEach((d,i)=>d.setAttribute('aria-current',i===current?'true':'false'));syncVideo();}
+   root.querySelector('[data-prev]')?.addEventListener('click',()=>show(current-1));
+   root.querySelector('[data-next]')?.addEventListener('click',()=>show(current+1));
+   dots.forEach((d,i)=>d.addEventListener('click',()=>show(i)));
+   reduced.addEventListener?.('change',syncVideo);wide.addEventListener?.('change',syncVideo);
+   syncVideo();
+  });
+ })();
+ </script>
  <?php break;
  case 'accesos': ?>
  <section class="quick wrap" aria-label="<?= patrona_e($d['titulo'] ?? 'Accesos') ?>"><div class="quick-grid">

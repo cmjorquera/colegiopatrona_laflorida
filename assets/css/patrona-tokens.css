@@ -1,0 +1,69 @@
+/* ==========================================================================
+   Variables institucionales — Colegio Patrona de Lourdes, La Florida
+   Se carga ANTES que el resto de las hojas públicas.
+   Contraste medido según WCAG 2.1 sobre blanco (#fff), salvo que se indique.
+   El contenido sigue viniendo del CMS: aquí solo se define la presentación.
+   ========================================================================== */
+:root{
+  /* Color: azules institucionales */
+  --pl-navy:#153c6b;          /* títulos, franja superior          11,1:1 */
+  --pl-navy-deep:#0b2f57;     /* fondos oscuros, footer                    */
+  --pl-blue:#1b66a8;          /* botones y enlaces                  6,0:1  */
+  --pl-blue-hover:#0e5593;    /* hover/activo de botones            7,7:1  */
+  --pl-sky:#d6eaff;           /* fondos de selección                       */
+  --pl-soft:#f4f8fc;          /* secciones alternas                        */
+
+  /* Color: acentos marianos */
+  --pl-gold:#e7a13a;          /* SOLO decorativo (barras, rellenos, foco)  */
+  --pl-gold-text:#9a6412;     /* dorado cuando es texto             5,0:1  */
+  --pl-orange:#f28b16;        /* acceso de matrícula (texto en navy 5,4:1) */
+  --pl-orange-ink:#0f2f57;
+
+  /* Color: texto y líneas */
+  --pl-ink:#132b4b;           /* texto principal                   13,5:1  */
+  --pl-muted:#53677f;         /* texto secundario (5,4:1 sobre --pl-soft)  */
+  --pl-line:#dce6f0;
+  --pl-paper:#fff;
+  --pl-on-dark:#fff;
+  --pl-on-dark-muted:#c6dbef;
+
+  /* Tipografía: se conserva la actual (cambio de familia pendiente de decisión) */
+  --pl-font-heading:Georgia,"Times New Roman",serif;
+  --pl-font-body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --pl-text-xs:12px;          /* mínimo para cualquier texto visible */
+  --pl-text-sm:14px;
+  --pl-text-md:16px;
+  --pl-text-lg:19px;
+  --pl-tracking-label:.08em;
+
+  /* Espaciado: escala de 4 */
+  --pl-space-1:4px; --pl-space-2:8px; --pl-space-3:12px; --pl-space-4:16px;
+  --pl-space-5:24px; --pl-space-6:32px; --pl-space-7:48px; --pl-space-8:64px; --pl-space-9:96px;
+  --pl-section-y:clamp(64px,8vw,96px);
+
+  /* Contenedores */
+  --pl-container:1180px;
+  --pl-container-wide:1440px;
+  --pl-gutter:24px;
+
+  /* Bordes, radios y sombras */
+  --pl-radius-sm:8px;         /* botones y campos   */
+  --pl-radius-md:12px;        /* tarjetas           */
+  --pl-radius-lg:16px;        /* tarjetas grandes   */
+  --pl-radius-pill:999px;
+  --pl-shadow-1:0 1px 2px rgb(15 47 87/.06),0 6px 18px rgb(15 47 87/.07);
+  --pl-shadow-2:0 12px 30px rgb(15 47 87/.14);
+
+  /* Interacción */
+  --pl-target:44px;           /* área táctil mínima */
+  --pl-focus:3px solid var(--pl-gold);
+  --pl-focus-offset:3px;
+  --pl-ease:cubic-bezier(.2,.7,.2,1);
+  --pl-dur-fast:150ms;
+  --pl-dur:250ms;
+}
+@media(max-width:640px){:root{--pl-gutter:16px}}
+
+/* Foco visible y consistente para teclado en todo el sitio público */
+:where(a,button,[tabindex],summary,input,select,textarea):focus-visible{outline:var(--pl-focus);outline-offset:var(--pl-focus-offset)}
+:where(.hero,.topline,footer,.patrona-podcast-audio,.patrona-lightbox,.patrona-seal-back) :where(a,button,[tabindex]):focus-visible{outline-color:#ffd27a}

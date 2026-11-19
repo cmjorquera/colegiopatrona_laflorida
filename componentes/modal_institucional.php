@@ -34,8 +34,8 @@ function patrona_render_modal_institucional(array $sections): void {
     <style>
       .pm-backdrop[hidden]{display:none!important}.pm-backdrop{position:fixed;inset:0;z-index:10000;background:rgba(5,23,49,.72);display:flex;align-items:center;justify-content:center;padding:20px}
       .pm-dialog{position:relative;background:#fff;color:#13365e;width:min(100%,620px);max-height:min(90vh,900px);overflow-y:auto;border-radius:16px;box-shadow:0 25px 90px #0006;outline:none}
-      .pm-close{position:absolute;right:12px;top:12px;z-index:1;width:40px;height:40px;border:0;border-radius:50%;background:#fff;color:#123b70;font-size:29px;line-height:1;cursor:pointer;box-shadow:0 2px 12px #0002}
-      .pm-image{display:block;width:100%;max-height:330px;object-fit:cover}.pm-body{padding:30px}.pm-body h2{margin:0 0 14px;font-size:clamp(23px,4vw,34px);line-height:1.2}.pm-body p{line-height:1.65;color:#4b617c;white-space:normal}.pm-action{display:inline-block;margin-top:15px;padding:12px 20px;border-radius:8px;background:#1675be;color:white!important;text-decoration:none;font-weight:700}
+      .pm-close{position:absolute;right:12px;top:12px;z-index:1;width:var(--pl-target,44px);height:var(--pl-target,44px);border:0;border-radius:50%;background:#fff;color:var(--pl-navy,#153c6b);font-size:29px;line-height:1;cursor:pointer;box-shadow:0 2px 12px #0002}
+      .pm-image{display:block;width:100%;max-height:330px;object-fit:cover}.pm-body{padding:30px}.pm-body h2{margin:0 0 14px;font-size:clamp(23px,4vw,34px);line-height:1.2}.pm-body p{line-height:1.65;color:var(--pl-muted,#4b617c);white-space:normal}.pm-body p a{color:var(--pl-blue,#1b66a8);text-decoration:underline}.pm-action{display:inline-flex;align-items:center;min-height:var(--pl-target,44px);margin-top:15px;padding:12px 20px;border-radius:var(--pl-radius-sm,8px);background:var(--pl-blue,#1b66a8);color:white!important;text-decoration:none;font-weight:700;transition:background-color var(--pl-dur-fast,150ms) ease}.pm-action:hover{background:var(--pl-blue-hover,#0e5593)}
       @media(max-width:600px){.pm-body{padding:22px}.pm-image{max-height:240px}}
     </style>
     <script>

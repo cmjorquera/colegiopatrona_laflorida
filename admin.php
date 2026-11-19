@@ -204,13 +204,18 @@ $subsByMenu=[]; foreach($publicSubs as $sub){$subsByMenu[(int)$sub['id_menu']][]
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CMS | Patrona de Lourdes · La Florida</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=3">
-<link rel="stylesheet" href="assets/admin/css/patrona-admin-menu.css?v=1">
+<link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=4">
+<link rel="stylesheet" href="assets/admin/css/patrona-admin-menu.css?v=2">
 </head>
 <body>
 <div class="admin-shell">
 <aside class="admin-sidebar">
-  <div class="sidebar-watermark" aria-hidden="true"></div>
+  <?php
+  // Marca de agua: solo un escudo PNG transparente que exista en el hosting (evita solicitudes 404).
+  $sidebarWatermark='';
+  foreach(['assets/imagenes/LOGO-COLEGIO--Sin-fondo.png','imagenes/LOGO-COLEGIO--Sin-fondo.png'] as $candidate){if(is_file(__DIR__.'/'.$candidate)){$sidebarWatermark=$candidate;break;}}
+  ?>
+  <div class="sidebar-watermark<?= $sidebarWatermark!==''?' has-logo':'' ?>" aria-hidden="true"<?php if($sidebarWatermark!==''):?> style="--sidebar-logo:url('<?=h($sidebarWatermark)?>')"<?php endif;?>></div>
   <div class="sidebar-brand"><span class="sidebar-brand-icon"><?php $sidebarLogo='';foreach(['assets/imagenes/LOGO-COLEGIO--Sin-fondo.png','assets/imagenes/logo-colegio-1024x598.jpg','imagenes/logo-colegio-1024x598.jpg'] as $candidate){if(is_file(__DIR__.'/'.$candidate)){$sidebarLogo=$candidate;break;}} ?><?php if($sidebarLogo!==''):?><img src="<?=h($sidebarLogo)?>" alt="Escudo del colegio" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden aria-hidden="true" class="patrona-logo-fallback">PL</span><?php else:?><span aria-hidden="true" class="patrona-logo-fallback">PL</span><?php endif;?></span><span><strong>Patrona de Lourdes</strong><small>La Florida · Panel CMS</small></span></div>
   <nav class="sidebar-nav" aria-label="Navegación administrativa">
     <span class="nav-group-label">PRINCIPAL</span>

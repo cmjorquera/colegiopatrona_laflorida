@@ -1,7 +1,7 @@
 
 /* Estructura de San Pablo adaptada al branding Patrona de Lourdes. */
 .admin-sidebar{background:linear-gradient(180deg,#226fba 0%,#125191 45%,#0b396b 100%);isolation:isolate}
-.sidebar-watermark{position:absolute;bottom:82px;left:2%;width:96%;height:230px;background:url('../../imagenes/LOGO-COLEGIO--Sin-fondo.png') center center/contain no-repeat;opacity:.09;pointer-events:none;z-index:-1;filter:grayscale(1) brightness(4)}
+.sidebar-watermark{position:absolute;bottom:82px;left:2%;width:96%;height:230px;background:var(--sidebar-logo,none) center center/contain no-repeat;opacity:.09;pointer-events:none;z-index:-1;filter:grayscale(1) brightness(4)}
 .sidebar-brand,.sidebar-nav,.sidebar-bottom{position:relative;z-index:1}
 .sidebar-brand{background:#267bce}
 .sidebar-brand-icon{background:rgba(255,255,255,.1)}
@@ -38,6 +38,7 @@
 @media(max-width:700px){.sidebar-watermark{display:none}.patrona-menu-admin .patrona-menu-list{padding:8px}.patrona-menu-entry>summary{gap:8px;flex-wrap:wrap}.menu-status{margin-left:0}.menu-editor-form{padding:12px}}
 
 /* Marca de agua de respaldo si el escudo no está disponible en el hosting. */
-.sidebar-watermark::after{content:"PL";position:absolute;inset:0;display:grid;place-items:center;font:900 150px Georgia,serif;letter-spacing:-.12em;color:#fff;opacity:.48}
+.sidebar-watermark.has-logo::after{content:none}
+.sidebar-watermark:not(.has-logo)::after{content:"PL";position:absolute;inset:0;display:grid;place-items:center;font:900 150px Georgia,serif;letter-spacing:-.12em;color:#fff;opacity:.48}
 .sidebar-brand-icon .patrona-logo-fallback{display:grid;place-items:center;width:45px;height:45px;border:2px solid #fff;border-radius:10px 10px 17px 17px;color:#fff;font:900 18px Georgia,serif}
 .sidebar-brand-icon .patrona-logo-fallback[hidden]{display:none}

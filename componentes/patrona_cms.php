@@ -55,11 +55,11 @@ function patrona_cms_render(array $s): void {
         .patrona-seal-card{position:relative;perspective:1100px;min-height:255px}
         .patrona-seal-inner{position:relative;width:100%;height:255px;transition:transform .55s;transform-style:preserve-3d}
         .patrona-seal-card.has-back:hover .patrona-seal-inner,.patrona-seal-card.has-back:focus-within .patrona-seal-inner,.patrona-seal-card.has-back:focus .patrona-seal-inner{transform:rotateY(180deg)}
-        .patrona-seal-front,.patrona-seal-back{position:absolute;inset:0;backface-visibility:hidden;border:1px solid #dce6f1;border-radius:16px;background:white;display:flex;align-items:center;justify-content:center;padding:22px;box-shadow:0 10px 25px #08295312}
+        .patrona-seal-front,.patrona-seal-back{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--pl-line);border-radius:var(--pl-radius-lg);background:white;display:flex;align-items:center;justify-content:center;padding:22px;box-shadow:var(--pl-shadow-1)}
         .patrona-seal-front img{max-width:100%;max-height:100%;width:100%;height:100%;object-fit:contain}
-        .patrona-seal-back{transform:rotateY(180deg);flex-direction:column;gap:10px;overflow:auto;text-align:center;background:#153c6b;color:white}
-        .patrona-seal-back p{font-size:14px;line-height:1.5}.patrona-seal-back a{color:#fff;text-decoration:underline}
-        .patrona-seal-link{display:block;text-align:center;margin-top:10px;color:#1675bb}
+        .patrona-seal-back{transform:rotateY(180deg);flex-direction:column;gap:10px;overflow:auto;text-align:center;background:var(--pl-navy);color:white}
+        .patrona-seal-back p{font-size:var(--pl-text-sm);line-height:1.5}.patrona-seal-back a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+        .patrona-seal-link{display:block;text-align:center;margin-top:10px;padding-block:10px;color:var(--pl-blue);text-decoration:underline;text-underline-offset:3px}
         @media(prefers-reduced-motion:reduce){.patrona-seal-inner{transition:none}}
         </style>
         <?php

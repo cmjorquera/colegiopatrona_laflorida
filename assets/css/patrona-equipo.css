@@ -1,5 +1,5 @@
 /* Equipo docente por ciclos */
-.patrona-team{padding:90px 0;background:#fff}
+.patrona-team{padding:var(--pl-section-y) 0;background:#fff}
 .patrona-cycle-nav{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin:20px auto 40px}
 .patrona-cycle-nav button{width:178px;height:178px;border-radius:50%;border:2px solid #0c315a;background:#76afe9;box-shadow:4px 5px 0 #0c315a;color:#082c55;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:transform .2s,background .2s;font:inherit;text-align:center}
 .patrona-cycle-nav button strong{font-size:25px;font-weight:900;text-transform:uppercase}.patrona-cycle-nav button span{font-size:17px;font-weight:800}
@@ -15,7 +15,7 @@
 .patrona-team-placeholder{display:grid;place-items:center;font-size:60px}
 .patrona-team-person h4{font-size:15px;margin:12px 0 7px;color:#0b305b;text-transform:uppercase}
 .patrona-team-role{display:inline-block;border-radius:20px;background:#e5e8ec;color:#213a55;padding:4px 12px;font-size:12px;font-weight:800}
-.patrona-team-person a{font-size:12px}.patrona-team-person details{font-size:13px;margin-top:10px;text-align:left}.patrona-team-person summary{cursor:pointer;color:#1765a2}
+.patrona-team-person a{font-size:12px}.patrona-team-person details{font-size:13px;margin-top:10px;text-align:left}.patrona-team-person summary{cursor:pointer;color:var(--pl-blue);min-height:32px;display:flex;align-items:center}
 .patrona-team-empty{text-align:center;padding:30px;color:#60748c}
 @media(max-width:800px){.patrona-team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.patrona-team-lead{grid-template-columns:1fr}.patrona-cycle-nav button{width:140px;height:140px}.patrona-cycle-nav button strong{font-size:20px}}
 @media(max-width:480px){.patrona-cycle-nav{gap:12px}.patrona-cycle-nav button{width:125px;height:125px}.patrona-cycle-nav button strong{font-size:17px}.patrona-cycle-nav button span{font-size:13px}.patrona-team-grid{gap:14px}.patrona-team-person img,.patrona-team-placeholder{height:175px}}
@@ -71,7 +71,7 @@
 #organizacion-colegio .patrona-team-carousel-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:22px 0 18px}
 #organizacion-colegio .patrona-team-carousel-heading .patrona-team-subheading{margin:0}
 #organizacion-colegio .patrona-team-carousel-controls{display:flex;gap:8px}
-#organizacion-colegio .patrona-team-carousel-controls button{border:1px solid #bdd8f0;background:#fff;color:#0b477a;border-radius:50%;width:40px;height:40px;font-size:27px;cursor:pointer}
+#organizacion-colegio .patrona-team-carousel-controls button{border:1px solid #bdd8f0;background:#fff;color:var(--pl-navy);border-radius:50%;width:var(--pl-target);height:var(--pl-target);font-size:27px;line-height:1;cursor:pointer}
 #organizacion-colegio .patrona-team-carousel-controls button:disabled{opacity:.35;cursor:default}
 #organizacion-colegio .patrona-team-viewport{overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;scroll-behavior:smooth}
 #organizacion-colegio .patrona-team-viewport::-webkit-scrollbar{display:none}
@@ -91,7 +91,7 @@
 /* Coordinación compacta: deja visible el carrusel sin tanto desplazamiento */
 #organizacion-colegio.patrona-team-active .patrona-team-lead{padding:4px 0 14px;gap:12px;align-items:center}
 #organizacion-colegio.patrona-team-active .patrona-team-lead:not(:has(>img)){padding:4px 0 14px}
-#organizacion-colegio.patrona-team-active .patrona-team-lead .patrona-kicker{font-size:10px;letter-spacing:.12em}
+#organizacion-colegio.patrona-team-active .patrona-team-lead .patrona-kicker{font-size:var(--pl-text-xs);letter-spacing:.12em}
 #organizacion-colegio.patrona-team-active .patrona-team-lead h3{font-size:clamp(18px,1.7vw,24px);line-height:1.25;margin:5px 0 5px}
 #organizacion-colegio.patrona-team-active .patrona-team-lead strong{font-size:13px}
 #organizacion-colegio.patrona-team-active .patrona-team-lead>img{width:110px;height:110px;border-radius:50%}
@@ -100,13 +100,13 @@
 
 
 /* Opción 2 — pestañas horizontales institucionales (reemplaza diseño de círculos). */
-#organizacion-colegio{padding:70px 0 85px;background:#fff}
-#organizacion-colegio .wrap{width:calc(100% - 64px);max-width:1380px;margin-inline:auto;display:block}
+#organizacion-colegio{padding:var(--pl-section-y) 0;background:#fff}
+#organizacion-colegio .wrap{width:min(var(--pl-container-wide),calc(100% - 2 * var(--pl-gutter)));max-width:var(--pl-container-wide);margin-inline:auto;display:block}
 #organizacion-colegio .patrona-centered-heading{margin-bottom:30px}
 #organizacion-colegio .patrona-team-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:8px;background:#f2f6fb;border:1px solid #e2eaf4;border-radius:16px;margin:0 auto 30px}
-#organizacion-colegio .patrona-team-tab{appearance:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:82px;padding:14px 10px;border:1px solid transparent;border-radius:11px;background:transparent;color:#173e6b;font:inherit;cursor:pointer;transition:background .2s,color .2s,box-shadow .2s}
+#organizacion-colegio .patrona-team-tab{appearance:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:82px;padding:14px 10px;border:1px solid transparent;border-radius:var(--pl-radius-md);background:transparent;color:var(--pl-navy);font:inherit;cursor:pointer;transition:background .2s,color .2s,box-shadow .2s}
 #organizacion-colegio .patrona-team-tab strong{font-size:16px;font-weight:800;text-transform:none}
-#organizacion-colegio .patrona-team-tab span{font-size:12px;font-weight:500}
+#organizacion-colegio .patrona-team-tab span{font-size:13px;font-weight:500}
 #organizacion-colegio .patrona-team-tab:hover:not([aria-selected=true]){background:#e2edf8}
 #organizacion-colegio .patrona-team-tab[aria-selected=true]{background:#123e70;color:white;box-shadow:0 5px 13px #123e7026}
 #organizacion-colegio .patrona-team-tab:focus-visible{outline:3px solid #e69a24;outline-offset:2px}
@@ -116,7 +116,7 @@
 #organizacion-colegio .patrona-team-lead:not(:has(>img))>div{max-width:none}
 #organizacion-colegio .patrona-team-lead>img{width:90px;height:90px;flex:0 0 90px;object-fit:cover;border-radius:50%}
 #organizacion-colegio .patrona-team-lead h3{font-size:clamp(19px,2vw,24px);margin:3px 0 4px}
-#organizacion-colegio .patrona-team-lead .patrona-kicker{font-size:10px}
+#organizacion-colegio .patrona-team-lead .patrona-kicker{font-size:var(--pl-text-xs)}
 #organizacion-colegio .patrona-team-lead strong{font-size:13px}
 #organizacion-colegio .patrona-team-carousel-heading{margin:12px 0 16px}
 #organizacion-colegio .patrona-team-carousel-heading .patrona-team-subheading{font-size:23px}
@@ -126,8 +126,6 @@
 #organizacion-colegio .patrona-team-person h4{font-size:13px}
 @media(max-width:1100px){#organizacion-colegio .patrona-team-person{flex-basis:calc((100% - 36px)/3)}}
 @media(max-width:720px){
- #organizacion-colegio{padding:50px 0}
- #organizacion-colegio .wrap{width:calc(100% - 30px)}
  #organizacion-colegio .patrona-team-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:6px}
  #organizacion-colegio .patrona-team-tab{min-height:65px;padding:10px 6px}
  #organizacion-colegio .patrona-team-tab strong{font-size:14px}
@@ -166,7 +164,7 @@
 #organizacion-colegio .patrona-course-button{aspect-ratio:auto;min-height:112px;padding:10px 8px;border-radius:14px;gap:5px}
 #organizacion-colegio .patrona-course-cycle-dot{width:29px;height:29px;flex:0 0 29px;border-radius:50%;display:grid;place-items:center;background:#103e72;color:#fff;font-size:12px;font-weight:800;letter-spacing:0;box-shadow:0 2px 5px #103e7226}
 #organizacion-colegio .patrona-course-button strong{font-size:clamp(23px,2.4vw,32px);line-height:1.1}
-#organizacion-colegio .patrona-course-button span:not(.patrona-course-cycle-dot){font-size:11px;margin-top:0;letter-spacing:.05em}
+#organizacion-colegio .patrona-course-button span:not(.patrona-course-cycle-dot){font-size:var(--pl-text-xs);margin-top:0;letter-spacing:.05em}
 #organizacion-colegio .patrona-course-results{padding-top:10px}
 #organizacion-colegio .patrona-course-selected-title{font-size:19px;margin-bottom:5px}
 #organizacion-colegio .patrona-team-carousel-heading{margin:8px 0 10px}
