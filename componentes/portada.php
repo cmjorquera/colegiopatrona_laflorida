@@ -20,19 +20,19 @@ function patrona_render(array $contenedor): void {
  <?php foreach ($slides as $i=>$slide): ?>
  <div class="patrona-slide" data-slide <?= $i>0?'hidden':'' ?>>
    <div class="hero-media" aria-hidden="true">
-   <?php $video = (string)($slide['video'] ?? ''); $poster=(string)($slide['imagen']??''); ?>
-   <?php if ($video !== ''): ?>
+   <?php $video = (string)($slide['video'] ?? ''); $poster=(string)($slide['imagen']??''); $youtube=(string)($slide['youtube']??''); $mobile=(string)($slide['imagen_mobile']??''); $youtubeId='';if(preg_match('~(?:youtu\\.be/|youtube\\.com/(?:watch\\?v=|embed/|shorts/))([a-zA-Z0-9_-]{11})~',$youtube,$match))$youtubeId=$match[1]; ?>
+   <?php if ($youtubeId !== ''): ?><iframe src="https://www.youtube-nocookie.com/embed/<?= patrona_e($youtubeId) ?>?autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=<?= patrona_e($youtubeId) ?>&amp;controls=0" title="Video de portada" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" tabindex="-1" style="width:100%;height:100%;border:0;pointer-events:none"></iframe><?php elseif ($video !== ''): ?>
    <?php // El video se carga solo en pantallas >=768px, sin ahorro de datos ni movimiento reducido; si no, se ve el póster administrado. ?>
    <video class="hero-background-video" muted loop playsinline preload="none" data-hero-video <?= $poster!==''?'poster="'.patrona_e($poster).'"':'' ?>><source data-src="<?= patrona_e($video) ?>" type="video/mp4"></video>
-   <?php elseif ($poster !== ''): ?><img src="<?= patrona_e($poster) ?>" alt="" style="width:100%;height:100%;object-fit:cover">
+   <?php elseif ($poster !== ''): ?><picture><?php if($mobile!==''):?><source media="(max-width:767px)" srcset="<?= patrona_e($mobile) ?>"><?php endif;?><img src="<?= patrona_e($poster) ?>" alt="" style="width:100%;height:100%;object-fit:cover"></picture>
    <?php endif; ?>
    </div>
    <?php if ($overlay !== 'ninguno'): ?><div class="hero-shade" aria-hidden="true" style="<?= $overlay==='claro'?'background:rgba(255,255,255,.28)':'' ?>"></div><?php endif; ?>
    <div class="wrap hero-video-content" style="text-align:<?= $align==='izquierda'?'left':($align==='derecha'?'right':'center') ?>">
     <p class="eyebrow"><?= patrona_e((string)($slide['etiqueta']??'')) ?></p>
-    <h1><?= patrona_e((string)($slide['titulo']??'')) ?></h1>
+    <h1 style="white-space:pre-line"><?= patrona_e((string)($slide['titulo']??'')) ?></h1>
     <p class="lead"><?= patrona_e((string)($slide['texto']??'')) ?></p>
-    <?php if (!empty($slide['boton'])): ?><a class="btn" href="<?= patrona_e((string)($slide['enlace']?:'#colegio')) ?>"><?= patrona_e((string)$slide['boton']) ?> <span aria-hidden="true">↗</span></a><?php endif; ?>
+    <?php if (!empty($slide['boton'])): ?><a class="btn" href="<?= patrona_e((string)($slide['enlace']?:'#colegio')) ?>"><?= patrona_e((string)$slide['boton']) ?> <span aria-hidden="true">↗</span></a><?php endif; ?><?php if(!empty($slide['boton_2'])):?><a class="btn" style="margin-left:10px" href="<?= patrona_e((string)($slide['enlace_2']?:'#colegio')) ?>"><?= patrona_e((string)$slide['boton_2']) ?> <span aria-hidden="true">↗</span></a><?php endif;?>
    </div>
  </div>
  <?php endforeach; ?>
