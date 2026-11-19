@@ -8,6 +8,9 @@ function init(textarea){
  const commands=[['bold','B'],['italic','I'],['underline','U'],['strikeThrough','S'],['insertUnorderedList','• Lista'],['insertOrderedList','1. Lista'],['formatBlock','❞ Cita','blockquote'],['createLink','🔗 Enlace'],['unlink','Quitar enlace'],['undo','↶'],['redo','↷']];
  const editor=document.createElement('div');editor.className='rich-content';editor.contentEditable='true';editor.setAttribute('role','textbox');editor.setAttribute('aria-multiline','true');editor.setAttribute('aria-label','Descripción enriquecida');editor.innerHTML=textarea.value;
  function sync(){textarea.value=editor.innerHTML;}
+ // Mantiene sincronizada la vista enriquecida cuando un modal carga datos existentes.
+ function loadSource(){editor.innerHTML=textarea.value;}
+ textarea.addEventListener('rich-editor:load',loadSource);
  commands.forEach(([cmd,label,arg])=>{
   const b=document.createElement('button');b.type='button';b.textContent=label;b.title=cmd;b.setAttribute('aria-label',cmd);b.addEventListener('mousedown',e=>e.preventDefault());
   b.addEventListener('click',()=>{
