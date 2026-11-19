@@ -116,17 +116,7 @@ $editing=null;$editId=(int)($_GET['item']??0);foreach($items as $i)if((int)$i['i
 @media(max-width:650px){.seal-modal{padding:8px}.seal-fields{grid-template-columns:1fr}.seal-list{font-size:12px}.seal-list th:nth-child(3),.seal-list td:nth-child(3){display:none}}
 </style><?php patrona_rich_assets(); ?></head><body>
 <div class="admin-shell">
-<aside class="admin-sidebar">
-<div class="sidebar-brand"><span class="sidebar-brand-icon"><i class="bi bi-mortarboard" style="font-size:24px;color:#183a64"></i></span><span><strong>Patrona de Lourdes</strong><small>La Florida · Panel CMS</small></span></div>
-<nav class="sidebar-nav">
-<span class="nav-group-label">PRINCIPAL</span>
-<a class="nav-item" href="admin.php?panel=dashboard"><i class="bi bi-grid-1x2"></i> Inicio</a>
-<span class="nav-group-label">GESTIÓN DEL SITIO</span>
-<a class="nav-item active" href="admin.php?panel=contenedores"><i class="bi bi-layers"></i> Contenedores</a>
-<a class="nav-item" href="index.php" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Ver sitio público</a>
-</nav>
-<div class="sidebar-bottom"><div class="admin-user"><span class="avatar"><i class="bi bi-person"></i></span><span><strong><?=se((string)($_SESSION['patrona_admin_nombre']??'Administrador'))?></strong><small>Administrador institucional</small></span></div><a class="logout" href="admin.php?panel=contenedores"><i class="bi bi-arrow-left"></i> Volver al panel</a></div>
-</aside>
+<?php $panel =  'contenedores'; require __DIR__.'/includes/patrona_sidebar.php'; ?>
 <div class="admin-content">
 <header class="topbar"><span><i class="bi bi-list"></i> Panel de administración <span class="topbar-muted">/ Contenedores / Sellos institucionales</span></span><a href="index.php#sellos-home" target="_blank" rel="noopener">Ver sitio <i class="bi bi-arrow-up-right"></i></a></header>
 <main class="admin-main">
@@ -183,4 +173,4 @@ document.getElementById('sealImage').addEventListener('change',e=>{const f=e.tar
 sealModal.addEventListener('click',e=>{if(e.target===sealModal)closeSeal();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sealModal.hidden)closeSeal();});
 const sortable=document.getElementById('sealSortable');if(sortable){let dragged=null;sortable.addEventListener('dragstart',e=>{dragged=e.target.closest('tr');if(dragged){dragged.classList.add('dragging');e.dataTransfer.effectAllowed='move';}});sortable.addEventListener('dragover',e=>{e.preventDefault();const row=e.target.closest('tr');if(row&&dragged&&row!==dragged){const rect=row.getBoundingClientRect();sortable.insertBefore(dragged,e.clientY<rect.top+rect.height/2?row:row.nextSibling);}});sortable.addEventListener('dragend',()=>{if(!dragged)return;dragged.classList.remove('dragging');dragged=null;const rows=[...sortable.querySelectorAll('tr')];rows.forEach((r,i)=>r.querySelector('.seal-position').textContent=i+1);document.getElementById('sealOrderIds').value=rows.map(r=>r.dataset.id).join(',');document.getElementById('sealOrderForm').submit();});}
 </script>
-</main></div></div></body></html>
+</main></div></div><script defer src="assets/admin/js/patrona-sidebar.js?v=2"></script></body></html>
