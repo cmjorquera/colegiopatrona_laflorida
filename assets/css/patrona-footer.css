@@ -1,0 +1,14 @@
+/* Etapa 2: footer institucional; datos procedentes de seccion_config y menus. */
+.patrona-footer{background:var(--pl-navy-deep);color:#fff;padding:var(--pl-space-7) 0 var(--pl-space-4)}
+.patrona-footer-grid{display:grid;grid-template-columns:1.35fr 1fr 1fr .85fr;gap:clamp(20px,3vw,48px);align-items:start}
+.patrona-footer-intro>strong{display:block;font-size:18px;line-height:1.35;letter-spacing:.02em}
+.patrona-footer-intro>strong small{display:block;color:var(--pl-on-dark-muted);margin-top:6px;font-size:12px}
+.patrona-footer-intro p,.patrona-footer-column p{font-size:14px;line-height:1.7;color:var(--pl-on-dark-muted);margin:10px 0}
+.patrona-footer-column{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.patrona-footer-column h2{font:700 17px/1.4 var(--pl-font-body);color:#fff;margin:0 0 10px}
+.patrona-footer-column a{color:#e0efff;font-size:14px;text-decoration:underline;text-underline-offset:3px;min-height:30px}
+.patrona-footer-column a:hover{color:#fff}
+.patrona-footer-column p strong{color:#fff}
+.patrona-footer-bottom{border-top:1px solid rgb(255 255 255/.2);padding-top:20px;margin-top:32px;color:var(--pl-on-dark-muted);font-size:12px}
+@media(max-width:900px){.patrona-footer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:580px){.patrona-footer-grid{grid-template-columns:1fr;gap:26px}.patrona-footer{padding-top:36px}}
