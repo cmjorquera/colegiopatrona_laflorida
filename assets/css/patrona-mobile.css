@@ -1,0 +1,18 @@
+/* Etapa 2: navegación móvil. No cambia el origen CMS de los menús. */
+.patrona-mobile-toggle{display:none;flex:0 0 44px;width:44px;height:44px;border:1px solid var(--pl-line);border-radius:var(--pl-radius-sm);background:#fff;align-items:center;justify-content:center;flex-direction:column;gap:5px;cursor:pointer}
+.patrona-mobile-toggle span{display:block;width:21px;height:2px;background:var(--pl-navy);border-radius:2px}
+@media(max-width:1024px){
+.site-header .nav{display:flex;flex-wrap:nowrap;min-height:76px;gap:12px}
+.site-header .nav .patrona-mobile-toggle{display:flex;margin-left:auto}
+.site-header .nav .patrona-public-nav{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;box-shadow:0 18px 25px rgb(15 47 87/.17);max-height:calc(100dvh - 76px);overflow-y:auto;overscroll-behavior:contain;padding:12px max(16px,calc((100vw - var(--pl-container))/2));order:initial;width:auto}
+.site-header .nav .patrona-public-nav.is-open{display:block}
+.site-header .nav .patrona-public-nav>ul{display:flex;flex-direction:column;align-items:stretch;gap:0}
+.site-header .nav .patrona-public-nav>ul>li{position:relative;display:flex;flex-wrap:wrap;border-bottom:1px solid var(--pl-line)}
+.site-header .nav .patrona-public-nav>ul>li>a{flex:1;white-space:normal;padding:13px 8px;font-size:15px;min-height:44px}
+.site-header .nav .patrona-public-nav .patrona-nav-expand{height:44px;width:44px}
+.site-header .nav .patrona-public-nav .patrona-nav-submenu{position:static;flex-basis:100%;min-width:0;max-width:none;width:100%;box-shadow:none;border-radius:var(--pl-radius-sm);margin-bottom:8px;padding:4px 0}
+.site-header .nav .patrona-public-nav>ul>li:hover>.patrona-nav-submenu,.site-header .nav .patrona-public-nav>ul>li:focus-within>.patrona-nav-submenu{display:none}
+.site-header .nav .patrona-public-nav>ul>li.submenu-open>.patrona-nav-submenu{display:flex}
+.site-header .nav .nav-cta{display:none}
+}
+@media(min-width:1025px){.patrona-mobile-toggle{display:none!important}}
