@@ -35,6 +35,31 @@ if($quickItems){
  }
  unset($block);
 }
+// Las diapositivas administradas reemplazan el contenido de ejemplo cuando existen ítems visibles.
+$heroItems=$sectionsByName['hero_principal']['items']??[];
+if($heroItems){
+ $heroSlides=[];
+ foreach($heroItems as $item){
+  $lines=array_filter([(string)($item['titulo_linea_1']??''),(string)($item['titulo_linea_2']??''),(string)($item['titulo_linea_3']??'')],static fn($v)=>trim($v)!=='');
+  $heroSlides[]=[
+   'etiqueta'=>(string)($item['etiqueta']??''),
+   'titulo'=>$lines?implode("\n",$lines):(string)($item['titulo']??''),
+   'texto'=>(string)(($item['descripcion']??'')?:($item['subtitulo']??'')),
+   'imagen'=>(string)($item['imagen']??''),
+   'imagen_mobile'=>(string)($item['imagen_mobile']??''),
+   'video'=>(string)($item['url']??''),
+   'youtube'=>(string)($item['video_youtube']??''),
+   'boton'=>(string)($item['boton_1_texto']??''),
+   'enlace'=>patrona_cms_url($item['boton_1_url']??''),
+   'boton_2'=>(string)($item['boton_2_texto']??''),
+   'enlace_2'=>patrona_cms_url($item['boton_2_url']??'')
+  ];
+ }
+ foreach($portada['contenedores'] as &$block){
+  if(($block['clave']??'')==='hero'){$block['datos']['slides']=$heroSlides;$block['datos']['config']=$sectionsByName['hero_principal']['config']??[];}
+ }
+ unset($block);
+}
 $headerItems=$sectionsByName['header_principal']['items']??[];
 // La navegación pública utiliza la jerarquía real menus / sub_menus de San Pablo.
 $publicMenus=[];
