@@ -91,9 +91,9 @@
 .fr-final h2 em{color:#f3bc6d}
 .fr-final p{margin:0;color:#d5e2ee;line-height:1.7}
 .fr-final .fr-button{flex-shrink:0}
-.fr-reveal{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease}
-.fr-reveal.is-visible{opacity:1;transform:none}
+.fr-page.fr-enhanced .fr-reveal{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease}
+.fr-page.fr-enhanced .fr-reveal.is-visible{opacity:1;transform:none}
 .fr-page :is(a,button):focus-visible{outline:3px solid #e9a234;outline-offset:3px}
 @media(max-width:990px){.fr-hero-grid{grid-template-columns:1fr .72fr;min-height:545px}.fr-hero-art{height:370px}.fr-hero h1{font-size:clamp(48px,6vw,72px)}.fr-levels-layout{grid-template-columns:275px 1fr}.fr-level-panel{padding:30px}.fr-intro-grid{gap:40px}}
 @media(max-width:740px){.fr-section{padding:64px 0}.fr-wrap{width:min(100% - 36px,620px)}.fr-hero-grid{grid-template-columns:1fr;padding-block:35px 60px;min-height:0}.fr-breadcrumb{margin-bottom:45px}.fr-hero h1{font-size:clamp(49px,12vw,73px)}.fr-hero-art{height:270px;max-width:360px;margin:0 auto;width:100%}.fr-art-caption{right:0;bottom:-7px;padding:11px 16px}.fr-art-caption strong{font-size:18px}.fr-hero-stats{margin-top:38px}.fr-intro-grid{grid-template-columns:1fr;gap:20px}.fr-index-mark{font-size:65px}.fr-levels-layout{grid-template-columns:1fr}.fr-level-tabs{flex-direction:row;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}.fr-level-tab{min-width:210px;min-height:110px;padding:17px 15px}.fr-level-panel{padding:26px}.fr-pillar-grid{grid-template-columns:1fr}.fr-pillar{min-height:0}.fr-final-inner{flex-direction:column;align-items:flex-start}.fr-final h2{font-size:40px}}
-@media(prefers-reduced-motion:reduce){.fr-page *{scroll-behavior:auto!important;transition:none!important;animation:none!important}.fr-reveal{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.fr-page *{scroll-behavior:auto!important;transition:none!important;animation:none!important}.fr-page.fr-enhanced .fr-reveal{opacity:1;transform:none}}
