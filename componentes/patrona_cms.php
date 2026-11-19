@@ -268,8 +268,20 @@ function patrona_cms_render(array $s): void {
         <div class="patrona-stats-grid">
         <?php foreach($items as $i=>$stat):?><article class="patrona-stat-card">
           <?php if(!empty($stat['imagen'])):?><img loading="lazy" src="<?=patrona_e((string)$stat['imagen'])?>" alt=""><?php endif;?>
-          <div class="patrona-stat-info"><strong data-stat-count><?=patrona_e((string)($stat['etiqueta']??''))?></strong><h3><?=patrona_e((string)($stat['titulo']??''))?></h3><p><?=patrona_e((string)($stat['descripcion']??''))?></p></div>
-        </article><?php endforeach;?></div></div></section><?php return;
+          <div class="patrona-stat-info"><strong data-stat-count="<?=patrona_e((string)($stat['etiqueta']??''))?>"><?=patrona_e((string)($stat['etiqueta']??''))?></strong><h3><?=patrona_e((string)($stat['titulo']??''))?></h3><p><?=patrona_e((string)($stat['descripcion']??''))?></p></div>
+        </article><?php endforeach;?></div></div></section>
+        <style>
+        .patrona-stats .patrona-stat-card{opacity:0;transform:translateY(34px);transition:opacity .65s ease,transform .65s cubic-bezier(.2,.75,.25,1)}
+        .patrona-stats .patrona-stat-card.stat-visible{opacity:1;transform:translateY(0)}
+        .patrona-stats .patrona-stat-card:nth-child(2){transition-delay:.12s}
+        .patrona-stats .patrona-stat-card:nth-child(3){transition-delay:.24s}
+        .patrona-stats .patrona-stat-card:nth-child(4){transition-delay:.36s}
+        @media(prefers-reduced-motion:reduce){.patrona-stats .patrona-stat-card{opacity:1;transform:none;transition:none}}
+        </style>
+        <script>
+        (()=>{const section=document.getElementById('estadisticas-home');if(!section)return;const cards=[...section.querySelectorAll('.patrona-stat-card')];const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;function show(card){card.classList.add('stat-visible');if(reduced)return;const el=card.querySelector('[data-stat-count]');if(!el)return;const original=el.dataset.statCount||el.textContent.trim();const match=original.match(/^([^0-9]*)([0-9]+(?:[.,][0-9]+)?)(.*)$/);if(!match)return;const numeric=match[2];const decimal=numeric.includes(',')||numeric.includes('.');const separator=numeric.includes(',')?',':'.';const parts=decimal?numeric.split(separator):[numeric];const digits=decimal?(parts[1]||'').length:0;const end=Number(numeric.replace(',','.'));if(!Number.isFinite(end)||end<0||end>1000000)return;const start=performance.now(),duration=1200;function frame(now){const t=Math.min(1,(now-start)/duration),ease=1-Math.pow(1-t,3),value=end*ease;el.textContent=match[1]+(decimal?value.toFixed(digits).replace('.',separator):Math.round(value).toLocaleString('es-CL'))+match[3];if(t<1)requestAnimationFrame(frame);else el.textContent=original}requestAnimationFrame(frame)}if(!('IntersectionObserver'in window)||reduced){cards.forEach(show);return}const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){show(entry.target);observer.unobserve(entry.target)}})},{threshold:.15});cards.forEach(card=>observer.observe(card))})();
+        </script>
+        <?php return;
     }
     if (!$items) return;
     $id='seccion-'.(int)$s['id_seccion'];
