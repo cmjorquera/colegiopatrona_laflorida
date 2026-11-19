@@ -1,0 +1,14 @@
+/* Topbar administrable — no altera el header ni los demás contenedores. */
+.patrona-topbar{background:#164675;color:#fff;letter-spacing:normal}
+.patrona-topbar .patrona-topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:42px;padding-block:7px}
+.patrona-topbar-brand{font-size:11px;font-weight:750;letter-spacing:.08em;white-space:nowrap}
+.patrona-topbar-items{display:flex;align-items:center;justify-content:flex-end;gap:clamp(8px,1.3vw,20px);flex:1;flex-wrap:wrap}
+.patrona-topbar-items a,.patrona-topbar-address{display:inline-flex;align-items:center;gap:7px;color:#e9f2fc;font-size:12px;letter-spacing:0;text-decoration:none}
+.patrona-topbar-items a:hover{color:#fff;text-decoration:underline}
+.patrona-topbar-items i{color:#ffb24a;font-size:13px}
+.patrona-topbar-social{display:flex;align-items:center;gap:7px}
+.patrona-topbar-social a{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#ffffff1b;color:#fff;font-size:14px;transition:background .15s}
+.patrona-topbar-social a:hover{background:#ffffff45}
+.patrona-topbar-message{font-size:12px}
+@media(max-width:900px){.patrona-topbar-brand{white-space:normal}.patrona-topbar .patrona-topbar-inner{gap:10px}.patrona-topbar-items{gap:9px}.patrona-topbar-items a,.patrona-topbar-address{font-size:11px}}
+@media(max-width:640px){.patrona-topbar .patrona-topbar-inner{flex-wrap:wrap;justify-content:center}.patrona-topbar-brand{width:100%;text-align:center}.patrona-topbar .wrap .patrona-topbar-items,.patrona-topbar .wrap .patrona-topbar-social,.patrona-topbar .wrap .patrona-topbar-message{display:flex}.patrona-topbar-items{justify-content:center;flex-basis:100%}.patrona-topbar-social{justify-content:center}.patrona-topbar-message{justify-content:center}}
