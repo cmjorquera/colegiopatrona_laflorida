@@ -21,7 +21,21 @@ try{
   if(!hash_equals((string)$_SESSION['patrona_csrf'],(string)($_POST['csrf']??'')))throw new RuntimeException('Sesión vencida.');
   if(!in_array((string)$section['editable'],['si','1'],true))throw new RuntimeException('Contenedor no editable.');
   $action=(string)($_POST['accion']??'');$id=max(0,(int)($_POST['id_item']??0));
-  if($action==='config'){
+  if($action==='footer_config' && $name==='footer_principal'){
+   $keys=['texto','direccion','telefono','correo','horario','mapa_url','instagram_url','facebook_url','youtube_url'];
+   $db->begin_transaction();
+   try{
+    foreach($keys as $key){
+     $value=trim((string)($_POST[$key]??''));
+     if(mb_strlen($value)>1500)throw new RuntimeException('Texto demasiado extenso.');
+     if($key==='correo'&&$value!==''&&!filter_var($value,FILTER_VALIDATE_EMAIL))throw new RuntimeException('Correo no válido.');
+     if(str_ends_with($key,'_url')&&$value!==''&&!filter_var($value,FILTER_VALIDATE_URL))throw new RuntimeException('Enlace no válido: '.$key);
+     $q=$db->prepare('DELETE FROM seccion_config WHERE id_seccion=? AND clave=?');$q->bind_param('is',$sid,$key);$q->execute();
+     $q=$db->prepare('INSERT INTO seccion_config(id_seccion,clave,valor) VALUES(?,?,?)');$q->bind_param('iss',$sid,$key,$value);$q->execute();
+    }
+    $db->commit();
+   }catch(Throwable $e){$db->rollback();throw $e;}
+  }elseif($action==='config'){
    $db->begin_transaction();
    try{
     foreach(['titulo_bloque','subtitulo_bloque','texto','enlace','boton_texto'] as $key){
@@ -77,9 +91,18 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 </style><?php patrona_rich_assets(); ?></head><body><div class="admin-shell"><?php $panel = 'contenedores'; require __DIR__.'/includes/patrona_sidebar.php'; ?><div class="admin-content"><header class="topbar"><span>Panel de administración / Contenedores / Editor</span><a href="admin.php?panel=contenedores">← Volver</a></header><main class="cms-main"><small>GESTIÓN DEL SITIO / CONTENEDORES</small><h1><?=ce($section['titulo_admin']??'Editor de contenedores')?></h1><p>Configuración y elementos del contenedor. Utiliza las mismas tablas CMS de Tabancura.</p>
 <?php if($error):?><p style="color:#a92323"><?=ce($error)?></p><?php endif;?><?php if($notice):?><p style="color:#16703b"><?=ce($notice)?></p><?php endif;?>
 <?php if($section):?>
+<?php if(($section['nombre_interno']??'')==='footer_principal'):?>
+<section class="cms-card"><h2>Identidad y contacto del colegio</h2><p>Estos datos se muestran en el pie de página. Completa únicamente información verificada.</p>
+<form method="post"><input type="hidden" name="id_seccion" value="<?=$sid?>"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="footer_config"><div class="cms-grid">
+<?php foreach(['texto'=>'Descripción institucional','direccion'=>'Dirección','telefono'=>'Teléfono','correo'=>'Correo electrónico','horario'=>'Horario de atención','mapa_url'=>'Enlace de Google Maps','instagram_url'=>'Instagram (URL)','facebook_url'=>'Facebook (URL)','youtube_url'=>'YouTube (URL)'] as $key=>$label):?>
+<label class="cms-field"><?=ce($label)?><?php if($key==='texto'):?><textarea name="<?=ce($key)?>" rows="4" maxlength="1500"><?=ce($config[$key]??'')?></textarea><?php else:?><input name="<?=ce($key)?>" value="<?=ce($config[$key]??'')?>" maxlength="1500" <?=$key==='correo'?'type="email"':''?>><?php endif;?></label>
+<?php endforeach;?></div><p><button class="cms-btn">Guardar pie de página</button></p></form></section>
+<section class="cms-card"><h2>Enlaces institucionales</h2><p>Se obtienen del menú público administrable; no es necesario duplicarlos en el pie de página.</p><a href="admin.php?panel=menu">Administrar menú público</a></section>
+<?php else:?>
 <section class="cms-card"><h2>Configuración</h2><form method="post"><input type="hidden" name="id_seccion" value="<?=(int)$sid?>"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="config"><div class="cms-grid">
 <?php foreach(['titulo_bloque'=>'Título del bloque','subtitulo_bloque'=>'Subtítulo','texto'=>'Texto','enlace'=>'Enlace','boton_texto'=>'Texto del botón'] as $key=>$label):?><label class="cms-field"><?=ce($label)?><input name="<?=ce($key)?>" value="<?=ce($config[$key]??'')?>" maxlength="1000"></label><?php endforeach;?>
 </div><p><button class="cms-btn">Guardar configuración</button></p></form></section>
+<?php endif;?>
 <?php if(($section['nombre_interno']??'')==='galeria_home'):?>
 <section class="cms-card gallery-admin">
  <div class="gallery-heading"><div><h2>Ítems del contenedor</h2><p>Arrastra las imágenes para cambiar su orden. Los cambios se guardan al soltar.</p></div><button type="button" class="cms-btn" id="gallery-add"><i class="bi bi-plus-circle"></i> Agregar imagen</button></div>
