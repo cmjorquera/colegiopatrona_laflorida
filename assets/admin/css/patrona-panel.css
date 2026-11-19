@@ -6,3 +6,15 @@ td small,.kpi-card div>span,.card-footer,.topbar-muted{color:#5d6f85}
 .switch{position:relative}.switch::after{content:"";position:absolute;inset:-8px -4px}
 /* Sidebar unificado y contraíble en todas las pantallas CMS */
 .admin-shell{min-width:0}.admin-content{min-width:0;flex:1}.admin-sidebar{transition:width .2s ease;overflow-x:hidden}.patrona-sidebar-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;margin-right:10px;border:1px solid #d6e0ec;border-radius:8px;background:#fff;color:#183a64;vertical-align:middle}.admin-shell.sidebar-collapsed .admin-sidebar{width:72px}.admin-shell.sidebar-collapsed .sidebar-brand>span:last-child,.admin-shell.sidebar-collapsed .sidebar-nav .nav-group-label,.admin-shell.sidebar-collapsed .sidebar-nav .nav-chevron,.admin-shell.sidebar-collapsed .sidebar-subitems,.admin-shell.sidebar-collapsed .sidebar-bottom,.admin-shell.sidebar-collapsed .sidebar-watermark{display:none!important}.admin-shell.sidebar-collapsed .sidebar-nav .nav-item{font-size:0;justify-content:center;gap:0}.admin-shell.sidebar-collapsed .sidebar-nav .nav-item i{font-size:21px}.admin-shell.sidebar-collapsed .sidebar-brand{justify-content:center;padding:18px 6px}.admin-shell.sidebar-collapsed .sidebar-nav{padding:16px 6px}.admin-shell.sidebar-collapsed .sidebar-nav .nav-item{padding:13px 6px}@media(max-width:700px){.admin-shell.sidebar-collapsed .admin-sidebar{width:100%}.admin-shell.sidebar-collapsed .sidebar-brand>span:last-child,.admin-shell.sidebar-collapsed .sidebar-nav .nav-group-label,.admin-shell.sidebar-collapsed .sidebar-nav .nav-chevron,.admin-shell.sidebar-collapsed .sidebar-subitems,.admin-shell.sidebar-collapsed .sidebar-bottom{display:initial!important}.admin-shell.sidebar-collapsed .sidebar-nav .nav-item{font-size:inherit;justify-content:flex-start}}
+
+/* Navegación institucional compartida: mismos controles en Dashboard y editores. */
+.admin-sidebar .sidebar-group-toggle{width:100%;border:0;background:transparent;text-align:left;font-family:inherit;line-height:1.5;cursor:pointer}
+.admin-sidebar .sidebar-group-toggle:hover,.admin-sidebar .sidebar-group-toggle.active{background:#ffffff1d;color:#fff}
+.admin-sidebar .sidebar-subitems{padding-left:16px;border-left:1px solid #ffffff26;margin-left:17px}
+.admin-sidebar .sidebar-subitems .nav-item{margin:0 0 4px;padding:10px 12px}
+.admin-sidebar .nav-chevron{margin-left:auto;font-size:12px;transition:transform .2s ease}
+.admin-sidebar .sidebar-group-toggle[aria-expanded="false"] .nav-chevron{transform:rotate(-90deg)}
+.admin-sidebar .sidebar-group-toggle[aria-expanded="false"]+.sidebar-subitems{display:none}
+.admin-sidebar .sidebar-watermark{pointer-events:none}
+.admin-sidebar .sidebar-brand-icon{flex-shrink:0}
+@media(min-width:701px){.admin-shell.sidebar-collapsed .admin-sidebar .sidebar-group-toggle{font-size:0;text-align:center;justify-content:center}.admin-shell.sidebar-collapsed .admin-sidebar .sidebar-subitems{display:none}}
