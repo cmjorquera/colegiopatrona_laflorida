@@ -1,0 +1,9 @@
+ETAPA 2 - NAVEGACION, FOOTER Y ACCESOS FLOTANTES
+Rama de revisión: etapa-2-navegacion-footer, creada desde main (fd7f355).
+No se han creado ni eliminado contenedores ni se ha modificado la base de datos.
+Archivos: index.php, assets/css/patrona-mobile.css, assets/css/patrona-footer.css, assets/css/patrona-actions-icons.css, assets/js/patrona-nav.js.
+Menú: botón hamburguesa para pantallas hasta 1024px, submenús desplegables, cierre con Escape y clic exterior; menús desde las tablas actuales.
+Footer: usa footer_principal y sus seccion_config (texto, direccion, telefono, correo, horario, mapa_url, instagram_url, facebook_url, youtube_url), omite campos vacíos y reutiliza los menús existentes. No se agregan datos institucionales ficticios.
+Accesos flotantes: reemplazo de emojis por SVG; enlaces siguen desde header_principal.
+No se alteran hero, noticias, sellos, comunidad, galería, estadísticas ni podcast.
+PENDIENTE: verificar en navegador escritorio/móvil, PHP lint en cPanel, y confirmar que footer_principal está visible y que sus campos se puedan editar desde el panel. No fusionar a main hasta aprobación.
