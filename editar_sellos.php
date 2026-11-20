@@ -170,7 +170,7 @@ function closeSeal(){sealModal.hidden=true;document.body.style.overflow='';}
 function sealVisibility(){document.getElementById('sealVisibleValue').value=sealVisible.checked?'si':'no';document.getElementById('sealVisibleText').textContent=sealVisible.checked?'Mostrar en la página':'Ocultar de la página';}
 sealVisible.addEventListener('change',sealVisibility);
 document.getElementById('sealImage').addEventListener('change',e=>{const f=e.target.files[0],img=document.getElementById('sealImagePreview');if(f){img.src=URL.createObjectURL(f);img.hidden=false;}});
-sealModal.addEventListener('click',e=>{if(e.target===sealModal)closeSeal();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sealModal.hidden)closeSeal();});
+
 const sortable=document.getElementById('sealSortable');if(sortable){let dragged=null;sortable.addEventListener('dragstart',e=>{dragged=e.target.closest('tr');if(dragged){dragged.classList.add('dragging');e.dataTransfer.effectAllowed='move';}});sortable.addEventListener('dragover',e=>{e.preventDefault();const row=e.target.closest('tr');if(row&&dragged&&row!==dragged){const rect=row.getBoundingClientRect();sortable.insertBefore(dragged,e.clientY<rect.top+rect.height/2?row:row.nextSibling);}});sortable.addEventListener('dragend',()=>{if(!dragged)return;dragged.classList.remove('dragging');dragged=null;const rows=[...sortable.querySelectorAll('tr')];rows.forEach((r,i)=>r.querySelector('.seal-position').textContent=i+1);document.getElementById('sealOrderIds').value=rows.map(r=>r.dataset.id).join(',');document.getElementById('sealOrderForm').submit();});}
 </script>
 </main></div></div><script defer src="assets/admin/js/patrona-sidebar.js?v=2"></script></body></html>
