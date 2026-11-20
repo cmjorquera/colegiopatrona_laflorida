@@ -204,8 +204,8 @@ $subsByMenu=[]; foreach($publicSubs as $sub){$subsByMenu[(int)$sub['id_menu']][]
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CMS | Patrona de Lourdes · La Florida</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=5">
-<link rel="stylesheet" href="assets/admin/css/patrona-admin-menu.css?v=3">
+<link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=7">
+<link rel="stylesheet" href="assets/admin/css/patrona-admin-menu.css?v=7">
 </head>
 <body>
 <div class="admin-shell">
@@ -281,4 +281,4 @@ $subsByMenu=[]; foreach($publicSubs as $sub){$subsByMenu[(int)$sub['id_menu']][]
   </form>
 </section>
 <?php endif; ?>
-</main></div></div><script>if(document.getElementById("cms-container-table")){(()=>{const rows=[...document.querySelectorAll("#cms-container-table tbody tr")],search=document.getElementById("cms-container-search"),count=document.getElementById("cms-container-count"),pages=document.getElementById("cms-container-pages"),prev=document.getElementById("cms-container-prev"),next=document.getElementById("cms-container-next");if(!search)return;let page=1;const draw=()=>{const found=rows.filter(r=>r.textContent.toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase())),max=Math.max(1,Math.ceil(found.length/10));page=Math.min(page,max);rows.forEach(r=>r.hidden=true);found.slice((page-1)*10,page*10).forEach(r=>r.hidden=false);count.textContent=`Mostrando ${found.length?((page-1)*10+1):0} a ${Math.min(page*10,found.length)} de ${found.length} contenedores`;pages.textContent=` ${page} / ${max} `;prev.disabled=page===1;next.disabled=page===max;};search.addEventListener("input",()=>{page=1;draw()});prev.addEventListener("click",()=>{page--;draw()});next.addEventListener("click",()=>{page++;draw()});draw()})()}</script><script defer src="assets/admin/js/patrona-sidebar.js?v=4"></script></body></html>
+</main></div></div><script>if(document.getElementById("cms-container-table")){(()=>{const rows=[...document.querySelectorAll("#cms-container-table tbody tr")],search=document.getElementById("cms-container-search"),count=document.getElementById("cms-container-count"),pages=document.getElementById("cms-container-pages"),prev=document.getElementById("cms-container-prev"),next=document.getElementById("cms-container-next");if(!search)return;let page=1;const draw=()=>{const found=rows.filter(r=>r.textContent.toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase())),max=Math.max(1,Math.ceil(found.length/10));page=Math.min(page,max);rows.forEach(r=>r.hidden=true);found.slice((page-1)*10,page*10).forEach(r=>r.hidden=false);count.textContent=`Mostrando ${found.length?((page-1)*10+1):0} a ${Math.min(page*10,found.length)} de ${found.length} contenedores`;pages.textContent=` ${page} / ${max} `;prev.disabled=page===1;next.disabled=page===max;};search.addEventListener("input",()=>{page=1;draw()});prev.addEventListener("click",()=>{page--;draw()});next.addEventListener("click",()=>{page++;draw()});draw()})()}</script><script defer src="assets/admin/js/patrona-sidebar.js?v=7"></script></body></html>
