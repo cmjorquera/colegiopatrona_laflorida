@@ -1,24 +1,60 @@
-(()=>{'use strict';
-const shell=document.querySelector('.admin-shell');if(!shell)return;
-const topbar=shell.querySelector('.admin-content .topbar, .admin-content .nt-top');
-const desktop=()=>window.matchMedia('(min-width:701px)').matches;
-const sync=()=>{
- const collapsed=shell.classList.contains('sidebar-collapsed');
- document.querySelectorAll('.patrona-sidebar-toggle').forEach(btn=>{btn.setAttribute('aria-label',collapsed?'Expandir menú lateral':'Contraer menú lateral');btn.title=collapsed?'Expandir menú lateral':'Contraer menú lateral';});
- const bottom=shell.querySelector('[data-sidebar-collapse]');if(bottom)bottom.title=collapsed?'Expandir menú':'Contraer menú';
-};
-const toggle=()=>{if(!desktop())return;const collapsed=shell.classList.toggle('sidebar-collapsed');try{sessionStorage.setItem('patrona_sidebar_collapsed',collapsed?'1':'0')}catch(e){}sync();};
-if(topbar&&!topbar.querySelector('.patrona-sidebar-toggle')){
- const btn=document.createElement('button');btn.type='button';btn.className='patrona-sidebar-toggle';btn.innerHTML='<i class="bi bi-layout-sidebar-inset" aria-hidden="true"></i>';topbar.insertBefore(btn,topbar.firstChild);btn.addEventListener('click',toggle);
-}
-const bottom=shell.querySelector('[data-sidebar-collapse]');if(bottom)bottom.addEventListener('click',toggle);
-try{if(desktop()&&sessionStorage.getItem('patrona_sidebar_collapsed')==='1')shell.classList.add('sidebar-collapsed')}catch(e){}
-sync();
-document.querySelectorAll('.sidebar-group-toggle').forEach(button=>{
- const target=document.getElementById(button.getAttribute('aria-controls'));if(!target)return;
- button.addEventListener('click',()=>{
-  const expanded=button.getAttribute('aria-expanded')==='true';
-  button.setAttribute('aria-expanded',String(!expanded));target.hidden=expanded;
- });
-});
+(() => {
+    'use strict';
+
+    const sidebar = document.getElementById('patrona-sidebar');
+    const shell = sidebar?.closest('.admin-shell');
+    if (!shell) return;
+
+    const toolbar = shell.querySelector('[data-sidebar-toolbar]');
+    const bottomToggle = sidebar.querySelector('[data-sidebar-collapse]');
+    const groupToggle = sidebar.querySelector('.sidebar-group-toggle');
+    const links = document.getElementById(groupToggle.getAttribute('aria-controls'));
+    const desktop = window.matchMedia('(min-width: 701px)');
+    const storageKey = 'patrona_sidebar_collapsed';
+    let collapsed = false;
+    try {
+        collapsed = sessionStorage.getItem(storageKey) === '1';
+    } catch {}
+
+    const toolbarToggle = document.createElement('button');
+    toolbarToggle.type = 'button';
+    toolbarToggle.className = 'patrona-sidebar-toggle';
+    toolbarToggle.innerHTML = '<i class="bi bi-layout-sidebar-inset" aria-hidden="true"></i>';
+    toolbar?.prepend(toolbarToggle);
+
+    function render() {
+        const compact = desktop.matches && collapsed;
+        shell.classList.toggle('sidebar-collapsed', compact);
+        const label = compact ? 'Expandir menú lateral' : 'Contraer menú lateral';
+        for (const button of [toolbarToggle, bottomToggle]) {
+            button.title = label;
+            button.setAttribute('aria-label', label);
+            button.setAttribute('aria-controls', sidebar.id);
+            button.setAttribute('aria-expanded', String(!compact));
+        }
+    }
+
+    function toggleSidebar() {
+        if (!desktop.matches) return;
+        collapsed = !collapsed;
+        try {
+            sessionStorage.setItem(storageKey, collapsed ? '1' : '0');
+        } catch {}
+        render();
+    }
+
+    toolbarToggle.addEventListener('click', toggleSidebar);
+    bottomToggle.addEventListener('click', toggleSidebar);
+    desktop.addEventListener('change', render);
+    groupToggle.addEventListener('click', () => {
+        if (shell.classList.contains('sidebar-collapsed')) {
+            toggleSidebar();
+            links.hidden = false;
+        } else {
+            links.hidden = !links.hidden;
+        }
+        groupToggle.setAttribute('aria-expanded', String(!links.hidden));
+    });
+
+    render();
 })();

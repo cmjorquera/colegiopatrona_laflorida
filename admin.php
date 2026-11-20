@@ -203,15 +203,13 @@ $subsByMenu=[]; foreach($publicSubs as $sub){$subsByMenu[(int)$sub['id_menu']][]
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CMS | Patrona de Lourdes · La Florida</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=7">
-<link rel="stylesheet" href="assets/admin/css/patrona-admin-menu.css?v=7">
+<?php require __DIR__.'/includes/patrona_admin_assets.php'; ?>
 </head>
 <body>
 <div class="admin-shell">
 <?php $panel = $panel ?? 'dashboard'; require __DIR__.'/includes/patrona_sidebar.php'; ?>
 <div class="admin-content">
-<header class="topbar"><span><i class="bi bi-list"></i> Panel de administración <span class="topbar-muted">/ <?= $panel==='dashboard'?'Inicio':($panel==='menus'?'Menú público':'Contenedores del sitio') ?></span></span><a href="index.php" target="_blank" rel="noopener">Ver sitio <i class="bi bi-arrow-up-right"></i></a></header>
+<header class="topbar" data-sidebar-toolbar><span>Panel de administración <span class="topbar-muted">/ <?= $panel==='dashboard'?'Inicio':($panel==='menus'?'Menú público':'Contenedores del sitio') ?></span></span><a href="index.php" target="_blank" rel="noopener">Ver sitio <i class="bi bi-arrow-up-right"></i></a></header>
 <main class="admin-main <?= $panel==='contenedores'?'cms-containers-page':'' ?>">
 <div class="page-heading"><div><div class="eyebrow">COLEGIO PATRONA DE LOURDES · LA FLORIDA</div><h1><?= $panel==='dashboard'?'Dashboard':($panel==='menus'?'Menú público':'Contenedores del sitio') ?></h1><p><?= $panel==='dashboard'?'Resumen de la administración del sitio web.':($panel==='menus'?'Administra menús y submenús del encabezado.':'Gestiona la visibilidad y el estado de las secciones de la página.') ?></p></div><span class="section-pill"><i class="bi bi-database-check"></i> MySQL conectado</span></div>
 <?php if ($error): ?><div class="alert error"><?=h($error)?></div><?php endif; ?>
@@ -281,4 +279,4 @@ $subsByMenu=[]; foreach($publicSubs as $sub){$subsByMenu[(int)$sub['id_menu']][]
   </form>
 </section>
 <?php endif; ?>
-</main></div></div><script>if(document.getElementById("cms-container-table")){(()=>{const rows=[...document.querySelectorAll("#cms-container-table tbody tr")],search=document.getElementById("cms-container-search"),count=document.getElementById("cms-container-count"),pages=document.getElementById("cms-container-pages"),prev=document.getElementById("cms-container-prev"),next=document.getElementById("cms-container-next");if(!search)return;let page=1;const draw=()=>{const found=rows.filter(r=>r.textContent.toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase())),max=Math.max(1,Math.ceil(found.length/10));page=Math.min(page,max);rows.forEach(r=>r.hidden=true);found.slice((page-1)*10,page*10).forEach(r=>r.hidden=false);count.textContent=`Mostrando ${found.length?((page-1)*10+1):0} a ${Math.min(page*10,found.length)} de ${found.length} contenedores`;pages.textContent=` ${page} / ${max} `;prev.disabled=page===1;next.disabled=page===max;};search.addEventListener("input",()=>{page=1;draw()});prev.addEventListener("click",()=>{page--;draw()});next.addEventListener("click",()=>{page++;draw()});draw()})()}</script><script defer src="assets/admin/js/patrona-sidebar.js?v=7"></script></body></html>
+</main></div></div><script>if(document.getElementById("cms-container-table")){(()=>{const rows=[...document.querySelectorAll("#cms-container-table tbody tr")],search=document.getElementById("cms-container-search"),count=document.getElementById("cms-container-count"),pages=document.getElementById("cms-container-pages"),prev=document.getElementById("cms-container-prev"),next=document.getElementById("cms-container-next");if(!search)return;let page=1;const draw=()=>{const found=rows.filter(r=>r.textContent.toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase())),max=Math.max(1,Math.ceil(found.length/10));page=Math.min(page,max);rows.forEach(r=>r.hidden=true);found.slice((page-1)*10,page*10).forEach(r=>r.hidden=false);count.textContent=`Mostrando ${found.length?((page-1)*10+1):0} a ${Math.min(page*10,found.length)} de ${found.length} contenedores`;pages.textContent=` ${page} / ${max} `;prev.disabled=page===1;next.disabled=page===max;};search.addEventListener("input",()=>{page=1;draw()});prev.addEventListener("click",()=>{page--;draw()});next.addEventListener("click",()=>{page++;draw()});draw()})()}</script></body></html>

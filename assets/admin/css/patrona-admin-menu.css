@@ -99,3 +99,42 @@
  .admin-shell.sidebar-collapsed .patrona-sidebar-v2 .nav-item,.admin-shell.sidebar-collapsed .patrona-sidebar-v2 .logout{justify-content:flex-start;padding:10px 12px;font-size:13px;gap:11px}
 }
 @media(prefers-reduced-motion:reduce){.admin-sidebar.patrona-sidebar-v2{transition:none}}
+
+[data-sidebar-toolbar] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+[data-sidebar-toolbar] .patrona-sidebar-toggle {
+    flex: 0 0 36px;
+    margin-right: 0;
+}
+
+[data-sidebar-toolbar] .patrona-sidebar-toggle + * {
+    min-width: 0;
+    margin-right: auto;
+}
+
+.family-pagebar {
+    min-height: 64px;
+    padding: 10px clamp(12px, 2vw, 32px);
+    background: #fff;
+    border-bottom: 1px solid #dce3ec;
+}
+
+@media (max-width: 700px) {
+    [data-sidebar-toolbar] .patrona-sidebar-toggle {
+        display: none;
+    }
+}
+
+.admin-sidebar.patrona-sidebar-v2 {
+    font: 15px/1.5 "Segoe UI", system-ui, sans-serif;
+}
+
+.patrona-sidebar-v2 .logout,
+.patrona-sidebar-v2 .patrona-sidebar-bottom-toggle {
+    font-family: inherit;
+}
