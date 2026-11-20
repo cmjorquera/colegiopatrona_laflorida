@@ -116,7 +116,7 @@ $editing=null;foreach($items as $i)if((int)$i['id_item']===(int)($_GET['item']??
  tabs.forEach(t=>t.addEventListener('click',()=>select(t.dataset.tab)));
  const editor=document.getElementById('nt-modal');const closeEditor=()=>{if(editor){editor.hidden=true;document.body.style.overflow='';}};const openEditor=()=>{if(editor){editor.hidden=false;document.body.style.overflow='hidden';}};
  document.getElementById('nt-add')?.addEventListener('click',openEditor);
- document.getElementById('nt-close')?.addEventListener('click',closeEditor);document.getElementById('nt-cancel')?.addEventListener('click',closeEditor);editor?.addEventListener('click',e=>{if(e.target===editor)closeEditor();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!editor?.hidden)closeEditor();});
+ document.getElementById('nt-close')?.addEventListener('click',closeEditor);document.getElementById('nt-cancel')?.addEventListener('click',closeEditor);
  if((location.hash==='#editor'||!editor?.hidden)&&editor)openEditor();
  document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{const cards=btn.dataset.view==='cards';document.getElementById('nt-list').hidden=cards;document.getElementById('nt-cards').hidden=!cards;document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b===btn));}));
  document.querySelectorAll('[data-preview]').forEach(btn=>btn.addEventListener('click',()=>{select('preview');document.querySelector('[data-panel=preview]')?.scrollIntoView({behavior:'smooth'});}));
