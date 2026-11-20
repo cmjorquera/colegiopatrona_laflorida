@@ -204,7 +204,7 @@ $subsByMenu=[]; foreach($publicSubs as $sub){$subsByMenu[(int)$sub['id_menu']][]
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CMS | Patrona de Lourdes · La Florida</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=4">
+<link rel="stylesheet" href="assets/admin/css/patrona-panel.css?v=5">
 <link rel="stylesheet" href="assets/admin/css/patrona-admin-menu.css?v=3">
 </head>
 <body>
@@ -238,7 +238,7 @@ $subsByMenu=[]; foreach($publicSubs as $sub){$subsByMenu[(int)$sub['id_menu']][]
 <?php endforeach; ?>
 <?php if (!$sections): ?><tr><td colspan="7">No hay contenedores registrados.</td></tr><?php endif; ?>
 </tbody></table></div><?php if($panel==='contenedores'):?><div class="cms-container-pagination"><span id="cms-container-count"></span><div><button type="button" id="cms-container-prev">Anterior</button><span id="cms-container-pages"></span><button type="button" id="cms-container-next">Siguiente</button></div></div><?php endif;?>
-<div class="card-footer">Los cambios de visibilidad y estado se guardan en MySQL. La edición de la portada y los sellos ya está disponible; los demás editores siguen en desarrollo.</div>
+<div class="card-footer">Los cambios de visibilidad y estado se guardan en MySQL. Utiliza el botón de edición de cada contenedor para administrar su contenido.</div>
 </section>
 <?php else: ?>
 <section class="content-card patrona-menu-admin">
