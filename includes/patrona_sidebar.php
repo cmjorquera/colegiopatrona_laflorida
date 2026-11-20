@@ -1,26 +1,47 @@
 <?php
-/** Navegación única del CMS. $panel indica la sección activa. */
-$panel = $panel ?? 'contenedores';
+/** Menú administrativo único. Compatible con dashboard, contenedores y editores. */
+$panel=$panel??'contenedores';
+$sidebarLogo='';
+foreach([
+ 'assets/imagenes/cropped-logo-cuadrado-sin-fondo-2-180x180.png',
+ 'assets/imagenes/LOGO-COLEGIO--Sin-fondo.png',
+ 'imagenes/LOGO-COLEGIO--Sin-fondo.png',
+ 'assets/imagenes/logo-colegio-1024x598.jpg'
+] as $candidate){
+ if(is_file(dirname(__DIR__).'/'.$candidate)){$sidebarLogo=$candidate;break;}
+}
+$sidebarH=static fn($v):string=>htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');
 ?>
-<aside class="admin-sidebar" id="patrona-sidebar">
-  <?php
-  // Marca de agua: solo un escudo PNG transparente que exista en el hosting (evita solicitudes 404).
-  $sidebarWatermark='';
-  foreach(['assets/imagenes/LOGO-COLEGIO--Sin-fondo.png','imagenes/LOGO-COLEGIO--Sin-fondo.png'] as $candidate){if(is_file(__DIR__.'/'.$candidate)){$sidebarWatermark=$candidate;break;}}
-  ?>
-  <div class="sidebar-watermark<?= $sidebarWatermark!==''?' has-logo':'' ?>" aria-hidden="true"<?php if($sidebarWatermark!==''):?> style="--sidebar-logo:url('<?=htmlspecialchars($sidebarWatermark, ENT_QUOTES, 'UTF-8')?>')"<?php endif;?>></div>
-  <div class="sidebar-brand"><span class="sidebar-brand-icon"><?php $sidebarLogo='';foreach(['assets/imagenes/LOGO-COLEGIO--Sin-fondo.png','assets/imagenes/logo-colegio-1024x598.jpg','imagenes/logo-colegio-1024x598.jpg'] as $candidate){if(is_file(__DIR__.'/'.$candidate)){$sidebarLogo=$candidate;break;}} ?><?php if($sidebarLogo!==''):?><img src="<?=htmlspecialchars($sidebarLogo, ENT_QUOTES, 'UTF-8')?>" alt="Escudo del colegio" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden aria-hidden="true" class="patrona-logo-fallback">PL</span><?php else:?><span aria-hidden="true" class="patrona-logo-fallback">PL</span><?php endif;?></span><span><strong>Patrona de Lourdes</strong><small>La Florida · Panel CMS</small></span></div>
+<aside class="admin-sidebar patrona-sidebar-v2" id="patrona-sidebar" aria-label="Menú lateral de administración">
+  <div class="sidebar-brand">
+    <a class="patrona-sidebar-brand-link" href="admin.php?panel=dashboard" title="Panel principal">
+      <span class="sidebar-brand-icon"><?php if($sidebarLogo!==''):?><img src="<?=$sidebarH($sidebarLogo)?>" alt="" loading="eager"><?php else:?><span class="patrona-logo-fallback">PL</span><?php endif;?></span>
+      <span class="patrona-sidebar-brand-text"><strong>Patrona de Lourdes</strong><small>Panel de administración</small></span>
+    </a>
+  </div>
   <nav class="sidebar-nav" aria-label="Navegación administrativa">
     <span class="nav-group-label">PRINCIPAL</span>
-    <a class="nav-item <?= $panel==='dashboard'?'active':'' ?>" href="admin.php?panel=dashboard"><i class="bi bi-grid-1x2"></i> Dashboard</a>
-    <span class="nav-group-label">GESTIÓN DEL SITIO</span>
-    <button class="nav-item sidebar-group-toggle" type="button" aria-expanded="true" aria-controls="sidebar-contenidos"><i class="bi bi-layers"></i> Contenidos del sitio <i class="bi bi-chevron-down nav-chevron"></i></button>
-    <div class="sidebar-subitems" id="sidebar-contenidos"><a class="nav-item <?= $panel==='contenedores'?'active':'' ?>" href="admin.php?panel=contenedores"><i class="bi bi-grid-3x3-gap"></i> Contenedores</a></div>
-    <button class="nav-item sidebar-group-toggle <?= $panel==='menus'?'active':'' ?>" type="button" aria-expanded="true" aria-controls="sidebar-navegacion"><i class="bi bi-signpost-split"></i> Navegación <i class="bi bi-chevron-down nav-chevron"></i></button>
-    <div class="sidebar-subitems" id="sidebar-navegacion"><a class="nav-item <?= $panel==='menus'?'active':'' ?>" href="admin.php?panel=menus"><i class="bi bi-diagram-3"></i> Menú público</a></div>
-    <span class="nav-group-label">SISTEMA</span>
-    <a class="nav-item" href="index.php" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Ver sitio público</a>
+    <a class="nav-item <?=$panel==='dashboard'?'active':''?>" href="admin.php?panel=dashboard" <?=$panel==='dashboard'?'aria-current="page"':''?> title="Inicio"><i class="bi bi-house-door-fill" aria-hidden="true"></i><span class="patrona-nav-label">INICIO</span></a>
+
+    <span class="nav-group-label">ADMINISTRACIÓN</span>
+    <button class="nav-item sidebar-group-toggle <?=in_array($panel,['contenedores','menus'],true)?'is-current-group':''?>" type="button" aria-expanded="true" aria-controls="sidebar-contenidos" title="Gestión del sitio">
+      <i class="bi bi-gear-fill" aria-hidden="true"></i><span class="patrona-nav-label">Gestión del sitio</span><i class="bi bi-chevron-down nav-chevron" aria-hidden="true"></i>
+    </button>
+    <div class="sidebar-subitems" id="sidebar-contenidos">
+      <a class="nav-item <?=$panel==='contenedores'?'active':''?>" href="admin.php?panel=contenedores" <?=$panel==='contenedores'?'aria-current="page"':''?> title="Contenedores"><i class="bi bi-grid-fill" aria-hidden="true"></i><span class="patrona-nav-label">Contenedores</span></a>
+      <a class="nav-item <?=$panel==='menus'?'active':''?>" href="admin.php?panel=menus" <?=$panel==='menus'?'aria-current="page"':''?> title="Menú público"><i class="bi bi-diagram-3-fill" aria-hidden="true"></i><span class="patrona-nav-label">Menú público</span></a>
+    </div>
+
+    <span class="nav-group-label">SITIO WEB</span>
+    <a class="nav-item" href="index.php" target="_blank" rel="noopener noreferrer" title="Ver sitio público"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i><span class="patrona-nav-label">Ver sitio público</span></a>
   </nav>
-  <div class="sidebar-bottom"><div class="admin-user"><span class="avatar"><i class="bi bi-person"></i></span><span><strong><?=htmlspecialchars((string)($_SESSION['patrona_admin_nombre'] ?? 'Administrador'), ENT_QUOTES, 'UTF-8')?></strong><small>Administrador institucional</small></span></div>
-  <form method="post" action="admin.php"><input type="hidden" name="csrf" value="<?=htmlspecialchars((string)($_SESSION['patrona_csrf']??''), ENT_QUOTES, 'UTF-8')?>"><input type="hidden" name="accion" value="salir"><button class="logout" type="submit"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button></form></div>
+  <div class="sidebar-watermark<?=$sidebarLogo!==''?' has-logo':''?>" aria-hidden="true" <?php if($sidebarLogo!==''):?>style="--sidebar-logo:url('<?=$sidebarH($sidebarLogo)?>')"<?php endif;?>></div>
+  <div class="sidebar-bottom">
+    <form method="post" action="admin.php" class="patrona-sidebar-logout">
+      <input type="hidden" name="csrf" value="<?=$sidebarH($_SESSION['patrona_csrf']??'')?>">
+      <input type="hidden" name="accion" value="salir">
+      <button class="logout" type="submit" title="Cerrar sesión"><i class="bi bi-box-arrow-right" aria-hidden="true"></i><span class="patrona-nav-label">Cerrar sesión</span></button>
+    </form>
+    <button type="button" class="patrona-sidebar-bottom-toggle" data-sidebar-collapse title="Contraer menú"><i class="bi bi-chevron-left" aria-hidden="true"></i><span class="patrona-nav-label">Contraer</span></button>
+  </div>
 </aside>
