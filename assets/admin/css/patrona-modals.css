@@ -1,0 +1,110 @@
+/* Shared editing dialogs for the administrative panel. */
+.admin-shell .patrona-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    background: rgb(16 35 59 / 55%);
+}
+
+.admin-shell .patrona-modal-overlay[hidden] {
+    display: none;
+}
+
+.admin-shell .patrona-modal-panel {
+    --modal-padding: clamp(14px, 2vw, 24px);
+    display: block;
+    width: min(1120px, calc(100% - 32px));
+    max-width: none;
+    max-height: calc(100% - 32px);
+    max-height: calc(100dvh - 32px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 0;
+    color: #193553;
+    background: #fff;
+    border: 1px solid #d9e3ef;
+    border-radius: 14px;
+    box-shadow: 0 24px 68px rgb(14 32 55 / 28%);
+}
+
+.admin-shell dialog.patrona-modal-panel:not([open]) {
+    display: none;
+}
+
+.admin-shell dialog.patrona-modal-panel::backdrop {
+    background: rgb(16 35 59 / 55%);
+}
+
+.patrona-modal-panel .patrona-modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px var(--modal-padding);
+    background: #fff;
+    border-bottom: 1px solid #dbe5ef;
+}
+
+.patrona-modal-panel .patrona-modal-header h2 {
+    margin: 0;
+    color: #15365b;
+    font-size: clamp(17px, 2vw, 22px);
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.patrona-modal-panel .patrona-modal-header .patrona-modal-close {
+    display: grid;
+    place-items: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    border-radius: 9px;
+    background: #eef3f9;
+    color: #315575;
+    font: 400 23px/1 system-ui, sans-serif;
+    cursor: pointer;
+}
+
+.patrona-modal-panel .patrona-modal-close:hover {
+    background: #dfe9f5;
+    color: #15365b;
+}
+
+.patrona-modal-panel .patrona-modal-body {
+    padding: var(--modal-padding);
+}
+
+.patrona-modal-panel .patrona-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 14px var(--modal-padding);
+    background: #f7f9fc;
+    border: 0;
+    border-top: 1px solid #dbe5ef;
+}
+
+@media (max-width: 700px) {
+    .admin-shell .patrona-modal-panel {
+        width: calc(100% - 20px);
+        max-height: calc(100% - 20px);
+        max-height: calc(100dvh - 20px);
+    }
+
+    .patrona-modal-panel .patrona-modal-header {
+        padding-block: 12px;
+    }
+
+    .patrona-modal-panel :is(.family-grid, .seal-fields, .nt-form-grid, .hero-form-grid, .cms-grid, .gallery-form-grid, .grid) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

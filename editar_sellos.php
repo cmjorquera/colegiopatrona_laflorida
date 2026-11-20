@@ -145,19 +145,19 @@ $editing=null;$editId=(int)($_GET['item']??0);foreach($items as $i)if((int)$i['i
  </div></td></tr><?php endforeach;?></tbody></table></div><?php endif;?>
 </div>
 <form id="sealOrderForm" method="post" hidden><input type="hidden" name="csrf" value="<?=se($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="reorder"><input type="hidden" name="ids" id="sealOrderIds"></form>
-<div class="seal-modal" id="sealModal" hidden role="dialog" aria-modal="true" aria-labelledby="sealModalTitle">
- <div class="seal-dialog">
- <div class="seal-modal-head"><h2 id="sealModalTitle" style="margin:0;font-size:19px">Agregar sello</h2><button type="button" class="seal-close" aria-label="Cerrar" onclick="closeSeal()"><i class="bi bi-x-lg"></i></button></div>
- <form method="post" enctype="multipart/form-data" id="sealForm" style="overflow:auto;display:flex;flex-direction:column">
+<div class="seal-modal patrona-modal-overlay" id="sealModal" hidden role="dialog" aria-modal="true" aria-labelledby="sealModalTitle">
+ <div class="seal-dialog patrona-modal-panel">
+ <div class="seal-modal-head patrona-modal-header"><h2 id="sealModalTitle">Agregar sello</h2><button type="button" class="seal-close patrona-modal-close" aria-label="Cerrar" onclick="closeSeal()"><span aria-hidden="true">×</span></button></div>
+ <form method="post" enctype="multipart/form-data" id="sealForm">
  <input type="hidden" name="csrf" value="<?=se($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="save"><input type="hidden" name="id_item" id="sealId" value="0">
- <div class="seal-modal-body"><div class="seal-fields">
+ <div class="seal-modal-body patrona-modal-body"><div class="seal-fields">
  <label class="seal-field">Imagen del sello (JPG, PNG o WebP; máximo 5 MB)<input type="file" name="imagen" id="sealImage" accept="image/jpeg,image/png,image/webp"><img id="sealImagePreview" class="seal-preview" alt="Vista previa" hidden></label>
  <label class="seal-field">Nombre del sello<input name="titulo" id="sealTitle" maxlength="180" placeholder="Nombre institucional"></label>
  <label class="seal-field">Enlace externo (opcional)<input type="url" name="url" id="sealUrl" placeholder="https://..."></label>
  <label class="seal-field">Visibilidad<div class="seal-check"><input type="checkbox" id="sealVisible" checked><span id="sealVisibleText">Mostrar en la página</span></div><input type="hidden" name="visible" id="sealVisibleValue" value="si"></label>
  <label class="seal-field" style="grid-column:1/-1">Descripción del reverso (máximo 5.000 caracteres)<textarea name="descripcion" id="sealDescription" maxlength="5000" rows="5" data-rich-editor></textarea></label>
  </div></div>
- <div class="seal-modal-foot"><button class="seal-btn" type="submit"><i class="bi bi-check-circle"></i>&nbsp; Guardar sello</button></div>
+ <div class="seal-modal-foot patrona-modal-footer"><button class="seal-btn" type="submit"><i class="bi bi-check-circle"></i>&nbsp; Guardar sello</button></div>
  </form></div>
 </div>
 <?php endif;?>
