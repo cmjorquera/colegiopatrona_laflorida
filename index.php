@@ -279,4 +279,10 @@ $contactUrl=patrona_cms_url($headerConfig['url_contacto_flotante']??'#contacto')
 <script defer src="assets/js/patrona-cms-v6.js?v=3"></script>
 <script defer src="assets/js/patrona-equipo.js?v=8"></script>
 <script defer src="assets/js/patrona-nav.js?v=2"></script>
+<!-- Chat de consultas (Webnia Bot, empresa "patrona-laflorida").
+     Por ahora apunta al Webnia Bot que corre en el PC de Cristian (Docker + localhost:5173):
+     en otro equipo la burbuja no carga y no aparece nada. Cuando Webnia Bot esté en su
+     servidor, solo se cambia la dirección por https://chatbot.webnia.cl/widget.js. -->
+<script src="http://localhost:5173/widget.js"
+        data-tenant="patrona-laflorida" data-lang="es" data-color="#1266ac" async></script>
 </body></html>
