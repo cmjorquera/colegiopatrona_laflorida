@@ -284,5 +284,6 @@ $contactUrl=patrona_cms_url($headerConfig['url_contacto_flotante']??'#contacto')
      en otro equipo la burbuja no carga y no aparece nada. Cuando Webnia Bot esté en su
      servidor, solo se cambia la dirección por https://chatbot.webnia.cl/widget.js. -->
 <script src="http://localhost:5173/widget.js"
-        data-tenant="patrona-laflorida" data-lang="es" data-color="#1266ac" async></script>
+        data-tenant="patrona-laflorida" data-lang="es" data-color="#1266ac"
+        data-position="bottom-left" async></script>
 </body></html>
