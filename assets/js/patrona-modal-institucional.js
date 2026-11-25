@@ -39,6 +39,7 @@ document.querySelectorAll('[data-patrona-modal]').forEach(root => {
             previous?.focus();
         }
         close.addEventListener('click', hide);
+        root.querySelectorAll('[data-pm-dismiss]').forEach(button => button.addEventListener('click', hide));
         root.addEventListener('click', event => {
             if (event.target === root) hide();
         });

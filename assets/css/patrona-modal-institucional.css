@@ -59,3 +59,14 @@
 }
 .pm-backdrop article:first-of-type .pm-body,
 .pm-backdrop article:not(:has(.pm-image, .pm-video)) .pm-body { padding-right: 60px; }
+
+.pm-image-only .pm-image { height: auto; max-height: 78dvh; object-fit: contain; }
+.pm-action:is(button) { border: 0; cursor: pointer; }
+@media (min-width: 701px) {
+    .pm-informative:not([hidden]):has(> .pm-image) {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        align-items: center;
+    }
+    .pm-informative > .pm-image { max-height: 60dvh; }
+}

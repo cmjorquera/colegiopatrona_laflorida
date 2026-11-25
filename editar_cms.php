@@ -58,6 +58,7 @@ try{
    $title=trim((string)($_POST['titulo']??''));$desc=patrona_rich_clean((string)($_POST['descripcion']??''));$url=trim((string)($_POST['url']??''));$label=trim((string)($_POST['etiqueta']??''));$subtitle=trim((string)($_POST['subtitulo']??''));
    if(mb_strlen($title)>220||mb_strlen($desc)>5000||mb_strlen($label)>120||mb_strlen($subtitle)>220)throw new RuntimeException('Texto demasiado largo.');
    if($url!==''&&!(($name==='equipo_docente_home'&&filter_var($url,FILTER_VALIDATE_EMAIL))||(filter_var($url,FILTER_VALIDATE_URL)&&in_array(strtolower((string)parse_url($url,PHP_URL_SCHEME)),['http','https'],true))))throw new RuntimeException('El enlace debe ser HTTP(S).');
+   $imageOnly = $isModal && ($_POST['tipo_modal'] ?? '') === 'solo_imagen';
    $youtube = $isModal ? trim((string)($_POST['video_youtube'] ?? '')) : '';
    if ($youtube !== '' && patrona_modal_youtube_id($youtube) === '') {
     throw new RuntimeException('Ingresa un enlace válido de YouTube.');
@@ -72,7 +73,7 @@ try{
     if ($f['error'] !== UPLOAD_ERR_OK) throw new RuntimeException('No se pudo subir el archivo. Comprueba el límite de carga del servidor.');
     $mime=(new finfo(FILEINFO_MIME_TYPE))->file($f['tmp_name']);
     $extensions = ['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp'];
-    if ($isModal) $extensions['video/mp4'] = 'mp4';
+    if ($isModal && !$imageOnly) $extensions['video/mp4'] = 'mp4';
     $ext = $extensions[$mime] ?? '';
     if ($ext === '' || ($ext !== 'mp4' && !getimagesize($f['tmp_name']))) throw new RuntimeException($isModal ? 'Solo JPG, PNG, WebP o MP4.' : 'Solo JPG, PNG o WebP.');
     if ($f['size'] > ($ext === 'mp4' ? 50 : 5) * 1024 * 1024) throw new RuntimeException('El archivo excede el límite de carga.');
@@ -82,13 +83,21 @@ try{
     if(!move_uploaded_file($f['tmp_name'],$dir.'/'.$filename))throw new RuntimeException('No se pudo guardar la imagen.');
     $image='assets/uploads/secciones/'.$name.'/'.$filename;
    }
+   if ($isModal) {
+    $label = $imageOnly ? 'solo_imagen' : 'informativo';
+    $buttonText = trim((string)($_POST['boton_1_texto'] ?? ''));
+    if (mb_strlen($buttonText) > 120) throw new RuntimeException('Texto del botón demasiado largo.');
+    if ($label === 'solo_imagen' && (patrona_modal_local_media($image) === '' || patrona_modal_is_video($image) || $youtube !== '')) {
+     throw new RuntimeException('Selecciona una imagen para el tipo Solo imagen.');
+    }
+   }
    $visible=($_POST['visible']??'si')==='no'?'no':'si';$orden=max(1,(int)($_POST['orden']??1));
    if ($isModal && $id) {
-    $q = $db->prepare('UPDATE seccion_item SET titulo=?,subtitulo=?,descripcion=?,imagen=?,video_youtube=?,url=?,visible=?,orden=? WHERE id_item=? AND id_seccion=?');
-    $q->bind_param('sssssssiii', $title, $subtitle, $desc, $image, $youtube, $url, $visible, $orden, $id, $sid);
+    $q = $db->prepare('UPDATE seccion_item SET etiqueta=?,titulo=?,subtitulo=?,descripcion=?,imagen=?,video_youtube=?,url=?,boton_1_texto=?,visible=?,orden=? WHERE id_item=? AND id_seccion=?');
+    $q->bind_param('sssssssssiii', $label, $title, $subtitle, $desc, $image, $youtube, $url, $buttonText, $visible, $orden, $id, $sid);
    } elseif ($isModal) {
-    $q = $db->prepare('INSERT INTO seccion_item(id_seccion,etiqueta,titulo,subtitulo,descripcion,imagen,video_youtube,url,visible,orden) VALUES(?,?,?,?,?,?,?,?,?,?)');
-    $q->bind_param('issssssssi', $sid, $label, $title, $subtitle, $desc, $image, $youtube, $url, $visible, $orden);
+    $q = $db->prepare('INSERT INTO seccion_item(id_seccion,etiqueta,titulo,subtitulo,descripcion,imagen,video_youtube,url,boton_1_texto,visible,orden) VALUES(?,?,?,?,?,?,?,?,?,?,?)');
+    $q->bind_param('isssssssssi', $sid, $label, $title, $subtitle, $desc, $image, $youtube, $url, $buttonText, $visible, $orden);
    } elseif($id){
     $q=$db->prepare('UPDATE seccion_item SET etiqueta=?,titulo=?,subtitulo=?,descripcion=?,imagen=?,url=?,visible=?,orden=? WHERE id_item=? AND id_seccion=?');
     $q->bind_param('sssssssiii',$label,$title,$subtitle,$desc,$image,$url,$visible,$orden,$id,$sid);
@@ -130,6 +139,8 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 .modal-item-list.is-cards .modal-item{grid-template-columns:1fr;gap:8px;border:1px solid #dbe5ef;border-radius:10px}
 .modal-item-list.is-cards .gallery-thumb{width:100%;height:135px;object-fit:contain;background:#f3f6fa}
 @media(max-width:700px){.modal-item{grid-template-columns:28px 74px minmax(0,1fr)}.modal-item-actions{grid-column:3}}
+.modal-type-picker{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:10px;margin:0;padding:12px;border:1px solid #dbe5ef;border-radius:10px}
+.modal-type-picker legend{padding:0 6px;font-weight:700}.modal-type-picker label{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #dbe5ef;border-radius:8px;cursor:pointer}.modal-type-picker label:has(:checked){border-color:#193553;background:#f0f5fa}.modal-type-picker small{display:block;color:#526985}.cms-field[data-modal-informativo][hidden]{display:none}
 </style><?php patrona_rich_assets(); ?></head><body><div class="admin-shell"><?php $panel = 'contenedores'; require __DIR__.'/includes/patrona_sidebar.php'; ?><div class="admin-content"><header class="topbar" data-sidebar-toolbar><span>Panel de administración / Contenedores / Editor</span><a href="admin.php?panel=contenedores">← Volver</a></header><main class="cms-main"><small>GESTIÓN DEL SITIO / CONTENEDORES</small><h1><?=ce($section['titulo_admin']??'Editor de contenedores')?></h1><p>Configuración y elementos del contenedor. Utiliza las mismas tablas CMS de Tabancura.</p>
 <?php if($error):?><p style="color:#a92323"><?=ce($error)?></p><?php endif;?><?php if($notice):?><p style="color:#16703b"><?=ce($notice)?></p><?php endif;?>
 <?php if($section):?>
@@ -218,25 +229,35 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 <?php else:?>
 <section class="cms-card"><div class="gallery-heading"><div><h2>Ítems del contenedor</h2><p>Administra los elementos del bloque desde una ventana de edición.</p></div><button type="button" class="cms-btn" id="generic-add"><i class="bi bi-plus-circle"></i> Agregar elemento</button></div></section>
 <div class="gallery-modal patrona-modal-overlay" id="generic-modal" hidden role="dialog" aria-modal="true" aria-labelledby="generic-modal-title"><div class="gallery-dialog patrona-modal-panel"><div class="gallery-modal-header patrona-modal-header"><h2 id="generic-modal-title">Agregar elemento</h2><button type="button" class="gallery-close patrona-modal-close" aria-label="Cerrar"><span aria-hidden="true">×</span></button></div><form method="post" enctype="multipart/form-data" id="generic-form"><input type="hidden" name="id_seccion" value="<?=(int)$sid?>"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="save"><input type="hidden" name="id_item" value="<?=(int)($editing['id_item']??0)?>"><div class="patrona-modal-body"><div class="cms-grid">
+<?php if ($isModal): ?>
+<fieldset class="modal-type-picker">
+ <legend>Tipo de modal</legend>
+ <label><input type="radio" name="tipo_modal" value="informativo" checked><span><strong>Informativo</strong><small>Imagen o video, título, mensaje y botón</small></span></label>
+ <label><input type="radio" name="tipo_modal" value="solo_imagen"><span><strong>Solo imagen</strong><small>Afiche con enlace opcional</small></span></label>
+</fieldset>
+<?php endif; ?>
 <label class="cms-field">Título<input name="titulo" maxlength="220" value="<?=ce($editing['titulo']??'')?>"></label>
 <?php if(($section['nombre_interno']??'')==='equipo_docente_home'):?>
 <label class="cms-field">Ciclo<select name="etiqueta"><?php foreach(['jardin'=>'Jardín','basica_1'=>'Básica 1.er ciclo','basica_2'=>'Básica 2.º ciclo','media'=>'Enseñanza Media'] as $key=>$label):?><option value="<?=ce($key)?>" <?=($editing['etiqueta']??'')===$key?'selected':''?>><?=ce($label)?></option><?php endforeach;?></select></label>
 <?php elseif (!$isModal):?><label class="cms-field">Etiqueta<input name="etiqueta" maxlength="120" value="<?=ce($editing['etiqueta']??'')?>"></label><?php endif;?>
 <label class="cms-field"><?=($section['nombre_interno']??'')==='equipo_docente_home'?'Cargo / curso (Coordinación, Profesor jefe, etc.)':'Subtítulo'?><input name="subtitulo" maxlength="220" value="<?=ce($editing['subtitulo']??'')?>"></label>
 <?php if ($isModal): ?>
-<label class="cms-field">Imagen (5 MB) o video MP4 (50 MB)
+<label class="cms-field"><span id="modal-file-label">Imagen (5 MB) o video MP4 (50 MB)</span>
  <input type="file" name="imagen" accept="image/jpeg,image/png,image/webp,video/mp4">
  <small id="modal-current-file"></small>
  <span><input type="checkbox" name="quitar_archivo" value="1"> Quitar archivo actual</span>
 </label>
-<label class="cms-field">Enlace de YouTube<input type="url" name="video_youtube" placeholder="https://www.youtube.com/watch?v=…"></label>
+<label class="cms-field" data-modal-informativo>Enlace de YouTube<input type="url" name="video_youtube" placeholder="https://www.youtube.com/watch?v=…"></label>
 <?php else: ?>
 <label class="cms-field">Imagen JPG/PNG/WebP, máximo 5 MB<input type="file" name="imagen" accept="image/jpeg,image/png,image/webp" id="cms-image-input"><img class="cms-preview" id="cms-image-preview" alt="Vista previa de imagen seleccionada"></label>
 <?php endif; ?>
-<label class="cms-field"><?=($section['nombre_interno']??'')==='equipo_docente_home'?'Correo institucional':'Enlace HTTP(S)'?><input type="<?=($section['nombre_interno']??'')==='equipo_docente_home'?'email':'url'?>" name="url" value="<?=ce($editing['url']??'')?>"></label>
+<label class="cms-field"><?=($section['nombre_interno']??'')==='equipo_docente_home'?'Correo institucional':($isModal?'Enlace de destino (opcional)':'Enlace HTTP(S)')?><input type="<?=($section['nombre_interno']??'')==='equipo_docente_home'?'email':'url'?>" name="url" value="<?=ce($editing['url']??'')?>"></label>
 <label class="cms-field">Orden<input type="number" min="1" name="orden" value="<?=(int)($editing['orden']??count($items)+1)?>"></label>
 <label class="cms-field">Visibilidad<select name="visible"><option value="si" <?=($editing['visible']??'si')==='si'?'selected':''?>>Visible</option><option value="no" <?=($editing['visible']??'si')==='no'?'selected':''?>>Oculto</option></select></label>
-<label class="cms-field" style="grid-column:1/-1">Descripción<textarea name="descripcion" rows="4" maxlength="5000" data-rich-editor><?=ce($editing['descripcion']??'')?></textarea></label>
+<?php if ($isModal): ?>
+<label class="cms-field" data-modal-informativo>Texto del botón<input name="boton_1_texto" maxlength="120"></label>
+<?php endif; ?>
+<label class="cms-field" <?=$isModal ? 'data-modal-informativo' : ''?> style="grid-column:1/-1">Descripción<textarea name="descripcion" rows="4" maxlength="5000" data-rich-editor><?=ce($editing['descripcion']??'')?></textarea></label>
 </div><?php if(!$isModal && !empty($editing['imagen'])):?><p><img src="<?=ce($editing['imagen'])?>" alt="" style="max-width:180px;max-height:120px"></p><?php endif;?></div><div class="gallery-modal-footer patrona-modal-footer"><button class="cms-btn" type="submit">Guardar elemento</button></div></form></div></div>
 <?php if ($isModal): ?>
 <section class="cms-card gallery-admin">
@@ -301,10 +322,24 @@ document.querySelectorAll('[data-modal-layout]').forEach(button => {
 <section class="cms-card"><h2>Elementos registrados (<?=count($items)?>)</h2><?php if(!$items):?><p>No hay elementos registrados.</p><?php endif;?>
 <?php foreach($items as $item):?><div class="cms-row"><?php if(!empty($item['imagen']) && (!$isModal || !patrona_modal_is_video($item['imagen']))):?><img src="<?=ce($item['imagen'])?>" alt=""><?php endif;?><div><strong><?=ce($item['titulo']??'')?></strong><p><?=ce($item['visible']??'')?> · Orden <?=(int)$item['orden']?></p><button type="button" class="gallery-icon generic-edit" data-id="<?=(int)$item['id_item']?>" title="Editar elemento"><i class="bi bi-pencil-square"></i> Editar</button></div><form method="post" onsubmit="return confirm('¿Eliminar este elemento?')"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="id_seccion" value="<?=(int)$sid?>"><input type="hidden" name="accion" value="delete"><input type="hidden" name="id_item" value="<?=(int)$item['id_item']?>"><button type="submit">Eliminar</button></form></div><?php endforeach;?></section>
 <?php endif; ?>
-<script type="application/json" id="generic-items"><?=json_encode(array_map(static fn(array $i):array=>['id'=>(int)$i['id_item'],'titulo'=>(string)($i['titulo']??''),'etiqueta'=>(string)($i['etiqueta']??''),'subtitulo'=>(string)($i['subtitulo']??''),'descripcion'=>(string)($i['descripcion']??''),'video_youtube'=>(string)($i['video_youtube']??''),'url'=>(string)($i['url']??''),'orden'=>(int)$i['orden'],'visible'=>(string)$i['visible'],'imagen'=>(string)($i['imagen']??'')],$items),JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT)?></script>
+<script type="application/json" id="generic-items"><?=json_encode(array_map(static fn(array $i):array=>['id'=>(int)$i['id_item'],'titulo'=>(string)($i['titulo']??''),'etiqueta'=>(string)($i['etiqueta']??''),'subtitulo'=>(string)($i['subtitulo']??''),'descripcion'=>(string)($i['descripcion']??''),'video_youtube'=>(string)($i['video_youtube']??''),'boton_1_texto'=>(string)($i['boton_1_texto']??''),'url'=>(string)($i['url']??''),'orden'=>(int)$i['orden'],'visible'=>(string)$i['visible'],'imagen'=>(string)($i['imagen']??'')],$items),JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT)?></script>
 <script>
 (()=>{const modal=document.getElementById('generic-modal');if(!modal)return;const form=document.getElementById('generic-form'),data=JSON.parse(document.getElementById('generic-items').textContent),input=form.querySelector('input[type=file]'),preview=document.getElementById('cms-image-preview');let blob=null;const field=n=>form.elements.namedItem(n);
-function open(item){form.reset();field('id_item').value=item?.id||0;for(const n of ['titulo','etiqueta','subtitulo','descripcion','url','video_youtube']){const el=field(n);if(el)el.value=item?.[n]||''}const currentFile=document.getElementById('modal-current-file');
+const types=form.querySelectorAll('[name=tipo_modal]');
+function syncType(){
+ if(!types.length)return;
+ const imageOnly=form.elements.tipo_modal.value==='solo_imagen';
+ for(const el of form.querySelectorAll('[data-modal-informativo]')){
+  el.hidden=imageOnly;
+  for(const control of el.querySelectorAll('input, textarea'))control.disabled=imageOnly;
+ }
+ input.accept='image/jpeg,image/png,image/webp'+(imageOnly?'':',video/mp4');
+ document.getElementById('modal-file-label').textContent=imageOnly?'Imagen del afiche (máx. 5 MB)':'Imagen (5 MB) o video MP4 (50 MB)';
+}
+types.forEach(type=>type.addEventListener('change',syncType));
+function open(item){form.reset();
+if(types.length){form.elements.tipo_modal.value=item?.etiqueta==='solo_imagen'?'solo_imagen':'informativo';syncType()}
+field('id_item').value=item?.id||0;for(const n of ['titulo','etiqueta','subtitulo','descripcion','url','video_youtube','boton_1_texto']){const el=field(n);if(el)el.value=item?.[n]||''}const currentFile=document.getElementById('modal-current-file');
 if(currentFile) currentFile.textContent=item?.imagen ? 'Archivo actual: '+item.imagen.split('/').pop() : '';
 field('orden').value=item?.orden||Math.max(0,...data.map(entry=>entry.orden))+1;field('visible').value=item?.visible||'si';if(preview){preview.src=item?.imagen||'';preview.classList.toggle('is-visible',!!item?.imagen)}document.getElementById('generic-modal-title').textContent=item?'Editar elemento':'Agregar elemento';modal.hidden=false;document.body.style.overflow='hidden';form.querySelector('input[name=titulo]').focus()}
 function close(){modal.hidden=true;document.body.style.overflow='';if(blob){URL.revokeObjectURL(blob);blob=null}}
