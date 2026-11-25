@@ -41,5 +41,6 @@ function patrona_modal_link(string $url): string
     $url = trim($url);
     if (preg_match('~^https?://~i', $url) && filter_var($url, FILTER_VALIDATE_URL)) return $url;
     if (preg_match('~^(?:#[a-zA-Z0-9_-]+|/(?!/)[a-zA-Z0-9_./?&=%#-]+)$~D', $url)) return $url;
+    if (preg_match('~^index\.php(?:#[a-zA-Z0-9_-]+)?$~D', $url)) return '/'.$url;
     return '#';
 }

@@ -57,7 +57,8 @@ try{
   }elseif($action==='save'){
    $title=trim((string)($_POST['titulo']??''));$desc=patrona_rich_clean((string)($_POST['descripcion']??''));$url=trim((string)($_POST['url']??''));$label=trim((string)($_POST['etiqueta']??''));$subtitle=trim((string)($_POST['subtitulo']??''));
    if(mb_strlen($title)>220||mb_strlen($desc)>5000||mb_strlen($label)>120||mb_strlen($subtitle)>220)throw new RuntimeException('Texto demasiado largo.');
-   if($url!==''&&!(($name==='equipo_docente_home'&&filter_var($url,FILTER_VALIDATE_EMAIL))||(filter_var($url,FILTER_VALIDATE_URL)&&in_array(strtolower((string)parse_url($url,PHP_URL_SCHEME)),['http','https'],true))))throw new RuntimeException('El enlace debe ser HTTP(S).');
+   if ($isModal && $url !== '' && patrona_modal_link($url) === '#') throw new RuntimeException('Ingresa un enlace HTTP(S) o una ruta del sitio, como index.php#noticias-home.');
+   if(!$isModal && $url!==''&&!(($name==='equipo_docente_home'&&filter_var($url,FILTER_VALIDATE_EMAIL))||(filter_var($url,FILTER_VALIDATE_URL)&&in_array(strtolower((string)parse_url($url,PHP_URL_SCHEME)),['http','https'],true))))throw new RuntimeException('El enlace debe ser HTTP(S).');
    $imageOnly = $isModal && ($_POST['tipo_modal'] ?? '') === 'solo_imagen';
    $youtube = $isModal ? trim((string)($_POST['video_youtube'] ?? '')) : '';
    if ($youtube !== '' && patrona_modal_youtube_id($youtube) === '') {
@@ -141,6 +142,9 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 @media(max-width:700px){.modal-item{grid-template-columns:28px 74px minmax(0,1fr)}.modal-item-actions{grid-column:3}}
 .modal-type-picker{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:10px;margin:0;padding:12px;border:1px solid #dbe5ef;border-radius:10px}
 .modal-type-picker legend{padding:0 6px;font-weight:700}.modal-type-picker label{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #dbe5ef;border-radius:8px;cursor:pointer}.modal-type-picker label:has(:checked){border-color:#193553;background:#f0f5fa}.modal-type-picker small{display:block;color:#526985}.cms-field[data-modal-informativo][hidden]{display:none}
+#generic-modal.institutional-item-editor{grid-template-columns:minmax(0,1fr)}
+#generic-modal.institutional-item-editor .patrona-modal-panel{width:min(1120px,calc(100vw - 32px))}
+@media(max-width:700px){#generic-modal.institutional-item-editor .patrona-modal-panel{width:calc(100vw - 20px)}}
 </style><?php patrona_rich_assets(); ?></head><body><div class="admin-shell"><?php $panel = 'contenedores'; require __DIR__.'/includes/patrona_sidebar.php'; ?><div class="admin-content"><header class="topbar" data-sidebar-toolbar><span>Panel de administración / Contenedores / Editor</span><a href="admin.php?panel=contenedores">← Volver</a></header><main class="cms-main"><small>GESTIÓN DEL SITIO / CONTENEDORES</small><h1><?=ce($section['titulo_admin']??'Editor de contenedores')?></h1><p>Configuración y elementos del contenedor. Utiliza las mismas tablas CMS de Tabancura.</p>
 <?php if($error):?><p style="color:#a92323"><?=ce($error)?></p><?php endif;?><?php if($notice):?><p style="color:#16703b"><?=ce($notice)?></p><?php endif;?>
 <?php if($section):?>
@@ -228,7 +232,7 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 <script type="application/json" id="stat-data"><?=json_encode(array_map(static fn(array $i):array=>['id'=>(int)$i['id_item'],'etiqueta'=>(string)($i['etiqueta']??''),'titulo'=>(string)($i['titulo']??''),'descripcion'=>(string)($i['descripcion']??''),'orden'=>(int)$i['orden'],'visible'=>(string)$i['visible'],'imagen'=>(string)($i['imagen']??'')],$items),JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT)?></script>
 <?php else:?>
 <section class="cms-card"><div class="gallery-heading"><div><h2>Ítems del contenedor</h2><p>Administra los elementos del bloque desde una ventana de edición.</p></div><button type="button" class="cms-btn" id="generic-add"><i class="bi bi-plus-circle"></i> Agregar elemento</button></div></section>
-<div class="gallery-modal patrona-modal-overlay" id="generic-modal" hidden role="dialog" aria-modal="true" aria-labelledby="generic-modal-title"><div class="gallery-dialog patrona-modal-panel"><div class="gallery-modal-header patrona-modal-header"><h2 id="generic-modal-title">Agregar elemento</h2><button type="button" class="gallery-close patrona-modal-close" aria-label="Cerrar"><span aria-hidden="true">×</span></button></div><form method="post" enctype="multipart/form-data" id="generic-form"><input type="hidden" name="id_seccion" value="<?=(int)$sid?>"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="save"><input type="hidden" name="id_item" value="<?=(int)($editing['id_item']??0)?>"><div class="patrona-modal-body"><div class="cms-grid">
+<div class="gallery-modal patrona-modal-overlay<?=$isModal ? ' institutional-item-editor' : ''?>" id="generic-modal" hidden role="dialog" aria-modal="true" aria-labelledby="generic-modal-title"><div class="gallery-dialog patrona-modal-panel"><div class="gallery-modal-header patrona-modal-header"><h2 id="generic-modal-title">Agregar elemento</h2><button type="button" class="gallery-close patrona-modal-close" aria-label="Cerrar"><span aria-hidden="true">×</span></button></div><form method="post" enctype="multipart/form-data" id="generic-form"><input type="hidden" name="id_seccion" value="<?=(int)$sid?>"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="save"><input type="hidden" name="id_item" value="<?=(int)($editing['id_item']??0)?>"><div class="patrona-modal-body"><div class="cms-grid">
 <?php if ($isModal): ?>
 <fieldset class="modal-type-picker">
  <legend>Tipo de modal</legend>
@@ -251,7 +255,8 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 <?php else: ?>
 <label class="cms-field">Imagen JPG/PNG/WebP, máximo 5 MB<input type="file" name="imagen" accept="image/jpeg,image/png,image/webp" id="cms-image-input"><img class="cms-preview" id="cms-image-preview" alt="Vista previa de imagen seleccionada"></label>
 <?php endif; ?>
-<label class="cms-field"><?=($section['nombre_interno']??'')==='equipo_docente_home'?'Correo institucional':($isModal?'Enlace de destino (opcional)':'Enlace HTTP(S)')?><input type="<?=($section['nombre_interno']??'')==='equipo_docente_home'?'email':'url'?>" name="url" value="<?=ce($editing['url']??'')?>"></label>
+<label class="cms-field"><?=($section['nombre_interno']??'')==='equipo_docente_home'?'Correo institucional':($isModal?'Enlace de destino (opcional)':'Enlace HTTP(S)')?><input type="<?=($section['nombre_interno']??'')==='equipo_docente_home'?'email':($isModal?'text':'url')?>" name="url" value="<?=ce($editing['url']??'')?>" <?php if ($isModal): ?>placeholder="index.php#noticias-home o https://…"<?php endif; ?>>
+<?php if ($isModal): ?><small>Abre esta página al pulsar el botón del modal o el afiche.</small><?php endif; ?></label>
 <label class="cms-field">Orden<input type="number" min="1" name="orden" value="<?=(int)($editing['orden']??count($items)+1)?>"></label>
 <label class="cms-field">Visibilidad<select name="visible"><option value="si" <?=($editing['visible']??'si')==='si'?'selected':''?>>Visible</option><option value="no" <?=($editing['visible']??'si')==='no'?'selected':''?>>Oculto</option></select></label>
 <?php if ($isModal): ?>
