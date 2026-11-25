@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__.'/includes/rich_editor.php';
+require_once __DIR__.'/componentes/modal_institucional.php';
 $sessionPath='/home3/crist668/php_sessions_patrona';
 if(!is_dir($sessionPath)||!is_writable($sessionPath)){http_response_code(503);exit('Sesiones no disponibles');}
 session_save_path($sessionPath);session_start();
@@ -8,6 +9,10 @@ if(empty($_SESSION['patrona_admin_id'])){header('Location: admin.php');exit;}
 if(empty($_SESSION['patrona_csrf']))$_SESSION['patrona_csrf']=bin2hex(random_bytes(32));
 function ce($v):string{return htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');}
 $allowed=['topbar','header_principal','tab_destacados_home','spotify_podcast_home','galeria_home','estadisticas_home'];
+$modalTabs = ['general' => 'General', 'items' => 'Ítems', 'diseno' => 'Diseño', 'preview' => 'Vista previa'];
+$tab = (string)($_GET['tab'] ?? 'items');
+if (!isset($modalTabs[$tab])) $tab = 'items';
+$isModal = false;
 $requested=(int)($_GET['id']??$_POST['id_seccion']??0);$error='';$notice=(string)($_SESSION['generic_notice']??'');unset($_SESSION['generic_notice']);$items=[];$config=[];$section=null;
 try{
  $cfg=require __DIR__.'/class/conexion_local.php';
@@ -17,6 +22,7 @@ try{
  $q=$db->prepare('SELECT * FROM seccion WHERE id_seccion=? AND id_institucion=2 LIMIT 1');$q->bind_param('i',$requested);$q->execute();$section=$q->get_result()->fetch_assoc();
  if(!$section||in_array((string)$section['nombre_interno'],['hero_principal','sellos_home','noticias_home','tab_comunidad_home'],true))throw new RuntimeException('Este contenedor tiene un editor especializado.');
  $sid=(int)$section['id_seccion'];$name=(string)$section['nombre_interno'];
+ $isModal = $name === 'modal_institucional';
  if($_SERVER['REQUEST_METHOD']==='POST'){
   if(!hash_equals((string)$_SESSION['patrona_csrf'],(string)($_POST['csrf']??'')))throw new RuntimeException('Sesión vencida.');
   if(!in_array((string)$section['editable'],['si','1'],true))throw new RuntimeException('Contenedor no editable.');
@@ -35,11 +41,15 @@ try{
     }
     $db->commit();
    }catch(Throwable $e){$db->rollback();throw $e;}
-  }elseif($action==='config'){
+  }elseif($action==='config' || ($action==='modal_design' && $isModal)){
    $db->begin_transaction();
    try{
-    foreach(['titulo_bloque','subtitulo_bloque','texto','enlace','boton_texto'] as $key){
+    $keys = $action === 'modal_design' ? ['modal_encuadre', 'modal_color'] : ['titulo_bloque','subtitulo_bloque','texto','enlace','boton_texto'];
+    foreach($keys as $key){
      $value=trim((string)($_POST[$key]??''));if(mb_strlen($value)>1000)throw new RuntimeException('Configuración demasiado extensa.');
+     if ($key === 'modal_encuadre' && !in_array($value, ['contain','cover'], true)) throw new RuntimeException('Encuadre inválido.');
+     if ($key === 'modal_color' && !in_array($value, ['azul','marino'], true)) throw new RuntimeException('Color inválido.');
+     if ($isModal && $key === 'enlace' && $value !== '' && patrona_modal_link($value) === '#') throw new RuntimeException('Enlace inválido.');
      $q=$db->prepare('DELETE FROM seccion_config WHERE id_seccion=? AND clave=?');$q->bind_param('is',$sid,$key);$q->execute();
      $q=$db->prepare('INSERT INTO seccion_config(id_seccion,clave,valor) VALUES(?,?,?)');$q->bind_param('iss',$sid,$key,$value);$q->execute();
     }$db->commit();
@@ -48,12 +58,24 @@ try{
    $title=trim((string)($_POST['titulo']??''));$desc=patrona_rich_clean((string)($_POST['descripcion']??''));$url=trim((string)($_POST['url']??''));$label=trim((string)($_POST['etiqueta']??''));$subtitle=trim((string)($_POST['subtitulo']??''));
    if(mb_strlen($title)>220||mb_strlen($desc)>5000||mb_strlen($label)>120||mb_strlen($subtitle)>220)throw new RuntimeException('Texto demasiado largo.');
    if($url!==''&&!(($name==='equipo_docente_home'&&filter_var($url,FILTER_VALIDATE_EMAIL))||(filter_var($url,FILTER_VALIDATE_URL)&&in_array(strtolower((string)parse_url($url,PHP_URL_SCHEME)),['http','https'],true))))throw new RuntimeException('El enlace debe ser HTTP(S).');
+   $youtube = $isModal ? trim((string)($_POST['video_youtube'] ?? '')) : '';
+   if ($youtube !== '' && patrona_modal_youtube_id($youtube) === '') {
+    throw new RuntimeException('Ingresa un enlace válido de YouTube.');
+   }
    $image='';
    if($id){$q=$db->prepare('SELECT imagen FROM seccion_item WHERE id_item=? AND id_seccion=?');$q->bind_param('ii',$id,$sid);$q->execute();$old=$q->get_result()->fetch_assoc();if(!$old)throw new RuntimeException('Elemento no encontrado');$image=(string)($old['imagen']??'');}
-   if(isset($_FILES['imagen'])&&($_FILES['imagen']['error']??UPLOAD_ERR_NO_FILE)!==UPLOAD_ERR_NO_FILE){
-    $f=$_FILES['imagen'];if($f['error']!==UPLOAD_ERR_OK||$f['size']>5*1024*1024)throw new RuntimeException('Imagen inválida o mayor a 5 MB.');
-    $mime=(new finfo(FILEINFO_MIME_TYPE))->file($f['tmp_name']);$ext=['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp'][$mime]??'';
-    if($ext===''||!getimagesize($f['tmp_name']))throw new RuntimeException('Solo JPG, PNG o WebP.');
+   $hasUpload = isset($_FILES['imagen']) && ($_FILES['imagen']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
+   if ($isModal && $youtube !== '' && $hasUpload) throw new RuntimeException('Selecciona un archivo o un enlace de YouTube por ítem.');
+   if ($isModal && ($youtube !== '' || isset($_POST['quitar_archivo']))) $image = '';
+   if ($hasUpload) {
+    $f=$_FILES['imagen'];
+    if ($f['error'] !== UPLOAD_ERR_OK) throw new RuntimeException('No se pudo subir el archivo. Comprueba el límite de carga del servidor.');
+    $mime=(new finfo(FILEINFO_MIME_TYPE))->file($f['tmp_name']);
+    $extensions = ['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp'];
+    if ($isModal) $extensions['video/mp4'] = 'mp4';
+    $ext = $extensions[$mime] ?? '';
+    if ($ext === '' || ($ext !== 'mp4' && !getimagesize($f['tmp_name']))) throw new RuntimeException($isModal ? 'Solo JPG, PNG, WebP o MP4.' : 'Solo JPG, PNG o WebP.');
+    if ($f['size'] > ($ext === 'mp4' ? 50 : 5) * 1024 * 1024) throw new RuntimeException('El archivo excede el límite de carga.');
     $dir=__DIR__.'/assets/uploads/secciones/'.$name;
     if(!is_dir($dir)&&!mkdir($dir,0755,true)&&!is_dir($dir))throw new RuntimeException('No se pudo crear carpeta de imágenes.');
     $filename=bin2hex(random_bytes(16)).'.'.$ext;
@@ -61,7 +83,13 @@ try{
     $image='assets/uploads/secciones/'.$name.'/'.$filename;
    }
    $visible=($_POST['visible']??'si')==='no'?'no':'si';$orden=max(1,(int)($_POST['orden']??1));
-   if($id){
+   if ($isModal && $id) {
+    $q = $db->prepare('UPDATE seccion_item SET titulo=?,subtitulo=?,descripcion=?,imagen=?,video_youtube=?,url=?,visible=?,orden=? WHERE id_item=? AND id_seccion=?');
+    $q->bind_param('sssssssiii', $title, $subtitle, $desc, $image, $youtube, $url, $visible, $orden, $id, $sid);
+   } elseif ($isModal) {
+    $q = $db->prepare('INSERT INTO seccion_item(id_seccion,etiqueta,titulo,subtitulo,descripcion,imagen,video_youtube,url,visible,orden) VALUES(?,?,?,?,?,?,?,?,?,?)');
+    $q->bind_param('issssssssi', $sid, $label, $title, $subtitle, $desc, $image, $youtube, $url, $visible, $orden);
+   } elseif($id){
     $q=$db->prepare('UPDATE seccion_item SET etiqueta=?,titulo=?,subtitulo=?,descripcion=?,imagen=?,url=?,visible=?,orden=? WHERE id_item=? AND id_seccion=?');
     $q->bind_param('sssssssiii',$label,$title,$subtitle,$desc,$image,$url,$visible,$orden,$id,$sid);
    }else{
@@ -78,7 +106,7 @@ try{
   }elseif($action==='delete'){
    $q=$db->prepare('DELETE FROM seccion_item WHERE id_item=? AND id_seccion=?');$q->bind_param('ii',$id,$sid);$q->execute();
   }else throw new RuntimeException('Acción inválida');
-  $_SESSION['generic_notice']='Cambios guardados correctamente.';header('Location: editar_cms.php?id='.$sid);exit;
+  $_SESSION['generic_notice']='Cambios guardados correctamente.';header('Location: editar_cms.php?id='.$sid.($isModal ? '&tab='.$tab : ''));exit;
  }
  $q=$db->prepare('SELECT * FROM seccion_item WHERE id_seccion=? ORDER BY orden,id_item');$q->bind_param('i',$sid);$q->execute();$items=$q->get_result()->fetch_all(MYSQLI_ASSOC);
  $q=$db->prepare('SELECT clave,valor FROM seccion_config WHERE id_seccion=?');$q->bind_param('i',$sid);$q->execute();foreach($q->get_result()->fetch_all(MYSQLI_ASSOC) as $r)$config[$r['clave']]=$r['valor'];
@@ -89,9 +117,30 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 <style>
 .admin-shell{min-height:100vh;background:#f3f6fb}.cms-main{max-width:none!important}.cms-side{background:#102b50;color:#fff;padding:24px 18px}.cms-side a{display:block;padding:12px;color:#e0eafb;text-decoration:none}.cms-main{max-width:1120px;width:100%;margin:auto;padding:32px}.cms-card{background:#fff;border:1px solid #dce5ef;border-radius:12px;padding:24px;margin:22px 0}.cms-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.cms-field{display:flex;flex-direction:column;gap:7px;font-weight:600;font-size:13px}.cms-field input,.cms-field textarea,.cms-field select{border:1px solid #cbd5e1;border-radius:7px;padding:11px;font:inherit;font-weight:400}.cms-btn{background:#1765b8;color:white;border:0;border-radius:7px;padding:10px 16px;cursor:pointer;text-decoration:none}.cms-row{display:flex;align-items:center;gap:16px;padding:12px;border-bottom:1px solid #e4eaf0}.cms-row img{width:110px;height:82px;object-fit:cover;border-radius:9px}.cms-preview{display:none;max-width:320px;max-height:210px;object-fit:contain;border:1px solid #dce5ef;border-radius:10px;padding:8px;margin-top:12px}.cms-preview.is-visible{display:block}.cms-row{background:#fff;border-radius:10px;margin:8px 0}.cms-row strong{color:#123b70}.cms-row a{display:inline-block;margin-top:6px;color:#1765b8;font-weight:600}.cms-field input:focus,.cms-field textarea:focus,.cms-field select:focus{outline:2px solid #91bff2;border-color:#1765b8}.cms-row form{margin-left:auto}@media(max-width:750px){.cms-shell{grid-template-columns:1fr}.cms-grid{grid-template-columns:1fr}.cms-main{padding:15px}}
  .gallery-admin{margin-top:16px}.gallery-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.gallery-heading h2{margin:0}.gallery-heading p{font-size:12px;color:#657b95}.gallery-toolbar{display:flex;justify-content:flex-end;margin:14px 0}.gallery-views{background:#f3f6fa;padding:5px;border-radius:8px;display:flex;gap:4px}.gallery-views button{border:0;border-radius:6px;background:transparent;padding:9px 14px;cursor:pointer}.gallery-views button.active{background:#102c50;color:#fff}.gallery-list table{width:100%;border-collapse:collapse}.gallery-list th{text-align:left;text-transform:uppercase;font-size:11px;color:#5b7190;background:#f8fafc}.gallery-list th,.gallery-list td{padding:12px;border-bottom:1px solid #e1e9f1}.gallery-thumb{width:80px;height:55px;object-fit:cover;border-radius:7px}.gallery-grip{cursor:grab;color:#53769d}.gallery-list tr.dragging{opacity:.4}.gallery-list tr.dragover{outline:2px dashed #2677c1}.gallery-switch{width:36px;height:20px;border:0;border-radius:20px;background:#bdc8d6;padding:3px;cursor:pointer}.gallery-switch.on{background:#07669e}.gallery-switch span{display:block;width:14px;height:14px;background:white;border-radius:50%;transition:transform .15s}.gallery-switch.on span{transform:translateX(16px)}.gallery-actions{white-space:nowrap}.gallery-actions form{display:inline}.gallery-icon{background:#fff;border:1px solid #d6e3f1;color:#1a65a6;border-radius:7px;padding:9px;cursor:pointer;margin-right:5px}.gallery-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.gallery-cards[hidden],.gallery-modal[hidden]{display:none!important}.gallery-tile{border:1px solid #dce5ef;border-radius:10px;overflow:hidden}.gallery-tile img{width:100%;height:185px;object-fit:cover}.gallery-tile>div{padding:12px}.gallery-tile p{font-size:12px;color:#667b91}.gallery-tile button{background:none;border:0;color:#1262a4;cursor:pointer}.gallery-modal{position:fixed;inset:0;z-index:10000;background:#0d284a80;display:flex;justify-content:center;align-items:center;padding:20px}.gallery-dialog{background:white;border-radius:12px;width:min(860px,100%);max-height:calc(100vh - 40px);overflow:auto;box-shadow:0 20px 60px #09213e55}.gallery-modal-header,.gallery-modal-footer{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid #dce5ef}.gallery-modal-header h2{margin:0}.gallery-modal-body{padding:22px}.gallery-modal-footer{justify-content:flex-end;gap:12px;border-top:1px solid #dce5ef;border-bottom:0;background:#f8fafc}.gallery-close{font-size:28px;background:none;border:0;cursor:pointer;color:#56708d}.gallery-check{flex-direction:row;align-items:center}.gallery-image-preview{max-width:240px;max-height:160px;object-fit:contain;margin-top:8px;border-radius:8px}.gallery-image-preview[hidden]{display:none!important}@media(max-width:750px){.gallery-cards{grid-template-columns:1fr}.gallery-list{overflow:auto}.gallery-heading{align-items:flex-start;flex-direction:column}}
+.modal-editor-tabs{display:flex;flex-wrap:wrap;gap:10px;padding:12px;background:#f6f8fc}
+.modal-editor-tabs a{padding:9px 16px;border:1px solid #dbe5ef;border-radius:8px;background:white;color:#193553;font-weight:600}
+.modal-editor-tabs a[aria-current=page]{background:#102d52;border-color:#102d52;color:white}
+.modal-item-list{margin-top:16px;border:1px solid #dbe5ef;border-radius:10px;overflow:hidden}
+.modal-item-list:empty{display:none}
+.modal-item{display:grid;grid-template-columns:40px 110px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px;border-bottom:1px solid #dbe5ef}
+.modal-item:last-child{border-bottom:0}
+.modal-item-actions{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.modal-item-actions form{margin:0}
+.modal-item-list.is-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:12px;border:0}
+.modal-item-list.is-cards .modal-item{grid-template-columns:1fr;gap:8px;border:1px solid #dbe5ef;border-radius:10px}
+.modal-item-list.is-cards .gallery-thumb{width:100%;height:135px;object-fit:contain;background:#f3f6fa}
+@media(max-width:700px){.modal-item{grid-template-columns:28px 74px minmax(0,1fr)}.modal-item-actions{grid-column:3}}
 </style><?php patrona_rich_assets(); ?></head><body><div class="admin-shell"><?php $panel = 'contenedores'; require __DIR__.'/includes/patrona_sidebar.php'; ?><div class="admin-content"><header class="topbar" data-sidebar-toolbar><span>Panel de administración / Contenedores / Editor</span><a href="admin.php?panel=contenedores">← Volver</a></header><main class="cms-main"><small>GESTIÓN DEL SITIO / CONTENEDORES</small><h1><?=ce($section['titulo_admin']??'Editor de contenedores')?></h1><p>Configuración y elementos del contenedor. Utiliza las mismas tablas CMS de Tabancura.</p>
 <?php if($error):?><p style="color:#a92323"><?=ce($error)?></p><?php endif;?><?php if($notice):?><p style="color:#16703b"><?=ce($notice)?></p><?php endif;?>
 <?php if($section):?>
+<?php if ($isModal): ?>
+<nav class="cms-card modal-editor-tabs" aria-label="Configuración del modal">
+ <?php foreach ($modalTabs as $key => $label): ?>
+ <a href="?id=<?=$sid?>&amp;tab=<?=ce($key)?>" <?=$key === $tab ? 'aria-current="page"' : ''?>><?=ce($label)?></a>
+ <?php endforeach; ?>
+</nav>
+<?php endif; ?>
+<?php if (!$isModal || $tab === 'general'): ?>
 <?php if(($section['nombre_interno']??'')==='footer_principal'):?>
 <section class="cms-card"><h2>Identidad y contacto del colegio</h2><p>Estos datos se muestran en el pie de página. Completa únicamente información verificada.</p>
 <form method="post"><input type="hidden" name="id_seccion" value="<?=$sid?>"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="footer_config"><div class="cms-grid">
@@ -100,10 +149,46 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 <?php endforeach;?></div><p><button class="cms-btn">Guardar pie de página</button></p></form></section>
 <section class="cms-card"><h2>Enlaces institucionales</h2><p>Se obtienen del menú público administrable; no es necesario duplicarlos en el pie de página.</p><a href="admin.php?panel=menu">Administrar menú público</a></section>
 <?php else:?>
-<section class="cms-card"><h2>Configuración</h2><form method="post"><input type="hidden" name="id_seccion" value="<?=(int)$sid?>"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="config"><div class="cms-grid">
+<section class="cms-card"><h2>Configuración</h2><?php if ($isModal): ?><p>Estos valores se usan cuando un ítem no tiene su propio título, texto o enlace.</p><?php endif; ?><form method="post"><input type="hidden" name="id_seccion" value="<?=(int)$sid?>"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="config"><div class="cms-grid">
 <?php foreach(['titulo_bloque'=>'Título del bloque','subtitulo_bloque'=>'Subtítulo','texto'=>'Texto','enlace'=>'Enlace','boton_texto'=>'Texto del botón'] as $key=>$label):?><label class="cms-field"><?=ce($label)?><input name="<?=ce($key)?>" value="<?=ce($config[$key]??'')?>" maxlength="1000"></label><?php endforeach;?>
 </div><p><button class="cms-btn">Guardar configuración</button></p></form></section>
 <?php endif;?>
+<?php endif; ?>
+<?php if ($isModal && $tab === 'diseno'): ?>
+<section class="cms-card">
+ <h2>Diseño del modal</h2>
+ <form method="post">
+  <input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>">
+  <input type="hidden" name="accion" value="modal_design">
+  <div class="cms-grid">
+   <label class="cms-field">Encuadre de imagen
+    <select name="modal_encuadre">
+     <option value="contain">Imagen completa</option>
+     <option value="cover" <?=($config['modal_encuadre'] ?? '') === 'cover' ? 'selected' : ''?>>Llenar el espacio</option>
+    </select>
+   </label>
+   <label class="cms-field">Color del botón
+    <select name="modal_color">
+     <option value="azul">Azul institucional</option>
+     <option value="marino" <?=($config['modal_color'] ?? '') === 'marino' ? 'selected' : ''?>>Azul marino</option>
+    </select>
+   </label>
+  </div>
+  <p><button class="cms-btn">Guardar diseño</button></p>
+ </form>
+</section>
+<?php elseif ($isModal && $tab === 'preview'): ?>
+<section class="cms-card" id="modal-preview"><h2>Vista previa</h2>
+ <?php if ($section['estado'] !== 'activo' || $section['visible'] !== 'si'): ?>
+ <p>El contenedor está inactivo u oculto. Esta vista solo es visible desde el panel.</p>
+ <?php endif; ?>
+ <?php
+ $previewItem = (int)($_GET['preview_item'] ?? 0);
+ $previewItems = $previewItem ? array_filter($items, static fn(array $item): bool => (int)$item['id_item'] === $previewItem) : $items;
+ patrona_render_modal_institucional([array_merge($section, ['items' => $previewItems, 'config' => $config])], true);
+ ?>
+</section>
+<?php elseif (!$isModal || $tab === 'items'): ?>
 <?php if(($section['nombre_interno']??'')==='footer_principal'):?>
 <section class="cms-card"><h2>Vista previa</h2><p>El pie de página se actualiza en el sitio público después de guardar los cambios.</p><a class="cms-btn" href="index.php#contacto" target="_blank" rel="noopener">Ver pie de página ↗</a></section>
 <?php elseif(($section['nombre_interno']??'')==='galeria_home'):?>
@@ -136,24 +221,96 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 <label class="cms-field">Título<input name="titulo" maxlength="220" value="<?=ce($editing['titulo']??'')?>"></label>
 <?php if(($section['nombre_interno']??'')==='equipo_docente_home'):?>
 <label class="cms-field">Ciclo<select name="etiqueta"><?php foreach(['jardin'=>'Jardín','basica_1'=>'Básica 1.er ciclo','basica_2'=>'Básica 2.º ciclo','media'=>'Enseñanza Media'] as $key=>$label):?><option value="<?=ce($key)?>" <?=($editing['etiqueta']??'')===$key?'selected':''?>><?=ce($label)?></option><?php endforeach;?></select></label>
-<?php else:?><label class="cms-field">Etiqueta<input name="etiqueta" maxlength="120" value="<?=ce($editing['etiqueta']??'')?>"></label><?php endif;?>
+<?php elseif (!$isModal):?><label class="cms-field">Etiqueta<input name="etiqueta" maxlength="120" value="<?=ce($editing['etiqueta']??'')?>"></label><?php endif;?>
 <label class="cms-field"><?=($section['nombre_interno']??'')==='equipo_docente_home'?'Cargo / curso (Coordinación, Profesor jefe, etc.)':'Subtítulo'?><input name="subtitulo" maxlength="220" value="<?=ce($editing['subtitulo']??'')?>"></label>
+<?php if ($isModal): ?>
+<label class="cms-field">Imagen (5 MB) o video MP4 (50 MB)
+ <input type="file" name="imagen" accept="image/jpeg,image/png,image/webp,video/mp4">
+ <small id="modal-current-file"></small>
+ <span><input type="checkbox" name="quitar_archivo" value="1"> Quitar archivo actual</span>
+</label>
+<label class="cms-field">Enlace de YouTube<input type="url" name="video_youtube" placeholder="https://www.youtube.com/watch?v=…"></label>
+<?php else: ?>
 <label class="cms-field">Imagen JPG/PNG/WebP, máximo 5 MB<input type="file" name="imagen" accept="image/jpeg,image/png,image/webp" id="cms-image-input"><img class="cms-preview" id="cms-image-preview" alt="Vista previa de imagen seleccionada"></label>
+<?php endif; ?>
 <label class="cms-field"><?=($section['nombre_interno']??'')==='equipo_docente_home'?'Correo institucional':'Enlace HTTP(S)'?><input type="<?=($section['nombre_interno']??'')==='equipo_docente_home'?'email':'url'?>" name="url" value="<?=ce($editing['url']??'')?>"></label>
 <label class="cms-field">Orden<input type="number" min="1" name="orden" value="<?=(int)($editing['orden']??count($items)+1)?>"></label>
 <label class="cms-field">Visibilidad<select name="visible"><option value="si" <?=($editing['visible']??'si')==='si'?'selected':''?>>Visible</option><option value="no" <?=($editing['visible']??'si')==='no'?'selected':''?>>Oculto</option></select></label>
 <label class="cms-field" style="grid-column:1/-1">Descripción<textarea name="descripcion" rows="4" maxlength="5000" data-rich-editor><?=ce($editing['descripcion']??'')?></textarea></label>
-</div><?php if(!empty($editing['imagen'])):?><p><img src="<?=ce($editing['imagen'])?>" alt="" style="max-width:180px;max-height:120px"></p><?php endif;?></div><div class="gallery-modal-footer patrona-modal-footer"><button class="cms-btn" type="submit">Guardar elemento</button></div></form></div></div>
+</div><?php if(!$isModal && !empty($editing['imagen'])):?><p><img src="<?=ce($editing['imagen'])?>" alt="" style="max-width:180px;max-height:120px"></p><?php endif;?></div><div class="gallery-modal-footer patrona-modal-footer"><button class="cms-btn" type="submit">Guardar elemento</button></div></form></div></div>
+<?php if ($isModal): ?>
+<section class="cms-card gallery-admin">
+ <div class="gallery-heading"><h2>Elementos registrados (<?=count($items)?>)</h2>
+  <?php if ($items): ?>
+  <div class="gallery-views" aria-label="Formato de visualización">
+   <button type="button" class="active" data-modal-layout="list" aria-pressed="true">Listado</button>
+   <button type="button" data-modal-layout="cards" aria-pressed="false">Tarjetas</button>
+  </div>
+  <?php endif; ?>
+ </div>
+ <?php if (!$items): ?><p>Agrega un ítem para comenzar.</p><?php endif; ?>
+ <div id="modal-item-list" class="modal-item-list">
+  <?php foreach ($items as $item):
+   $itemId = (int)$item['id_item'];
+   $media = patrona_modal_local_media((string)($item['imagen'] ?? ''));
+   $youtubeId = patrona_modal_youtube_id((string)($item['video_youtube'] ?? ''));
+   $video = patrona_modal_is_video($media);
+   $visible = $item['visible'] === 'si';
+  ?>
+  <article class="modal-item">
+   <span class="modal-item-order"><?=(int)$item['orden']?></span>
+   <div class="modal-item-media">
+    <?php if ($youtubeId): ?><span><i class="bi bi-youtube"></i> YouTube</span>
+    <?php elseif ($video): ?><span><i class="bi bi-film"></i> MP4</span>
+    <?php elseif ($media !== ''): ?><img class="gallery-thumb" src="<?=ce($media)?>" alt="">
+    <?php else: ?><span><i class="bi bi-card-text"></i> Texto</span><?php endif; ?>
+   </div>
+   <strong><?=ce($item['titulo'] ?: 'Sin título')?></strong>
+   <div class="modal-item-actions">
+    <form method="post">
+     <input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>">
+     <input type="hidden" name="accion" value="toggle">
+     <input type="hidden" name="id_item" value="<?=$itemId?>">
+     <button class="gallery-switch <?=$visible ? 'on' : ''?>" type="submit" aria-label="Cambiar visibilidad" aria-pressed="<?=$visible ? 'true' : 'false'?>" title="<?=$visible ? 'Visible' : 'Oculto'?>"><span></span></button>
+    </form>
+    <a class="gallery-icon" href="?id=<?=$sid?>&amp;tab=preview&amp;preview_item=<?=$itemId?>#modal-preview" aria-label="Vista previa"><i class="bi bi-eye" aria-hidden="true"></i></a>
+    <button class="gallery-icon generic-edit" type="button" data-id="<?=$itemId?>" aria-label="Editar ítem"><i class="bi bi-pencil-square" aria-hidden="true"></i></button>
+    <form method="post" onsubmit="return confirm('¿Eliminar este elemento?')">
+     <input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>">
+     <input type="hidden" name="accion" value="delete">
+     <input type="hidden" name="id_item" value="<?=$itemId?>">
+     <button class="gallery-icon" type="submit" aria-label="Eliminar ítem"><i class="bi bi-trash" aria-hidden="true"></i></button>
+    </form>
+   </div>
+  </article>
+  <?php endforeach; ?>
+ </div>
+</section>
+<script>
+document.querySelectorAll('[data-modal-layout]').forEach(button => {
+    button.addEventListener('click', () => {
+        document.getElementById('modal-item-list').classList.toggle('is-cards', button.dataset.modalLayout === 'cards');
+        document.querySelectorAll('[data-modal-layout]').forEach(option => {
+            option.classList.toggle('active', option === button);
+            option.setAttribute('aria-pressed', String(option === button));
+        });
+    });
+});
+</script>
+<?php else: ?>
 <section class="cms-card"><h2>Elementos registrados (<?=count($items)?>)</h2><?php if(!$items):?><p>No hay elementos registrados.</p><?php endif;?>
-<?php foreach($items as $item):?><div class="cms-row"><?php if(!empty($item['imagen'])):?><img src="<?=ce($item['imagen'])?>" alt=""><?php endif;?><div><strong><?=ce($item['titulo']??'')?></strong><p><?=ce($item['visible']??'')?> · Orden <?=(int)$item['orden']?></p><button type="button" class="gallery-icon generic-edit" data-id="<?=(int)$item['id_item']?>" title="Editar elemento"><i class="bi bi-pencil-square"></i> Editar</button></div><form method="post" onsubmit="return confirm('¿Eliminar este elemento?')"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="id_seccion" value="<?=(int)$sid?>"><input type="hidden" name="accion" value="delete"><input type="hidden" name="id_item" value="<?=(int)$item['id_item']?>"><button type="submit">Eliminar</button></form></div><?php endforeach;?></section><?php endif;?>
-<script type="application/json" id="generic-items"><?=json_encode(array_map(static fn(array $i):array=>['id'=>(int)$i['id_item'],'titulo'=>(string)($i['titulo']??''),'etiqueta'=>(string)($i['etiqueta']??''),'subtitulo'=>(string)($i['subtitulo']??''),'descripcion'=>(string)($i['descripcion']??''),'url'=>(string)($i['url']??''),'orden'=>(int)$i['orden'],'visible'=>(string)$i['visible'],'imagen'=>(string)($i['imagen']??'')],$items),JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT)?></script>
+<?php foreach($items as $item):?><div class="cms-row"><?php if(!empty($item['imagen']) && (!$isModal || !patrona_modal_is_video($item['imagen']))):?><img src="<?=ce($item['imagen'])?>" alt=""><?php endif;?><div><strong><?=ce($item['titulo']??'')?></strong><p><?=ce($item['visible']??'')?> · Orden <?=(int)$item['orden']?></p><button type="button" class="gallery-icon generic-edit" data-id="<?=(int)$item['id_item']?>" title="Editar elemento"><i class="bi bi-pencil-square"></i> Editar</button></div><form method="post" onsubmit="return confirm('¿Eliminar este elemento?')"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="id_seccion" value="<?=(int)$sid?>"><input type="hidden" name="accion" value="delete"><input type="hidden" name="id_item" value="<?=(int)$item['id_item']?>"><button type="submit">Eliminar</button></form></div><?php endforeach;?></section>
+<?php endif; ?>
+<script type="application/json" id="generic-items"><?=json_encode(array_map(static fn(array $i):array=>['id'=>(int)$i['id_item'],'titulo'=>(string)($i['titulo']??''),'etiqueta'=>(string)($i['etiqueta']??''),'subtitulo'=>(string)($i['subtitulo']??''),'descripcion'=>(string)($i['descripcion']??''),'video_youtube'=>(string)($i['video_youtube']??''),'url'=>(string)($i['url']??''),'orden'=>(int)$i['orden'],'visible'=>(string)$i['visible'],'imagen'=>(string)($i['imagen']??'')],$items),JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT)?></script>
 <script>
 (()=>{const modal=document.getElementById('generic-modal');if(!modal)return;const form=document.getElementById('generic-form'),data=JSON.parse(document.getElementById('generic-items').textContent),input=form.querySelector('input[type=file]'),preview=document.getElementById('cms-image-preview');let blob=null;const field=n=>form.elements.namedItem(n);
-function open(item){form.reset();field('id_item').value=item?.id||0;for(const n of ['titulo','etiqueta','subtitulo','descripcion','url']){const el=field(n);if(el)el.value=item?.[n]||''}field('orden').value=item?.orden||data.length+1;field('visible').value=item?.visible||'si';if(preview){preview.src=item?.imagen||'';preview.classList.toggle('is-visible',!!item?.imagen)}document.getElementById('generic-modal-title').textContent=item?'Editar elemento':'Agregar elemento';modal.hidden=false;document.body.style.overflow='hidden';form.querySelector('input[name=titulo]').focus()}
+function open(item){form.reset();field('id_item').value=item?.id||0;for(const n of ['titulo','etiqueta','subtitulo','descripcion','url','video_youtube']){const el=field(n);if(el)el.value=item?.[n]||''}const currentFile=document.getElementById('modal-current-file');
+if(currentFile) currentFile.textContent=item?.imagen ? 'Archivo actual: '+item.imagen.split('/').pop() : '';
+field('orden').value=item?.orden||Math.max(0,...data.map(entry=>entry.orden))+1;field('visible').value=item?.visible||'si';if(preview){preview.src=item?.imagen||'';preview.classList.toggle('is-visible',!!item?.imagen)}document.getElementById('generic-modal-title').textContent=item?'Editar elemento':'Agregar elemento';modal.hidden=false;document.body.style.overflow='hidden';form.querySelector('input[name=titulo]').focus()}
 function close(){modal.hidden=true;document.body.style.overflow='';if(blob){URL.revokeObjectURL(blob);blob=null}}
-document.getElementById('generic-add').addEventListener('click',()=>open(null));document.querySelectorAll('.generic-edit').forEach(b=>b.addEventListener('click',()=>open(data.find(i=>i.id===Number(b.dataset.id)))));modal.querySelectorAll('.gallery-close').forEach(b=>b.addEventListener('click',close));if(input)input.addEventListener('change',()=>{if(blob)URL.revokeObjectURL(blob);blob=null;const f=input.files[0];if(!f)return;if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>5*1024*1024){alert('Solo JPG, PNG o WebP de máximo 5 MB');input.value='';return}blob=URL.createObjectURL(f);preview.src=blob;preview.classList.add('is-visible')});const selected=new URLSearchParams(location.search).get('item');if(selected)open(data.find(i=>i.id===Number(selected))||null);
+document.getElementById('generic-add').addEventListener('click',()=>open(null));document.querySelectorAll('.generic-edit').forEach(b=>b.addEventListener('click',()=>open(data.find(i=>i.id===Number(b.dataset.id)))));modal.querySelectorAll('.gallery-close').forEach(b=>b.addEventListener('click',close));if(input&&preview)input.addEventListener('change',()=>{if(blob)URL.revokeObjectURL(blob);blob=null;const f=input.files[0];if(!f)return;if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>5*1024*1024){alert('Solo JPG, PNG o WebP de máximo 5 MB');input.value='';return}blob=URL.createObjectURL(f);preview.src=blob;preview.classList.add('is-visible')});const selected=new URLSearchParams(location.search).get('item');if(selected)open(data.find(i=>i.id===Number(selected))||null);
 })();
-</script><?php endif;?></main></div><script>
+</script><?php endif;?><?php endif; ?><?php endif; ?></main></div></div><script>
 (function(){
  const input=document.getElementById('cms-image-input'),preview=document.getElementById('cms-image-preview');
  if(!input||!preview)return;

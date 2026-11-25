@@ -1,64 +1,89 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__.'/../includes/rich_editor.php';
-/** Modal institucional automático. Solo contenido publicado en el CMS. */
-function patrona_render_modal_institucional(array $sections): void {
-    $section=null;
-    foreach($sections as $candidate){
-        if(($candidate['nombre_interno']??'')==='modal_institucional'){$section=$candidate;break;}
-    }
-    if(!$section)return;
-    $items=$section['items']??[];
-    if(!$items)return;
-    $item=$items[0];
-    $title=trim((string)($item['titulo']??''));
-    $description=trim((string)($item['descripcion']??''));
-    $image=trim((string)($item['imagen']??''));
-    $url=patrona_cms_url($item['url']??'');
-    if($title===''&&$description===''&&$image==='')return;
 
+require_once __DIR__.'/../includes/rich_editor.php';
+require_once __DIR__.'/portada.php';
+require_once __DIR__.'/../includes/patrona_modal_media.php';
+
+function patrona_render_modal_institucional(array $sections, bool $preview = false): void
+{
+    foreach ($sections as $section) {
+        if (($section['nombre_interno'] ?? '') === 'modal_institucional') {
+            break;
+        }
+    }
+    if (($section['nombre_interno'] ?? '') !== 'modal_institucional') return;
+
+    $config = $section['config'] ?? [];
+    $slides = [];
+    foreach ($section['items'] ?? [] as $item) {
+        if (!$preview && ($item['visible'] ?? '') !== 'si') continue;
+        $title = trim((string)($item['titulo'] ?? ''));
+        $subtitle = trim((string)($item['subtitulo'] ?? ''));
+        $description = trim((string)($item['descripcion'] ?? ''));
+        $media = patrona_modal_local_media(trim((string)($item['imagen'] ?? '')));
+        $youtube = patrona_modal_youtube_id((string)($item['video_youtube'] ?? ''));
+        $url = patrona_modal_link($item['url'] ?? '');
+        if ($title === '' && $subtitle === '' && $description === '' && $media === '' && $youtube === '' && $url === '#') continue;
+        $slides[] = [
+            'title' => $title ?: ((string)($config['titulo_bloque'] ?? '') ?: 'Comunicado institucional'),
+            'subtitle' => $subtitle ?: (string)($config['subtitulo_bloque'] ?? ''),
+            'description' => $description ?: (string)($config['texto'] ?? ''),
+            'media' => $media,
+            'youtube' => $youtube,
+            'url' => $url === '#' ? patrona_modal_link($config['enlace'] ?? '') : $url,
+            'hidden' => ($item['visible'] ?? '') !== 'si',
+        ];
+    }
+
+    if (!$slides) {
+        if ($preview) echo '<p>Agrega un ítem con texto, imagen o video para ver el modal.</p>';
+        return;
+    }
+
+    $fit = ($config['modal_encuadre'] ?? '') === 'cover' ? 'cover' : 'contain';
+    $color = ($config['modal_color'] ?? '') === 'marino' ? 'navy' : 'blue';
+    $label = trim((string)($config['boton_texto'] ?? '')) ?: 'Más información';
+    $count = count($slides);
     ?>
-    <div id="patrona-modal-institucional" class="pm-backdrop" hidden>
-      <section class="pm-dialog" role="dialog" aria-modal="true" aria-labelledby="pm-modal-title" tabindex="-1">
-        <button class="pm-close" type="button" aria-label="Cerrar comunicado" data-pm-close>&times;</button>
-        <?php if($image!=='' && preg_match('~^(?:assets/|/assets/)~',$image)):?>
-          <img class="pm-image" src="<?=patrona_e($image)?>" alt="">
-        <?php endif;?>
-        <div class="pm-body">
-          <?php if($title!==''):?><h2 id="pm-modal-title"><?=patrona_e($title)?></h2><?php else:?><h2 id="pm-modal-title">Comunicado institucional</h2><?php endif;?>
-          <?php if($description!==''):?><p><?=patrona_rich_clean((string)($item['descripcion']??''))?></p><?php endif;?>
-          <?php if($url!=='#'):?><a class="pm-action" href="<?=patrona_e($url)?>" <?=preg_match('~^https?://~i',$url)?'target="_blank" rel="noopener noreferrer"':''?>>Más información</a><?php endif;?>
-        </div>
+    <link rel="stylesheet" href="assets/css/patrona-modal-institucional.css?v=1">
+    <div class="<?= $preview ? 'pm-preview' : 'pm-backdrop' ?>" data-patrona-modal <?= $preview ? '' : 'hidden' ?>>
+      <section class="pm-dialog pm-fit-<?= $fit ?> pm-color-<?= $color ?>"
+        <?= $preview ? 'aria-label="Vista previa del comunicado"' : 'role="dialog" aria-modal="true" aria-label="Comunicado institucional"' ?>>
+        <?php if (!$preview): ?>
+        <button class="pm-close" type="button" aria-label="Cerrar comunicado" data-pm-close>×</button>
+        <?php endif; ?>
+        <?php foreach ($slides as $index => $slide): ?>
+        <article data-pm-slide <?= $index === 0 ? '' : 'hidden' ?>>
+          <?php if ($slide['youtube'] !== ''): ?>
+          <iframe class="pm-video" title="<?=patrona_e($slide['title'])?>" src="about:blank"
+            data-pm-video="https://www.youtube-nocookie.com/embed/<?=patrona_e($slide['youtube'])?>" allowfullscreen></iframe>
+          <?php elseif ($slide['media'] !== '' && patrona_modal_is_video($slide['media'])): ?>
+          <video class="pm-video" src="<?=patrona_e($slide['media'])?>" controls playsinline preload="none"></video>
+          <?php elseif ($slide['media'] !== ''): ?>
+          <img class="pm-image" src="<?=patrona_e($slide['media'])?>" alt="">
+          <?php endif; ?>
+          <div class="pm-body">
+            <?php if ($preview && $slide['hidden']): ?><small>Ítem oculto en el sitio</small><?php endif; ?>
+            <h2><?=patrona_e($slide['title'])?></h2>
+            <?php if ($slide['subtitle'] !== ''): ?><p><?=patrona_e($slide['subtitle'])?></p><?php endif; ?>
+            <?php if ($slide['description'] !== ''): ?><div><?=patrona_rich_clean($slide['description'])?></div><?php endif; ?>
+            <?php if ($slide['url'] !== '#'): ?>
+            <a class="pm-action" href="<?=patrona_e($slide['url'])?>"
+              <?=preg_match('~^https?://~i', $slide['url']) ? 'target="_blank" rel="noopener noreferrer"' : ''?>><?=patrona_e($label)?></a>
+            <?php endif; ?>
+          </div>
+        </article>
+        <?php endforeach; ?>
+        <?php if ($count > 1): ?>
+        <nav class="pm-controls" aria-label="Diapositivas del comunicado">
+          <button type="button" data-pm-step="-1" aria-label="Anterior">‹</button>
+          <span data-pm-counter aria-live="polite">1 / <?=$count?></span>
+          <button type="button" data-pm-step="1" aria-label="Siguiente">›</button>
+        </nav>
+        <?php endif; ?>
       </section>
     </div>
-    <style>
-      .pm-backdrop[hidden]{display:none!important}.pm-backdrop{position:fixed;inset:0;z-index:10000;background:rgba(5,23,49,.72);display:flex;align-items:center;justify-content:center;padding:20px}
-      .pm-dialog{position:relative;background:#fff;color:#13365e;width:min(100%,620px);max-height:min(90vh,900px);overflow-y:auto;border-radius:16px;box-shadow:0 25px 90px #0006;outline:none}
-      .pm-close{position:absolute;right:12px;top:12px;z-index:1;width:var(--pl-target,44px);height:var(--pl-target,44px);border:0;border-radius:50%;background:#fff;color:var(--pl-navy,#153c6b);font-size:29px;line-height:1;cursor:pointer;box-shadow:0 2px 12px #0002}
-      .pm-image{display:block;width:100%;max-height:330px;object-fit:cover}.pm-body{padding:30px}.pm-body h2{margin:0 0 14px;font-size:clamp(23px,4vw,34px);line-height:1.2}.pm-body p{line-height:1.65;color:var(--pl-muted,#4b617c);white-space:normal}.pm-body p a{color:var(--pl-blue,#1b66a8);text-decoration:underline}.pm-action{display:inline-flex;align-items:center;min-height:var(--pl-target,44px);margin-top:15px;padding:12px 20px;border-radius:var(--pl-radius-sm,8px);background:var(--pl-blue,#1b66a8);color:white!important;text-decoration:none;font-weight:700;transition:background-color var(--pl-dur-fast,150ms) ease}.pm-action:hover{background:var(--pl-blue-hover,#0e5593)}
-      @media(max-width:600px){.pm-body{padding:22px}.pm-image{max-height:240px}}
-    </style>
-    <script>
-    (function(){
-      const root=document.getElementById('patrona-modal-institucional');
-      if(!root)return;
-      const dialog=root.querySelector('.pm-dialog'),close=root.querySelector('[data-pm-close]');
-      let previous=null;
-      function hide(){root.hidden=true;document.body.style.overflow='';document.removeEventListener('keydown',keyHandler);if(previous&&previous.focus)previous.focus();}
-      function keyHandler(e){
-        if(e.key==='Escape'){hide();return;}
-        if(e.key!=='Tab')return;
-        const focusables=[...dialog.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),[tabindex]:not([tabindex="-1"])')];
-        if(!focusables.length){e.preventDefault();dialog.focus();return;}
-        const first=focusables[0],last=focusables[focusables.length-1];
-        if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
-        else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
-      }
-      function show(){previous=document.activeElement;root.hidden=false;document.body.style.overflow='hidden';close.focus();document.addEventListener('keydown',keyHandler);}
-      close.addEventListener('click',hide);
-      root.addEventListener('click',e=>{if(e.target===root)hide();});
-      if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',show,{once:true});else show();
-    })();
-    </script>
+    <script src="assets/js/patrona-modal-institucional.js?v=1" defer></script>
     <?php
 }
