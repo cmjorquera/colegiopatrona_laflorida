@@ -23,7 +23,8 @@ function patrona_render_modal_institucional(array $sections, bool $preview = fal
         $description = trim((string)($item['descripcion'] ?? ''));
         $media = patrona_modal_local_media(trim((string)($item['imagen'] ?? '')));
         $youtube = patrona_modal_youtube_id((string)($item['video_youtube'] ?? ''));
-        $url = patrona_modal_link($item['url'] ?? '');
+        $itemLink = trim((string)($item['url'] ?? ''));
+        $url = patrona_modal_link($itemLink);
         if ($title === '' && $subtitle === '' && $description === '' && $media === '' && $youtube === '' && $url === '#') continue;
         $imageOnly = ($item['etiqueta'] ?? '') === 'solo_imagen';
         if ($imageOnly && ($media === '' || patrona_modal_is_video($media))) continue;
@@ -40,7 +41,7 @@ function patrona_render_modal_institucional(array $sections, bool $preview = fal
             'description' => $description ?: (string)($config['texto'] ?? ''),
             'media' => $media,
             'youtube' => $youtube,
-            'url' => $url === '#' ? patrona_modal_link($config['enlace'] ?? '') : $url,
+            'url' => $itemLink !== '#' && $url === '#' ? patrona_modal_link($config['enlace'] ?? '') : $url,
             'hidden' => ($item['visible'] ?? '') !== 'si',
         ];
     }

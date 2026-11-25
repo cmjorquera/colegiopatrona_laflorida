@@ -57,7 +57,7 @@ try{
   }elseif($action==='save'){
    $title=trim((string)($_POST['titulo']??''));$desc=patrona_rich_clean((string)($_POST['descripcion']??''));$url=trim((string)($_POST['url']??''));$label=trim((string)($_POST['etiqueta']??''));$subtitle=trim((string)($_POST['subtitulo']??''));
    if(mb_strlen($title)>220||mb_strlen($desc)>5000||mb_strlen($label)>120||mb_strlen($subtitle)>220)throw new RuntimeException('Texto demasiado largo.');
-   if ($isModal && $url !== '' && patrona_modal_link($url) === '#') throw new RuntimeException('Ingresa un enlace HTTP(S) o una ruta del sitio, como index.php#noticias-home.');
+   if ($isModal && $url !== '' && $url !== '#' && patrona_modal_link($url) === '#') throw new RuntimeException('Ingresa un enlace HTTP(S) o una ruta del sitio, como index.php#noticias-home.');
    if(!$isModal && $url!==''&&!(($name==='equipo_docente_home'&&filter_var($url,FILTER_VALIDATE_EMAIL))||(filter_var($url,FILTER_VALIDATE_URL)&&in_array(strtolower((string)parse_url($url,PHP_URL_SCHEME)),['http','https'],true))))throw new RuntimeException('El enlace debe ser HTTP(S).');
    $imageOnly = $isModal && ($_POST['tipo_modal'] ?? '') === 'solo_imagen';
    $youtube = $isModal ? trim((string)($_POST['video_youtube'] ?? '')) : '';
@@ -145,6 +145,11 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 #generic-modal.institutional-item-editor{grid-template-columns:minmax(0,1fr)}
 #generic-modal.institutional-item-editor .patrona-modal-panel{width:min(1120px,calc(100vw - 32px))}
 @media(max-width:700px){#generic-modal.institutional-item-editor .patrona-modal-panel{width:calc(100vw - 20px)}}
+#generic-modal .institutional-wide{grid-column:1/-1}
+#generic-modal.institutional-item-editor .cms-field[hidden]{display:none}
+.institutional-item-editor .cms-field,.institutional-item-editor details{border:1px solid #dbe5ef;border-radius:9px;padding:10px;min-width:0}
+.institutional-item-editor .rich-editor .rich-content{min-height:110px;padding:10px 12px}
+.institutional-item-editor #modal-item-options[open]>.cms-grid{margin-top:10px}
 </style><?php patrona_rich_assets(); ?></head><body><div class="admin-shell"><?php $panel = 'contenedores'; require __DIR__.'/includes/patrona_sidebar.php'; ?><div class="admin-content"><header class="topbar" data-sidebar-toolbar><span>Panel de administración / Contenedores / Editor</span><a href="admin.php?panel=contenedores">← Volver</a></header><main class="cms-main"><small>GESTIÓN DEL SITIO / CONTENEDORES</small><h1><?=ce($section['titulo_admin']??'Editor de contenedores')?></h1><p>Configuración y elementos del contenedor. Utiliza las mismas tablas CMS de Tabancura.</p>
 <?php if($error):?><p style="color:#a92323"><?=ce($error)?></p><?php endif;?><?php if($notice):?><p style="color:#16703b"><?=ce($notice)?></p><?php endif;?>
 <?php if($section):?>
@@ -239,30 +244,39 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
  <label><input type="radio" name="tipo_modal" value="informativo" checked><span><strong>Informativo</strong><small>Imagen o video, título, mensaje y botón</small></span></label>
  <label><input type="radio" name="tipo_modal" value="solo_imagen"><span><strong>Solo imagen</strong><small>Afiche con enlace opcional</small></span></label>
 </fieldset>
-<?php endif; ?>
+<label class="cms-field institutional-wide"><span id="modal-file-label">Imagen lateral o video MP4</span>
+ <input type="file" name="imagen" accept="image/jpeg,image/png,image/webp,video/mp4">
+ <small id="modal-current-file"></small>
+ <span id="modal-remove-file" hidden><input type="checkbox" name="quitar_archivo" value="1"> Quitar archivo actual</span>
+</label>
+<label class="cms-field institutional-wide" id="modal-item-title">Título<input name="titulo" maxlength="220" placeholder="Bienvenidos al nuevo año escolar"></label>
+<label class="cms-field institutional-wide" data-modal-informativo>Mensaje<textarea name="descripcion" rows="4" maxlength="5000" data-rich-editor></textarea></label>
+<label class="cms-field" data-modal-informativo>Texto del botón<input name="boton_1_texto" maxlength="120" placeholder="Comenzar a navegar"><small>Vacío = sin botón.</small></label>
+<label class="cms-field" id="modal-link-field"><span id="modal-link-label">Enlace del botón</span>
+ <input type="text" name="url" placeholder="# para solo cerrar o https://…">
+ <small id="modal-link-help">Con #, el botón cierra el modal y deja al visitante en la portada.</small>
+</label>
+<details id="modal-item-options" class="institutional-wide">
+ <summary>Más opciones</summary>
+ <div class="cms-grid">
+  <label class="cms-field" data-modal-informativo>Enlace de YouTube<input type="url" name="video_youtube" placeholder="https://www.youtube.com/watch?v=…"></label>
+  <label class="cms-field">Orden en el carrusel<input type="number" min="1" name="orden"></label>
+  <label class="cms-field">Visibilidad<select name="visible"><option value="si">Visible</option><option value="no">Oculto</option></select></label>
+ </div>
+</details>
+<input type="hidden" name="subtitulo">
+<?php else: ?>
 <label class="cms-field">Título<input name="titulo" maxlength="220" value="<?=ce($editing['titulo']??'')?>"></label>
 <?php if(($section['nombre_interno']??'')==='equipo_docente_home'):?>
 <label class="cms-field">Ciclo<select name="etiqueta"><?php foreach(['jardin'=>'Jardín','basica_1'=>'Básica 1.er ciclo','basica_2'=>'Básica 2.º ciclo','media'=>'Enseñanza Media'] as $key=>$label):?><option value="<?=ce($key)?>" <?=($editing['etiqueta']??'')===$key?'selected':''?>><?=ce($label)?></option><?php endforeach;?></select></label>
-<?php elseif (!$isModal):?><label class="cms-field">Etiqueta<input name="etiqueta" maxlength="120" value="<?=ce($editing['etiqueta']??'')?>"></label><?php endif;?>
+<?php else:?><label class="cms-field">Etiqueta<input name="etiqueta" maxlength="120" value="<?=ce($editing['etiqueta']??'')?>"></label><?php endif;?>
 <label class="cms-field"><?=($section['nombre_interno']??'')==='equipo_docente_home'?'Cargo / curso (Coordinación, Profesor jefe, etc.)':'Subtítulo'?><input name="subtitulo" maxlength="220" value="<?=ce($editing['subtitulo']??'')?>"></label>
-<?php if ($isModal): ?>
-<label class="cms-field"><span id="modal-file-label">Imagen (5 MB) o video MP4 (50 MB)</span>
- <input type="file" name="imagen" accept="image/jpeg,image/png,image/webp,video/mp4">
- <small id="modal-current-file"></small>
- <span><input type="checkbox" name="quitar_archivo" value="1"> Quitar archivo actual</span>
-</label>
-<label class="cms-field" data-modal-informativo>Enlace de YouTube<input type="url" name="video_youtube" placeholder="https://www.youtube.com/watch?v=…"></label>
-<?php else: ?>
 <label class="cms-field">Imagen JPG/PNG/WebP, máximo 5 MB<input type="file" name="imagen" accept="image/jpeg,image/png,image/webp" id="cms-image-input"><img class="cms-preview" id="cms-image-preview" alt="Vista previa de imagen seleccionada"></label>
+<label class="cms-field">Enlace<input type="<?=($name==='equipo_docente_home')?'email':'url'?>" name="url" value="<?=ce($editing['url']??'')?>"></label>
+<label class="cms-field">Orden<input type="number" min="1" name="orden"></label>
+<label class="cms-field">Visibilidad<select name="visible"><option value="si">Visible</option><option value="no">Oculto</option></select></label>
+<label class="cms-field" style="grid-column:1/-1">Descripción<textarea name="descripcion" rows="4" maxlength="5000" data-rich-editor><?=ce($editing['descripcion']??'')?></textarea></label>
 <?php endif; ?>
-<label class="cms-field"><?=($section['nombre_interno']??'')==='equipo_docente_home'?'Correo institucional':($isModal?'Enlace de destino (opcional)':'Enlace HTTP(S)')?><input type="<?=($section['nombre_interno']??'')==='equipo_docente_home'?'email':($isModal?'text':'url')?>" name="url" value="<?=ce($editing['url']??'')?>" <?php if ($isModal): ?>placeholder="index.php#noticias-home o https://…"<?php endif; ?>>
-<?php if ($isModal): ?><small>Abre esta página al pulsar el botón del modal o el afiche.</small><?php endif; ?></label>
-<label class="cms-field">Orden<input type="number" min="1" name="orden" value="<?=(int)($editing['orden']??count($items)+1)?>"></label>
-<label class="cms-field">Visibilidad<select name="visible"><option value="si" <?=($editing['visible']??'si')==='si'?'selected':''?>>Visible</option><option value="no" <?=($editing['visible']??'si')==='no'?'selected':''?>>Oculto</option></select></label>
-<?php if ($isModal): ?>
-<label class="cms-field" data-modal-informativo>Texto del botón<input name="boton_1_texto" maxlength="120"></label>
-<?php endif; ?>
-<label class="cms-field" <?=$isModal ? 'data-modal-informativo' : ''?> style="grid-column:1/-1">Descripción<textarea name="descripcion" rows="4" maxlength="5000" data-rich-editor><?=ce($editing['descripcion']??'')?></textarea></label>
 </div><?php if(!$isModal && !empty($editing['imagen'])):?><p><img src="<?=ce($editing['imagen'])?>" alt="" style="max-width:180px;max-height:120px"></p><?php endif;?></div><div class="gallery-modal-footer patrona-modal-footer"><button class="cms-btn" type="submit">Guardar elemento</button></div></form></div></div>
 <?php if ($isModal): ?>
 <section class="cms-card gallery-admin">
@@ -339,13 +353,23 @@ function syncType(){
   for(const control of el.querySelectorAll('input, textarea'))control.disabled=imageOnly;
  }
  input.accept='image/jpeg,image/png,image/webp'+(imageOnly?'':',video/mp4');
- document.getElementById('modal-file-label').textContent=imageOnly?'Imagen del afiche (máx. 5 MB)':'Imagen (5 MB) o video MP4 (50 MB)';
+ document.getElementById('modal-file-label').textContent=imageOnly?'Imagen del afiche (máx. 5 MB)':'Imagen lateral (5 MB) o video MP4 (50 MB)';
+ document.getElementById('modal-item-title').hidden=imageOnly;
+ const link=form.elements.url;
+ link.placeholder=imageOnly?'https://…':'# para solo cerrar o https://…';
+ document.getElementById('modal-link-field').classList.toggle('institutional-wide',imageOnly);
+ document.getElementById('modal-link-label').textContent=imageOnly?'Enlace del afiche (opcional)':'Enlace del botón';
+ document.getElementById('modal-link-help').textContent=imageOnly?'Vacío = imagen sin enlace.':'Con #, el botón cierra el modal y deja al visitante en la portada.';
 }
 types.forEach(type=>type.addEventListener('change',syncType));
 function open(item){form.reset();
 if(types.length){form.elements.tipo_modal.value=item?.etiqueta==='solo_imagen'?'solo_imagen':'informativo';syncType()}
 field('id_item').value=item?.id||0;for(const n of ['titulo','etiqueta','subtitulo','descripcion','url','video_youtube','boton_1_texto']){const el=field(n);if(el)el.value=item?.[n]||''}const currentFile=document.getElementById('modal-current-file');
-if(currentFile) currentFile.textContent=item?.imagen ? 'Archivo actual: '+item.imagen.split('/').pop() : '';
+if(currentFile){
+ currentFile.textContent=item?.imagen ? 'Archivo actual: '+item.imagen.split('/').pop() : '';
+ document.getElementById('modal-remove-file').hidden=!item?.imagen;
+ document.getElementById('modal-item-options').open=false;
+}
 field('orden').value=item?.orden||Math.max(0,...data.map(entry=>entry.orden))+1;field('visible').value=item?.visible||'si';if(preview){preview.src=item?.imagen||'';preview.classList.toggle('is-visible',!!item?.imagen)}document.getElementById('generic-modal-title').textContent=item?'Editar elemento':'Agregar elemento';modal.hidden=false;document.body.style.overflow='hidden';form.querySelector('input[name=titulo]').focus()}
 function close(){modal.hidden=true;document.body.style.overflow='';if(blob){URL.revokeObjectURL(blob);blob=null}}
 document.getElementById('generic-add').addEventListener('click',()=>open(null));document.querySelectorAll('.generic-edit').forEach(b=>b.addEventListener('click',()=>open(data.find(i=>i.id===Number(b.dataset.id)))));modal.querySelectorAll('.gallery-close').forEach(b=>b.addEventListener('click',close));if(input&&preview)input.addEventListener('change',()=>{if(blob)URL.revokeObjectURL(blob);blob=null;const f=input.files[0];if(!f)return;if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>5*1024*1024){alert('Solo JPG, PNG o WebP de máximo 5 MB');input.value='';return}blob=URL.createObjectURL(f);preview.src=blob;preview.classList.add('is-visible')});const selected=new URLSearchParams(location.search).get('item');if(selected)open(data.find(i=>i.id===Number(selected))||null);
