@@ -31,7 +31,17 @@ try{
   if(!hash_equals((string)$_SESSION['patrona_csrf'],(string)($_POST['csrf']??'')))throw new RuntimeException('Sesión vencida.');
   if(!in_array((string)$section['editable'],['si','1'],true))throw new RuntimeException('Contenedor no editable.');
   $action=(string)($_POST['accion']??'');$id=max(0,(int)($_POST['id_item']??0));
-  if($action==='footer_config' && $name==='footer_principal'){
+  if ($action === 'modal_publicacion' && $isModal) {
+   $status = (string)($_POST['estado'] ?? '');
+   $visibility = (string)($_POST['visible'] ?? '');
+   if (!in_array($status, ['activo','inactivo'], true) || !in_array($visibility, ['si','no'], true)) {
+    throw new RuntimeException('Selecciona un estado y una visibilidad válidos.');
+   }
+   $q = $db->prepare("UPDATE seccion SET estado=?, visible=? WHERE id_seccion=? AND id_institucion=2 AND nombre_interno='modal_institucional'");
+   $q->bind_param('ssi', $status, $visibility, $sid);
+   $q->execute();
+   $tab = 'general';
+  }elseif($action==='footer_config' && $name==='footer_principal'){
    $keys=['texto','direccion','telefono','correo','horario','mapa_url','instagram_url','facebook_url','youtube_url'];
    $db->begin_transaction();
    try{
@@ -153,6 +163,12 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 .institutional-item-editor .cms-field,.institutional-item-editor details{border:1px solid #dbe5ef;border-radius:9px;padding:10px;min-width:0}
 .institutional-item-editor .rich-editor .rich-content{min-height:110px;padding:10px 12px}
 .institutional-item-editor #modal-item-options[open]>.cms-grid{margin-top:10px}
+ .modal-publication{padding:0;border:0;margin:0;min-width:0}
+.modal-publication legend{font-weight:700;margin:0 0 10px;padding:0}
+.admin-shell .cms-modal-preview{width:min(1080px,calc(100vw - 24px));margin:auto}
+.cms-modal-preview::backdrop{background:rgb(5 23 49 / 56%)}
+.cms-modal-preview-stage{display:grid;grid-template-columns:minmax(0,1fr);align-items:center;min-height:260px;background:#414955;color:white;padding:clamp(12px,3vw,32px)}
+.cms-modal-preview-stage>[hidden]{display:none}
 </style><?php patrona_rich_assets(); ?></head><body><div class="admin-shell"><?php $panel = 'contenedores'; require __DIR__.'/includes/patrona_sidebar.php'; ?><div class="admin-content"><header class="topbar" data-sidebar-toolbar><span>Panel de administración / Contenedores / Editor</span><a href="admin.php?panel=contenedores">← Volver</a></header><main class="cms-main"><small>GESTIÓN DEL SITIO / CONTENEDORES</small><h1><?=ce($section['titulo_admin']??'Editor de contenedores')?></h1><p><?=$isModal ? 'Anuncios que se muestran automáticamente al abrir la portada.' : 'Configuración y elementos del contenedor.'?></p>
 <?php if($error):?><p style="color:#a92323"><?=ce($error)?></p><?php endif;?><?php if($notice):?><p style="color:#16703b"><?=ce($notice)?></p><?php endif;?>
 <?php if($section):?>
@@ -167,13 +183,23 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 <?php if ($isModal): ?>
 <section class="cms-card">
  <h2>Publicación en la portada</h2>
- <dl>
-  <dt>Estado del contenedor</dt><dd><?=$section['estado'] === 'activo' ? 'Activo' : 'Inactivo'?></dd>
-  <dt>Visibilidad en el sitio</dt><dd><?=$section['visible'] === 'si' ? 'Visible' : 'Oculto'?></dd>
- </dl>
- <p>Se abre automáticamente en la página principal cuando está activo, visible y tiene al menos un ítem visible con contenido.</p>
- <a class="cms-btn" href="?id=<?=$sid?>&amp;tab=items">Administrar ítems</a>
- <a class="gallery-icon" href="admin.php?panel=contenedores">Ir a Contenedores</a>
+ <p>Se abre automáticamente cuando el contenedor está activo, visible y tiene al menos un ítem visible con contenido.</p>
+ <form method="post">
+  <input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>">
+  <input type="hidden" name="accion" value="modal_publicacion">
+  <fieldset <?=in_array((string)$section['editable'], ['si','1'], true) ? '' : 'disabled'?> class="modal-publication">
+   <legend>Configuración del contenedor</legend>
+   <div class="cms-grid">
+    <label class="cms-field">Estado
+     <select name="estado"><option value="activo">Activo</option><option value="inactivo" <?=$section['estado'] === 'activo' ? '' : 'selected'?>>Inactivo</option></select>
+    </label>
+    <label class="cms-field">Visible en la portada
+     <select name="visible"><option value="si">Visible</option><option value="no" <?=$section['visible'] === 'si' ? '' : 'selected'?>>Oculto</option></select>
+    </label>
+   </div>
+   <p><button class="cms-btn" type="submit">Guardar publicación</button></p>
+  </fieldset>
+ </form>
 </section>
 <?php endif; ?>
 <?php if(($section['nombre_interno']??'')==='footer_principal'):?>
@@ -206,16 +232,38 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
  <a class="cms-btn" href="?id=<?=$sid?>&amp;tab=preview">Ver plantilla con tus ítems</a>
 </section>
 <?php elseif ($isModal && $tab === 'preview'): ?>
-<section class="cms-card" id="modal-preview"><h2>Vista previa</h2>
- <?php if ($section['estado'] !== 'activo' || $section['visible'] !== 'si'): ?>
- <p>El contenedor está inactivo u oculto. Esta vista solo es visible desde el panel.</p>
- <?php endif; ?>
- <?php
- $previewItem = (int)($_GET['preview_item'] ?? 0);
- $previewItems = $previewItem ? array_filter($items, static fn(array $item): bool => (int)$item['id_item'] === $previewItem) : $items;
- patrona_render_modal_institucional([array_merge($section, ['items' => $previewItems, 'config' => $config])], true);
- ?>
+<?php
+$previewItem = (int)($_GET['preview_item'] ?? 0);
+$previewItems = array_filter($items, static fn(array $item): bool =>
+ $previewItem ? (int)$item['id_item'] === $previewItem : $item['visible'] === 'si');
+?>
+<section class="cms-card">
+ <button class="cms-btn" type="button" id="open-modal-preview">Abrir vista previa</button>
+ <a class="gallery-icon" href="?id=<?=$sid?>&amp;tab=items">Volver a Ítems</a>
 </section>
+<dialog class="patrona-modal-panel cms-modal-preview" id="modal-preview" aria-labelledby="modal-preview-title">
+ <header class="patrona-modal-header">
+  <h2 id="modal-preview-title">Vista previa del modal institucional</h2>
+  <button class="patrona-modal-close" type="button" id="close-modal-preview" aria-label="Cerrar"><span aria-hidden="true">×</span></button>
+ </header>
+ <div class="cms-modal-preview-stage">
+ <?php patrona_render_modal_institucional([array_merge($section, ['items' => $previewItems, 'config' => $config])], true); ?>
+ </div>
+</dialog>
+<script>
+(() => {
+ const dialog = document.getElementById('modal-preview');
+ const openButton = document.getElementById('open-modal-preview');
+ function openPreview() {
+  dialog.showModal();
+  dialog.dispatchEvent(new Event('previewopen'));
+ }
+ openButton.addEventListener('click', openPreview);
+ document.getElementById('close-modal-preview').addEventListener('click', () => dialog.close());
+ dialog.addEventListener('cancel', event => event.preventDefault());
+ window.addEventListener('DOMContentLoaded', openPreview, {once: true});
+})();
+</script>
 <?php elseif (!$isModal || $tab === 'items'): ?>
 <?php if(($section['nombre_interno']??'')==='footer_principal'):?>
 <section class="cms-card"><h2>Vista previa</h2><p>El pie de página se actualiza en el sitio público después de guardar los cambios.</p><a class="cms-btn" href="index.php#contacto" target="_blank" rel="noopener">Ver pie de página ↗</a></section>

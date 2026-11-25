@@ -63,9 +63,10 @@ function patrona_render_modal_institucional(array $sections, bool $preview = fal
         <button class="pm-close" type="button" aria-label="Cerrar comunicado" data-pm-close>×</button>
         <?php endif; ?>
         <?php foreach ($slides as $index => $slide): ?>
+        <?php $destination = $preview && str_starts_with($slide['url'], '#') && $slide['url'] !== '#' ? '/index.php'.$slide['url'] : $slide['url']; ?>
         <article class="<?= $slide['image_only'] ? 'pm-image-only' : 'pm-informative' ?>" data-pm-slide <?= $index === 0 ? '' : 'hidden' ?>>
           <?php if ($slide['image_only']): ?>
-            <?php if ($slide['url'] !== '#'): ?><a href="<?=patrona_e($slide['url'])?>" <?=preg_match('~^https?://~i', $slide['url']) ? 'target="_blank" rel="noopener noreferrer"' : ''?>><?php endif; ?>
+            <?php if ($slide['url'] !== '#'): ?><a href="<?=patrona_e($destination)?>" <?=$preview || preg_match('~^https?://~i', $slide['url']) ? 'target="_blank" rel="noopener noreferrer"' : ''?>><?php endif; ?>
               <img class="pm-image" src="<?=patrona_e($slide['media'])?>" alt="<?=patrona_e($slide['title'])?>">
             <?php if ($slide['url'] !== '#'): ?></a><?php endif; ?>
             <?php if ($preview && $slide['hidden']): ?><p class="pm-body">Ítem oculto en el sitio</p><?php endif; ?>
@@ -84,10 +85,10 @@ function patrona_render_modal_institucional(array $sections, bool $preview = fal
             <?php if ($slide['subtitle'] !== ''): ?><p><?=patrona_e($slide['subtitle'])?></p><?php endif; ?>
             <?php if ($slide['description'] !== ''): ?><div><?=patrona_rich_clean($slide['description'])?></div><?php endif; ?>
             <?php if ($slide['button'] !== '' && $slide['url'] !== '#'): ?>
-            <a class="pm-action" href="<?=patrona_e($slide['url'])?>"
-              <?=preg_match('~^https?://~i', $slide['url']) ? 'target="_blank" rel="noopener noreferrer"' : ''?>><?=patrona_e($slide['button'])?></a>
+            <a class="pm-action" href="<?=patrona_e($destination)?>"
+              <?=$preview || preg_match('~^https?://~i', $slide['url']) ? 'target="_blank" rel="noopener noreferrer"' : ''?>><?=patrona_e($slide['button'])?></a>
             <?php elseif ($slide['button'] !== ''): ?>
-            <button class="pm-action" type="button" <?= $preview ? 'disabled' : 'data-pm-dismiss' ?>><?=patrona_e($slide['button'])?></button>
+            <button class="pm-action" type="button" data-pm-dismiss><?=patrona_e($slide['button'])?></button>
             <?php endif; ?>
           </div>
           <?php endif; ?>
@@ -102,6 +103,6 @@ function patrona_render_modal_institucional(array $sections, bool $preview = fal
         <?php endif; ?>
       </section>
     </div>
-    <script src="assets/js/patrona-modal-institucional.js?v=2" defer></script>
+    <script src="assets/js/patrona-modal-institucional.js?v=3" defer></script>
     <?php
 }

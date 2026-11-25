@@ -60,5 +60,24 @@ document.querySelectorAll('[data-patrona-modal]').forEach(root => {
         });
     }
 
+    const preview = root.closest('dialog');
+    if (preview) {
+        function resetPreview() {
+            root.hidden = false;
+            show(0);
+        }
+
+        preview.addEventListener('previewopen', resetPreview);
+        preview.addEventListener('close', () => stop(slides[current]));
+        root.querySelectorAll('[data-pm-dismiss]').forEach(button => {
+            button.addEventListener('click', () => {
+                stop(slides[current]);
+                root.hidden = true;
+                preview.querySelector('#close-modal-preview').focus();
+            });
+        });
+        return;
+    }
+
     show(0);
 });
