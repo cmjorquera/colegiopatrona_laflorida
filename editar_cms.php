@@ -13,6 +13,10 @@ $modalTabs = ['general' => 'General', 'items' => 'Ítems', 'diseno' => 'Diseño'
 $tab = (string)($_GET['tab'] ?? 'items');
 if (!isset($modalTabs[$tab])) $tab = 'items';
 $isModal = false;
+$configFields = [
+ 'titulo_bloque'=>'Título del bloque', 'subtitulo_bloque'=>'Subtítulo',
+ 'texto'=>'Texto', 'enlace'=>'Enlace', 'boton_texto'=>'Texto del botón',
+];
 $requested=(int)($_GET['id']??$_POST['id_seccion']??0);$error='';$notice=(string)($_SESSION['generic_notice']??'');unset($_SESSION['generic_notice']);$items=[];$config=[];$section=null;
 try{
  $cfg=require __DIR__.'/class/conexion_local.php';
@@ -41,15 +45,14 @@ try{
     }
     $db->commit();
    }catch(Throwable $e){$db->rollback();throw $e;}
-  }elseif($action==='config' || ($action==='modal_design' && $isModal)){
+  }elseif($action==='config'){
    $db->begin_transaction();
    try{
-    $keys = $action === 'modal_design' ? ['modal_encuadre', 'modal_color'] : ['titulo_bloque','subtitulo_bloque','texto','enlace','boton_texto'];
-    foreach($keys as $key){
+    foreach (array_keys($configFields) as $key) {
      $value=trim((string)($_POST[$key]??''));if(mb_strlen($value)>1000)throw new RuntimeException('Configuración demasiado extensa.');
-     if ($key === 'modal_encuadre' && !in_array($value, ['contain','cover'], true)) throw new RuntimeException('Encuadre inválido.');
-     if ($key === 'modal_color' && !in_array($value, ['azul','marino'], true)) throw new RuntimeException('Color inválido.');
-     if ($isModal && $key === 'enlace' && $value !== '' && patrona_modal_link($value) === '#') throw new RuntimeException('Enlace inválido.');
+     if ($isModal && $key === 'enlace' && $value !== '' && patrona_modal_link($value) === '#') {
+      throw new RuntimeException('Ingresa una URL HTTP(S) o una ruta del sitio, como index.php#noticias-home.');
+     }
      $q=$db->prepare('DELETE FROM seccion_config WHERE id_seccion=? AND clave=?');$q->bind_param('is',$sid,$key);$q->execute();
      $q=$db->prepare('INSERT INTO seccion_config(id_seccion,clave,valor) VALUES(?,?,?)');$q->bind_param('iss',$sid,$key,$value);$q->execute();
     }$db->commit();
@@ -150,7 +153,7 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 .institutional-item-editor .cms-field,.institutional-item-editor details{border:1px solid #dbe5ef;border-radius:9px;padding:10px;min-width:0}
 .institutional-item-editor .rich-editor .rich-content{min-height:110px;padding:10px 12px}
 .institutional-item-editor #modal-item-options[open]>.cms-grid{margin-top:10px}
-</style><?php patrona_rich_assets(); ?></head><body><div class="admin-shell"><?php $panel = 'contenedores'; require __DIR__.'/includes/patrona_sidebar.php'; ?><div class="admin-content"><header class="topbar" data-sidebar-toolbar><span>Panel de administración / Contenedores / Editor</span><a href="admin.php?panel=contenedores">← Volver</a></header><main class="cms-main"><small>GESTIÓN DEL SITIO / CONTENEDORES</small><h1><?=ce($section['titulo_admin']??'Editor de contenedores')?></h1><p>Configuración y elementos del contenedor. Utiliza las mismas tablas CMS de Tabancura.</p>
+</style><?php patrona_rich_assets(); ?></head><body><div class="admin-shell"><?php $panel = 'contenedores'; require __DIR__.'/includes/patrona_sidebar.php'; ?><div class="admin-content"><header class="topbar" data-sidebar-toolbar><span>Panel de administración / Contenedores / Editor</span><a href="admin.php?panel=contenedores">← Volver</a></header><main class="cms-main"><small>GESTIÓN DEL SITIO / CONTENEDORES</small><h1><?=ce($section['titulo_admin']??'Editor de contenedores')?></h1><p><?=$isModal ? 'Anuncios que se muestran automáticamente al abrir la portada.' : 'Configuración y elementos del contenedor.'?></p>
 <?php if($error):?><p style="color:#a92323"><?=ce($error)?></p><?php endif;?><?php if($notice):?><p style="color:#16703b"><?=ce($notice)?></p><?php endif;?>
 <?php if($section):?>
 <?php if ($isModal): ?>
@@ -161,6 +164,18 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 </nav>
 <?php endif; ?>
 <?php if (!$isModal || $tab === 'general'): ?>
+<?php if ($isModal): ?>
+<section class="cms-card">
+ <h2>Publicación en la portada</h2>
+ <dl>
+  <dt>Estado del contenedor</dt><dd><?=$section['estado'] === 'activo' ? 'Activo' : 'Inactivo'?></dd>
+  <dt>Visibilidad en el sitio</dt><dd><?=$section['visible'] === 'si' ? 'Visible' : 'Oculto'?></dd>
+ </dl>
+ <p>Se abre automáticamente en la página principal cuando está activo, visible y tiene al menos un ítem visible con contenido.</p>
+ <a class="cms-btn" href="?id=<?=$sid?>&amp;tab=items">Administrar ítems</a>
+ <a class="gallery-icon" href="admin.php?panel=contenedores">Ir a Contenedores</a>
+</section>
+<?php endif; ?>
 <?php if(($section['nombre_interno']??'')==='footer_principal'):?>
 <section class="cms-card"><h2>Identidad y contacto del colegio</h2><p>Estos datos se muestran en el pie de página. Completa únicamente información verificada.</p>
 <form method="post"><input type="hidden" name="id_seccion" value="<?=$sid?>"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="footer_config"><div class="cms-grid">
@@ -168,34 +183,27 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 <label class="cms-field"><?=ce($label)?><?php if($key==='texto'):?><textarea name="<?=ce($key)?>" rows="4" maxlength="1500"><?=ce($config[$key]??'')?></textarea><?php else:?><input name="<?=ce($key)?>" value="<?=ce($config[$key]??'')?>" maxlength="1500" <?=$key==='correo'?'type="email"':''?>><?php endif;?></label>
 <?php endforeach;?></div><p><button class="cms-btn">Guardar pie de página</button></p></form></section>
 <section class="cms-card"><h2>Enlaces institucionales</h2><p>Se obtienen del menú público administrable; no es necesario duplicarlos en el pie de página.</p><a href="admin.php?panel=menu">Administrar menú público</a></section>
-<?php else:?>
-<section class="cms-card"><h2>Configuración</h2><?php if ($isModal): ?><p>Estos valores se usan cuando un ítem no tiene su propio título, texto o enlace.</p><?php endif; ?><form method="post"><input type="hidden" name="id_seccion" value="<?=(int)$sid?>"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="config"><div class="cms-grid">
-<?php foreach(['titulo_bloque'=>'Título del bloque','subtitulo_bloque'=>'Subtítulo','texto'=>'Texto','enlace'=>'Enlace','boton_texto'=>'Texto del botón'] as $key=>$label):?><label class="cms-field"><?=ce($label)?><input name="<?=ce($key)?>" value="<?=ce($config[$key]??'')?>" maxlength="1000"></label><?php endforeach;?>
-</div><p><button class="cms-btn">Guardar configuración</button></p></form></section>
-<?php endif;?>
+<?php elseif (!$isModal || array_filter(array_intersect_key($config, $configFields), static fn($value): bool => trim((string)$value) !== '') || $error !== ''): ?>
+<section class="cms-card">
+<?php if ($isModal): ?>
+<details <?=$error !== '' ? 'open' : ''?>>
+ <summary>Valores de respaldo guardados</summary>
+ <p>Se usan cuando un ítem deja el campo correspondiente vacío. Puedes borrar estos valores y guardar para retirarlos.</p>
+<?php else: ?><h2>Configuración</h2><?php endif; ?>
+<form method="post"><input type="hidden" name="id_seccion" value="<?=(int)$sid?>"><input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>"><input type="hidden" name="accion" value="config"><div class="cms-grid">
+<?php foreach ($configFields as $key => $label): ?>
+<label class="cms-field"><?=ce($label)?><input name="<?=ce($key)?>" value="<?=ce($config[$key]??'')?>" maxlength="1000"></label>
+<?php endforeach; ?>
+</div><p><button class="cms-btn">Guardar configuración</button></p></form>
+<?php if ($isModal): ?></details><?php endif; ?>
+</section>
+<?php endif; ?>
 <?php endif; ?>
 <?php if ($isModal && $tab === 'diseno'): ?>
 <section class="cms-card">
- <h2>Diseño del modal</h2>
- <form method="post">
-  <input type="hidden" name="csrf" value="<?=ce($_SESSION['patrona_csrf'])?>">
-  <input type="hidden" name="accion" value="modal_design">
-  <div class="cms-grid">
-   <label class="cms-field">Encuadre de imagen
-    <select name="modal_encuadre">
-     <option value="contain">Imagen completa</option>
-     <option value="cover" <?=($config['modal_encuadre'] ?? '') === 'cover' ? 'selected' : ''?>>Llenar el espacio</option>
-    </select>
-   </label>
-   <label class="cms-field">Color del botón
-    <select name="modal_color">
-     <option value="azul">Azul institucional</option>
-     <option value="marino" <?=($config['modal_color'] ?? '') === 'marino' ? 'selected' : ''?>>Azul marino</option>
-    </select>
-   </label>
-  </div>
-  <p><button class="cms-btn">Guardar diseño</button></p>
- </form>
+ <h2>Diseño institucional</h2>
+ <p>Esta es la única plantilla disponible para el modal de portada. Admite ítems informativos y afiches.</p>
+ <a class="cms-btn" href="?id=<?=$sid?>&amp;tab=preview">Ver plantilla con tus ítems</a>
 </section>
 <?php elseif ($isModal && $tab === 'preview'): ?>
 <section class="cms-card" id="modal-preview"><h2>Vista previa</h2>
