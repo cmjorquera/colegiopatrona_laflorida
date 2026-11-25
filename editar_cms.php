@@ -156,12 +156,9 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 .modal-type-picker{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:10px;margin:0;padding:12px;border:1px solid #dbe5ef;border-radius:10px}
 .modal-type-picker legend{padding:0 6px;font-weight:700}.modal-type-picker label{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #dbe5ef;border-radius:8px;cursor:pointer}.modal-type-picker label:has(:checked){border-color:#193553;background:#f0f5fa}.modal-type-picker small{display:block;color:#526985}.cms-field[data-modal-informativo][hidden]{display:none}
 #generic-modal.institutional-item-editor{grid-template-columns:minmax(0,1fr)}
-#generic-modal.institutional-item-editor .patrona-modal-panel{width:min(1120px,calc(100vw - 32px))}
-@media(max-width:700px){#generic-modal.institutional-item-editor .patrona-modal-panel{width:calc(100vw - 20px)}}
 #generic-modal .institutional-wide{grid-column:1/-1}
 #generic-modal.institutional-item-editor .cms-field[hidden]{display:none}
 .institutional-item-editor .cms-field,.institutional-item-editor details{border:1px solid #dbe5ef;border-radius:9px;padding:10px;min-width:0}
-.institutional-item-editor .rich-editor .rich-content{min-height:110px;padding:10px 12px}
 .institutional-item-editor #modal-item-options[open]>.cms-grid{margin-top:10px}
  .modal-publication{padding:0;border:0;margin:0;min-width:0}
 .modal-publication legend{font-weight:700;margin:0 0 10px;padding:0}
@@ -169,6 +166,25 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 .cms-modal-preview::backdrop{background:rgb(5 23 49 / 56%)}
 .cms-modal-preview-stage{display:grid;grid-template-columns:minmax(0,1fr);align-items:center;min-height:260px;background:#414955;color:white;padding:clamp(12px,3vw,32px)}
 .cms-modal-preview-stage>[hidden]{display:none}
+ .modal-design-options{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:10px;margin:14px 0 0;padding:0}
+.modal-design-options li{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #dbe5ef;border-radius:10px;color:#62738a}
+.modal-design-options i{display:grid;place-items:center;flex:0 0 32px;height:32px;background:#f0f5fa;border-radius:8px;color:#2568a5}
+.modal-design-options small{display:block}.modal-design-options .is-current{background:#eff6ff;border-color:#adcced;color:#193553}
+#generic-modal.institutional-item-editor .patrona-modal-panel{width:min(960px,calc(100vw - 24px));display:flex;flex-direction:column;overflow:hidden}
+#generic-modal.institutional-item-editor .patrona-modal-header{flex:none;padding:9px 16px}
+#generic-modal.institutional-item-editor .patrona-modal-header h2{font-size:18px}
+.institutional-item-editor #generic-form{display:flex;flex-direction:column;min-height:0;margin:0}
+.institutional-item-editor .patrona-modal-panel .patrona-modal-body{padding:12px 16px;overflow:auto;overscroll-behavior:contain}
+.institutional-item-editor .patrona-modal-body .cms-grid{gap:8px}
+.institutional-item-editor .cms-field,.institutional-item-editor details{padding:7px 9px}
+.institutional-item-editor .cms-field :is(input:not([type=checkbox]),select){padding:6px 8px;min-height:34px}
+.institutional-item-editor .modal-type-picker{padding:6px 8px;gap:8px}
+.institutional-item-editor .modal-type-picker label{padding:7px 9px}
+.institutional-item-editor .rich-editor .rich-content{min-height:82px;padding:8px 10px}
+.institutional-item-editor .rich-editor .rich-toolbar{padding:3px 5px}
+.institutional-item-editor .rich-editor .rich-toolbar button{padding:4px 6px}
+.institutional-item-editor [id=modal-current-file]:empty{display:none}
+.institutional-item-editor .patrona-modal-panel .patrona-modal-footer{flex:none;padding:8px 16px}
 </style><?php patrona_rich_assets(); ?></head><body><div class="admin-shell"><?php $panel = 'contenedores'; require __DIR__.'/includes/patrona_sidebar.php'; ?><div class="admin-content"><header class="topbar" data-sidebar-toolbar><span>Panel de administración / Contenedores / Editor</span><a href="admin.php?panel=contenedores">← Volver</a></header><main class="cms-main"><small>GESTIÓN DEL SITIO / CONTENEDORES</small><h1><?=ce($section['titulo_admin']??'Editor de contenedores')?></h1><p><?=$isModal ? 'Anuncios que se muestran automáticamente al abrir la portada.' : 'Configuración y elementos del contenedor.'?></p>
 <?php if($error):?><p style="color:#a92323"><?=ce($error)?></p><?php endif;?><?php if($notice):?><p style="color:#16703b"><?=ce($notice)?></p><?php endif;?>
 <?php if($section):?>
@@ -227,9 +243,14 @@ $editing=null;foreach($items as $item)if((int)$item['id_item']===(int)($_GET['it
 <?php endif; ?>
 <?php if ($isModal && $tab === 'diseno'): ?>
 <section class="cms-card">
- <h2>Diseño institucional</h2>
- <p>Esta es la única plantilla disponible para el modal de portada. Admite ítems informativos y afiches.</p>
- <a class="cms-btn" href="?id=<?=$sid?>&amp;tab=preview">Ver plantilla con tus ítems</a>
+ <h2>Opciones de diseño del bloque</h2>
+ <p>El modal usa el diseño base. Las demás variantes estarán disponibles en una próxima etapa.</p>
+ <ul class="modal-design-options">
+  <li class="is-current"><i class="bi bi-check-circle" aria-hidden="true"></i><div><strong>Diseño actual</strong><small>Activo</small></div></li>
+  <?php foreach (['building'=>'Variante institucional', 'arrows-collapse'=>'Vista compacta', 'stars'=>'Vista destacada', 'dash'=>'Vista minimalista'] as $icon => $label): ?>
+  <li><i class="bi bi-<?=ce($icon)?>" aria-hidden="true"></i><div><strong><?=ce($label)?></strong><small>Próximamente</small></div></li>
+  <?php endforeach; ?>
+ </ul>
 </section>
 <?php elseif ($isModal && $tab === 'preview'): ?>
 <?php
